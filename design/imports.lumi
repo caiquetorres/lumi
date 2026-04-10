@@ -1,0 +1,12 @@
+import "io"
+
+import "/user"
+from "/post" import { Post }
+
+fun main() {
+    let user = user::User.new()
+    let post = Post.new()
+
+    io::println(user.name)
+    io::println(post.content)
+}

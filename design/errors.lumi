@@ -1,0 +1,21 @@
+import "os"
+import "io"
+
+fun main() {
+    when divide(1, 2) {
+        is f32; let val {
+            io::printf("%f / %f = %f\n", 1, 2, val)
+        }
+        is error; let err {
+            io::eprintln(err.getMessage())
+        }
+    }
+}
+
+fun divide(a, b f32) !f32 {
+    if b == 0 {
+        return errors::Error.new("cannot divide by 0")
+    }
+
+    return a / b
+}

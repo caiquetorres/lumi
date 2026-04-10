@@ -1,0 +1,51 @@
+import "io"
+
+struct Admin {}
+
+struct Customer {}
+
+struct Seller {
+    company string
+}
+
+union User {
+    Admin
+    Customer
+    Seller
+}
+
+fun main() {
+    let admin = Admin{}
+    let customer = Customer{}
+    let seller = Seller {
+        company: "Google"
+    }
+
+    printUserType(admin)
+    printUserType(customer)
+    printUserType(seller)
+
+    printSellerCompanyIfSeller(admin)
+    printSellerCompanyIfSeller(customer)
+    printSellerCompanyIfSeller(seller)
+}
+
+fun printUserType(user User) {
+    when user {
+        is Admin; let admin {
+            io::println("admin")
+        }
+        is Customer; let customer {
+            io::println("customer")
+        }
+        is Seller; let seller {
+            io::println("seller")
+        }
+    }
+}
+
+fun printSellerCompanyIfSeller(user User) {
+    when user is Seller; let seller {
+        io::println(seller.company)
+    }
+}

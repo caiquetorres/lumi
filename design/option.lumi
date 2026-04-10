@@ -1,0 +1,48 @@
+struct Customer {
+    name string
+    email string
+}
+
+impl Customer {
+    fun new(name, email string) Customer {
+        return Customer {
+            name, email
+        }
+    }
+}
+
+fun main() {
+    let customersList = [
+        Customer.new("Jane", "jane@email.com"),
+        Customer.new("John", "john@email.com"),
+    ]
+
+    let foundCustomer ?Customer = null
+    for customer in customersList {
+        if customer.email == "jane@gmail.com" {
+            foundCustomer = customer
+            break
+        }
+    }
+
+    when foundCustomer {
+        is Customer; let customer {
+            io::println("customer found")
+        }
+        is null {
+            io::eprintln("customer not found")
+        }
+    }
+
+    if foundCustomer is Customer {
+        io::println("customer found")
+    } else {
+        io::eprintln("customer not found")
+    }
+
+    if foundCustomer != null {
+        io::println("customer found")
+    } else {
+        io::eprintln("customer not found")
+    }
+}

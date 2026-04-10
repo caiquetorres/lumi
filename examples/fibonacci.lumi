@@ -1,0 +1,21 @@
+import "io"
+
+fun main() {
+    let n = 10
+    let res = fib(n)
+
+    io::printf("fib de %d é igual a %d", n, res)
+}
+
+fun fib(n int) int {
+    let prev = 1
+    let curr = 1
+
+    for _ in 0..n {
+        let tmp = prev + curr
+        prev = curr
+        curr = tmp
+    }
+
+    return curr
+}

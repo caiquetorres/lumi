@@ -1,0 +1,9 @@
+fun main() {
+    sayHello(name: "Jane")
+    sayHello("John")
+}
+
+fun sayHello(name string) {
+    let s = fmt::sprintf("Hello %s", name)
+    io::println(s)
+}
