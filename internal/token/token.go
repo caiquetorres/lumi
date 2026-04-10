@@ -12,18 +12,18 @@ type Token struct {
 	hasSymbol bool
 }
 
-func New(id int, kind Kind, s span.Span) Token {
+func New(id SymbolID, kind Kind, s span.Span) Token {
 	return Token{
 		kind: kind,
 		s:    s,
 	}
 }
 
-func NewWithSymbol(id int, kind Kind, s span.Span) Token {
+func NewWithSymbol(id SymbolID, kind Kind, s span.Span) Token {
 	return Token{
 		kind:      kind,
 		s:         s,
-		symbolID:  SymbolID(id),
+		symbolID:  id,
 		hasSymbol: true,
 	}
 }

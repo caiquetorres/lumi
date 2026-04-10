@@ -18,14 +18,13 @@ type Lexer struct {
 	b *bufio.Reader
 
 	currLexeme string
-	symbols    []string
-	symTable   map[string]token.SymbolID
+	symTable   *symbolTable
 }
 
 func New(r io.Reader) *Lexer {
 	l := Lexer{
 		b:        bufio.NewReader(r), // the default buffer size is 4096
-		symTable: make(map[string]token.SymbolID),
+		symTable: newSymbolTable(),
 	}
 
 	l.currToken, l.currErr = l.next()
@@ -45,12 +44,12 @@ func (l *Lexer) Next() (token.Token, error) {
 	return currToken, currErr
 }
 
-func (l *Lexer) Lexeme(tok token.Token) []byte {
-	return []byte(l.symbols[tok.SymbolID()])
+func (l *Lexer) Lexeme(tok token.Token) string {
+	return l.symTable.lookup(tok.SymbolID())
 }
 
 func (l *Lexer) DebugTable() {
-	for sym, id := range l.symTable {
+	for sym, id := range l.symTable.index {
 		fmt.Printf("%d: %s\n", id, sym)
 	}
 }
@@ -83,22 +82,11 @@ func (l *Lexer) isAtEOF() bool {
 }
 
 func (l *Lexer) newToken(k token.Kind) token.Token {
-	id := l.intern(l.currLexeme)
-	tok := token.NewWithSymbol(int(id), k, span.New(l.start, l.end))
+	id := l.symTable.intern(l.currLexeme)
+
+	tok := token.NewWithSymbol(id, k, span.New(l.start, l.end))
 	l.resetSpan()
 	return tok
-}
-
-func (l *Lexer) intern(name string) token.SymbolID {
-	if id, ok := l.symTable[name]; ok {
-		return id
-	}
-
-	id := token.SymbolID(len(l.symbols))
-	l.symbols = append(l.symbols, name)
-	l.symTable[name] = id
-
-	return id
 }
 
 func (l *Lexer) resetSpan() {

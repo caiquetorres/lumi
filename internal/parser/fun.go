@@ -18,7 +18,7 @@ func (p *Parser) debugFuncDel(f *FunDecl, w io.Writer) error {
 
 	w.Write([]byte(" "))
 
-	if _, err := w.Write(p.l.Lexeme(f.Identifier)); err != nil {
+	if _, err := w.Write([]byte(p.l.Lexeme(f.Identifier))); err != nil {
 		return err
 	}
 
