@@ -2,6 +2,7 @@ package lexer
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 
 	"github.com/caiquetorres/lumi/internal/span"
@@ -15,11 +16,16 @@ type Lexer struct {
 	currErr   error
 
 	b *bufio.Reader
+
+	currLexeme string
+	symbols    []string
+	symTable   map[string]token.SymbolID
 }
 
 func New(r io.Reader) *Lexer {
 	l := Lexer{
-		b: bufio.NewReader(r), // the default buffer size is 4096
+		b:        bufio.NewReader(r), // the default buffer size is 4096
+		symTable: make(map[string]token.SymbolID),
 	}
 
 	l.currToken, l.currErr = l.next()
@@ -39,9 +45,22 @@ func (l *Lexer) Next() (token.Token, error) {
 	return currToken, currErr
 }
 
+func (l *Lexer) Lexeme(tok token.Token) []byte {
+	return []byte(l.symbols[tok.SymbolID()])
+}
+
+func (l *Lexer) DebugTable() {
+	for sym, id := range l.symTable {
+		fmt.Printf("%d: %s\n", id, sym)
+	}
+}
+
 func (l *Lexer) nextRune() (rune, error) {
 	r, _, err := l.b.ReadRune()
+
 	l.extendSpan()
+	l.currLexeme += string(r)
+
 	return r, err
 }
 
@@ -64,9 +83,22 @@ func (l *Lexer) isAtEOF() bool {
 }
 
 func (l *Lexer) newToken(k token.Kind) token.Token {
-	tok := token.New(k, span.New(l.start, l.end))
+	id := l.intern(l.currLexeme)
+	tok := token.NewWithSymbol(int(id), k, span.New(l.start, l.end))
 	l.resetSpan()
 	return tok
+}
+
+func (l *Lexer) intern(name string) token.SymbolID {
+	if id, ok := l.symTable[name]; ok {
+		return id
+	}
+
+	id := token.SymbolID(len(l.symbols))
+	l.symbols = append(l.symbols, name)
+	l.symTable[name] = id
+
+	return id
 }
 
 func (l *Lexer) resetSpan() {

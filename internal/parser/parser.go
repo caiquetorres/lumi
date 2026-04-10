@@ -9,21 +9,29 @@ import (
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
-func Parse(r io.Reader) (*Ast, error) {
-	p := new(r)
-	return p.parseAst()
+func Parse(r io.Reader) (*Ast, *Parser, error) {
+	var (
+		p        = new(r)
+		ast, err = p.parseAst()
+	)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return ast, p, nil
 }
 
-type parser struct {
+type Parser struct {
 	l *lexer.Lexer
 }
 
-func new(r io.Reader) *parser {
+func new(r io.Reader) *Parser {
 	l := lexer.New(r)
-	return &parser{l: l}
+	return &Parser{l: l}
 }
 
-func (p *parser) is(k token.Kind) bool {
+func (p *Parser) is(k token.Kind) bool {
 	tok, err := p.peek()
 	if err != nil {
 		return false
@@ -32,7 +40,7 @@ func (p *parser) is(k token.Kind) bool {
 	return tok.Kind() == k
 }
 
-func (p *parser) isOneOf(ks ...token.Kind) bool {
+func (p *Parser) isOneOf(ks ...token.Kind) bool {
 	tok, err := p.peek()
 	if err != nil {
 		return false
@@ -41,11 +49,16 @@ func (p *parser) isOneOf(ks ...token.Kind) bool {
 	return slices.Contains(ks, tok.Kind())
 }
 
-func (p *parser) peek() (token.Token, error) {
+func (p *Parser) err() error {
+	_, err := p.peek()
+	return err
+}
+
+func (p *Parser) peek() (token.Token, error) {
 	return p.l.Peek()
 }
 
-func (p *parser) expect(k token.Kind) (token.Token, error) {
+func (p *Parser) expect(k token.Kind) (token.Token, error) {
 	tok, err := p.l.Next()
 	if err != nil {
 		return token.Token{}, err
@@ -58,7 +71,7 @@ func (p *parser) expect(k token.Kind) (token.Token, error) {
 	return tok, nil
 }
 
-func (p *parser) expectOneOf(ks ...token.Kind) (token.Token, error) {
+func (p *Parser) expectOneOf(ks ...token.Kind) (token.Token, error) {
 	tok, err := p.l.Next()
 	if err != nil {
 		return token.Token{}, err
@@ -71,7 +84,7 @@ func (p *parser) expectOneOf(ks ...token.Kind) (token.Token, error) {
 	return tok, nil
 }
 
-func (p *parser) expectSequence(ks ...token.Kind) ([]token.Token, error) {
+func (p *Parser) expectSequence(ks ...token.Kind) ([]token.Token, error) {
 	toks := make([]token.Token, len(ks))
 	for i, k := range ks {
 		tok, err := p.expect(k)

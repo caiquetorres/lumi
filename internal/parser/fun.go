@@ -1,15 +1,37 @@
 package parser
 
 import (
+	"io"
+
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
-type Fun struct {
+type FunDecl struct {
 	Identifier token.Token
 	Body       []Expression
 }
 
-func (p *parser) parseFunDecl() (*Fun, error) {
+func (p *Parser) debugFuncDel(f *FunDecl, w io.Writer) error {
+	if _, err := w.Write([]byte("fun")); err != nil {
+		return err
+	}
+
+	w.Write([]byte(" "))
+
+	if _, err := w.Write(p.l.Lexeme(f.Identifier)); err != nil {
+		return err
+	}
+
+	w.Write([]byte(" "))
+
+	if _, err := w.Write([]byte("()")); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *Parser) parseFunDecl() (*FunDecl, error) {
 	// func <identifier>() { <body> }
 	// func <identifier>()
 
@@ -30,23 +52,21 @@ func (p *parser) parseFunDecl() (*Fun, error) {
 		}
 	}
 
-	return &Fun{
+	return &FunDecl{
 		Identifier: toks[1],
 		Body:       body,
 	}, nil
 }
 
-func (p *parser) parseFunDeclBody() ([]Expression, error) {
+func (p *Parser) parseFunDeclBody() ([]Expression, error) {
 	body := make([]Expression, 0)
 
-	if p.is(token.OpenBrace) {
-		_, err := p.expectSequence(token.OpenBrace, token.CloseBrace)
-		if err != nil {
-			return nil, err
-		}
+	_, err := p.expectSequence(token.OpenBrace, token.CloseBrace)
+	if err != nil {
+		return nil, err
 	}
 
 	return body, nil
 }
 
-var _ TopLevelStmt = (*Fun)(nil)
+var _ TopLevelStmt = (*FunDecl)(nil)

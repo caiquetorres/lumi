@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -27,12 +26,14 @@ func main() {
 }
 
 func runPipeline(r io.Reader) error {
-	ast, parseErr := parser.Parse(r)
+	ast, p, parseErr := parser.Parse(r)
 	if parseErr != nil {
 		return parseErr
 	}
 
-	fmt.Println(ast)
+	if err := p.DebugAst(ast, os.Stdout); err != nil {
+		return err
+	}
 
 	semanticErr := semantic.Analyze(ast)
 	if semanticErr != nil {

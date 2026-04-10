@@ -3,7 +3,9 @@ package lexer
 import "unicode"
 
 func (l *Lexer) skipWhitespace() error {
-	return l.bumpWhile(func(r rune) bool {
+	err := l.bumpWhile(func(r rune) bool {
 		return unicode.IsSpace(r)
 	})
+	l.currLexeme = l.currLexeme[:0]
+	return err
 }

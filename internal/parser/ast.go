@@ -1,12 +1,35 @@
 package parser
 
-import "github.com/caiquetorres/lumi/internal/token"
+import (
+	"io"
+
+	"github.com/caiquetorres/lumi/internal/lexer"
+	"github.com/caiquetorres/lumi/internal/token"
+)
 
 type Ast struct {
+	l *lexer.Lexer
+
 	Statements []TopLevelStmt
 }
 
-func (p *parser) parseAst() (*Ast, error) {
+func (p *Parser) DebugAst(ast *Ast, w io.Writer) error {
+	p.l.DebugTable()
+
+	for _, stmt := range ast.Statements {
+		if err := p.debugTopLevelStmt(stmt, w); err != nil {
+			return err
+		}
+
+		if _, err := w.Write([]byte("\n")); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (p *Parser) parseAst() (*Ast, error) {
 	ast := Ast{}
 
 	for !p.is(token.EOF) {
