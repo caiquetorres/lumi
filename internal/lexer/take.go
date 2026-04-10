@@ -1,12 +1,21 @@
 package lexer
 
-func (l *Lexer) takeUntil(predicate func(rune) bool) string {
+import (
+	"errors"
+	"io"
+)
+
+func (l *Lexer) takeUntil(predicate func(rune) bool) (string, error) {
 	var result []rune
 
 	for {
 		r, err := l.peekRune()
-		if err != nil {
+		if errors.Is(err, io.EOF) {
 			break
+		}
+
+		if err != nil {
+			return "", err
 		}
 
 		if predicate(r) {
@@ -18,16 +27,20 @@ func (l *Lexer) takeUntil(predicate func(rune) bool) string {
 		result = append(result, r)
 	}
 
-	return string(result)
+	return string(result), nil
 }
 
-func (l *Lexer) takeWhile(predicate func(rune) bool) string {
+func (l *Lexer) takeWhile(predicate func(rune) bool) (string, error) {
 	var result []rune
 
 	for {
 		r, err := l.peekRune()
-		if err != nil {
+		if errors.Is(err, io.EOF) {
 			break
+		}
+
+		if err != nil {
+			return "", err
 		}
 
 		if !predicate(r) {
@@ -39,5 +52,5 @@ func (l *Lexer) takeWhile(predicate func(rune) bool) string {
 		result = append(result, r)
 	}
 
-	return string(result)
+	return string(result), nil
 }

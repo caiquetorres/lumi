@@ -20,16 +20,19 @@ func (l *Lexer) isKeywordOrIdentifier() bool {
 		unicode.IsSymbol(r) || r == '_'
 }
 
-func (l *Lexer) readKeywordOrIdentifier() token.Token {
-	text := l.takeWhile(func(r rune) bool {
+func (l *Lexer) readKeywordOrIdentifier() (token.Token, error) {
+	text, err := l.takeWhile(func(r rune) bool {
 		return unicode.IsLetter(r) || unicode.IsNumber(r) ||
 			unicode.IsMark(r) || unicode.IsSymbol(r) || r == '_'
 	})
+	if err != nil {
+		return token.Token{}, err
+	}
 
 	kind, exists := keywords[text]
 	if !exists {
 		kind = token.Identifier
 	}
 
-	return l.newToken(kind)
+	return l.newToken(kind), nil
 }

@@ -16,3 +16,28 @@ const (
 	Pub
 	Fun
 )
+
+func (k Kind) String() string {
+	switch k {
+	case Bad:
+		return "bad"
+	case EOF:
+		return "eof"
+	case Identifier:
+		return "identifier"
+	case OpenParen:
+		return "("
+	case CloseParen:
+		return ")"
+	case OpenBrace:
+		return "{"
+	case CloseBrace:
+		return "}"
+	case Pub:
+		return "pub"
+	case Fun:
+		return "fun"
+	default:
+		return "unknown"
+	}
+}

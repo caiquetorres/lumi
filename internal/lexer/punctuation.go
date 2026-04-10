@@ -1,6 +1,9 @@
 package lexer
 
 import (
+	"errors"
+	"io"
+
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
@@ -21,10 +24,16 @@ var punctuations = map[rune]token.Kind{
 	'}': token.CloseBrace,
 }
 
-func (l *Lexer) readPunctuation() token.Token {
+func (l *Lexer) readPunctuation() (token.Token, error) {
 	r, err := l.nextRune()
+	if errors.Is(err, io.EOF) {
+		// This should never happen since isPunctuation is called before
+		// readPunctuation, but we return an EOF token just in case.
+		return l.newToken(token.EOF), nil
+	}
+
 	if err != nil {
-		return token.Token{}
+		return token.Token{}, err
 	}
 
 	kind, ok := punctuations[r]
@@ -34,5 +43,5 @@ func (l *Lexer) readPunctuation() token.Token {
 		kind = token.Bad
 	}
 
-	return l.newToken(kind)
+	return l.newToken(kind), nil
 }

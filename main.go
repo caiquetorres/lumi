@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -12,10 +13,10 @@ import (
 )
 
 func main() {
-	args := parseArgs()
-	log.Printf("running with file: %s", args.filePath)
+	// args := parseArgs()
+	// log.Printf("running with file: %s", args.filePath)
 
-	f, err := os.Open(args.filePath)
+	f, err := os.Open("main.lumi")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -30,6 +31,8 @@ func runPipeline(r io.Reader) error {
 	if parseErr != nil {
 		return parseErr
 	}
+
+	fmt.Println(ast)
 
 	semanticErr := semantic.Analyze(ast)
 	if semanticErr != nil {

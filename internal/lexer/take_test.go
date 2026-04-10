@@ -62,7 +62,7 @@ func TestTakeUntil(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := newRaw(strings.NewReader(tt.input))
 
-			gotText := l.takeUntil(tt.predicate)
+			gotText, _ := l.takeUntil(tt.predicate)
 
 			assert.Equal(t, tt.wantText, gotText)
 			assert.Equal(t, tt.wantStart, l.start)
@@ -133,7 +133,7 @@ func TestTakeWhile(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := newRaw(strings.NewReader(tt.input))
 
-			gotText := l.takeWhile(tt.predicate)
+			gotText, _ := l.takeWhile(tt.predicate)
 
 			assert.Equal(t, tt.wantText, gotText)
 			assert.Equal(t, tt.wantStart, l.start)
