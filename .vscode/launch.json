@@ -10,6 +10,7 @@
       "request": "launch",
       "mode": "auto",
       "program": "main.go",
+      "args": ["--file", "main.lumi", "--out", "bin"],
       "cwd": "."
     }
   ]

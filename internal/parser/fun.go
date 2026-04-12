@@ -1,34 +1,12 @@
 package parser
 
 import (
-	"io"
-
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
 type FunDecl struct {
 	Identifier token.Token
 	Body       []Expression
-}
-
-func (p *Parser) debugFuncDel(f *FunDecl, w io.Writer) error {
-	if _, err := w.Write([]byte("fun")); err != nil {
-		return err
-	}
-
-	w.Write([]byte(" "))
-
-	if _, err := w.Write([]byte(p.l.Lexeme(f.Identifier))); err != nil {
-		return err
-	}
-
-	w.Write([]byte(" "))
-
-	if _, err := w.Write([]byte("()")); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (p *Parser) parseFunDecl() (*FunDecl, error) {
@@ -41,7 +19,7 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 		return nil, err
 	}
 
-	body := make([]Expression, 0)
+	var body []Expression
 	if p.is(token.OpenBrace) {
 		// The function body is optional, so we only parse it if we see an
 		// opening brace.

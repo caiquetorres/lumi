@@ -1,3 +1,3 @@
 package parser
 
-type Expression interface{}
+type Expression any

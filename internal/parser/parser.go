@@ -9,26 +9,15 @@ import (
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
-func Parse(r io.Reader) (*Ast, *Parser, error) {
-	var (
-		p        = new(r)
-		ast, err = p.parseAst()
-	)
-
-	if err != nil {
-		return nil, nil, err
+func New(r io.Reader, l *lexer.Lexer) *Parser {
+	if l == nil {
+		l = lexer.New(r)
 	}
-
-	return ast, p, nil
+	return &Parser{l: l}
 }
 
 type Parser struct {
 	l *lexer.Lexer
-}
-
-func new(r io.Reader) *Parser {
-	l := lexer.New(r)
-	return &Parser{l: l}
 }
 
 func (p *Parser) is(k token.Kind) bool {
