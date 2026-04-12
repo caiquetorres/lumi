@@ -122,7 +122,9 @@ func (m *vm) run() error {
 
 		case emitter.Pop:
 			obj := m.popObject()
-			fmt.Println(obj)
+			if obj != nil {
+				fmt.Println(obj)
+			}
 
 		case emitter.End:
 			m.frames = m.frames[:len(m.frames)-1]
@@ -130,8 +132,6 @@ func (m *vm) run() error {
 			if len(m.frames) == 0 {
 				return nil
 			}
-
-			return nil
 		}
 	}
 }
