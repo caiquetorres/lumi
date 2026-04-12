@@ -46,10 +46,23 @@ func (d *debugVisitor) VisitLiteralExpr(expr *LiteralExpr) error {
 	id := d.l.Lexeme(expr.Value)
 	mustWrite(d.w.WriteString(id))
 
-	return nil
+	return d.w.Flush()
 }
 
-func (d *debugVisitor) VisitExprEnd(Expression) error {
+func (d *debugVisitor) VisitIdentifierExpr(expr *IdentifierExpr) error {
+	id := d.l.Lexeme(expr.Name)
+	mustWrite(d.w.WriteString(id))
+
+	return d.w.Flush()
+}
+
+func (d *debugVisitor) VisitCallExpr(expr *CallExpr) error {
+	mustWrite(d.w.WriteString("call "))
+
+	return d.w.Flush()
+}
+
+func (d *debugVisitor) VisitStmtEnd(Expr) error {
 	return nil
 }
 

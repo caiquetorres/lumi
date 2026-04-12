@@ -4,8 +4,12 @@ type Visitor interface {
 	VisitAst(*Ast) error
 	VisitFunDeclStart(*FunDecl) error
 	VisitFunDeclEnd(*FunDecl) error
+
 	VisitLiteralExpr(*LiteralExpr) error
-	VisitExprEnd(Expression) error
+	VisitIdentifierExpr(*IdentifierExpr) error
+	VisitCallExpr(*CallExpr) error
+
+	VisitStmtEnd(Expr) error
 }
 
 func Walk(v Visitor, ast *Ast) error {
@@ -38,13 +42,11 @@ func (w *walker) walkFunDecl(v Visitor, fd *FunDecl) error {
 	}
 
 	for _, expr := range fd.Body {
-		switch e := expr.(type) {
-		case *LiteralExpr:
-			if err := v.VisitLiteralExpr(e); err != nil {
-				return err
-			}
+		if err := w.walkExpr(v, expr); err != nil {
+			return err
 		}
-		if err := v.VisitExprEnd(expr); err != nil {
+
+		if err := v.VisitStmtEnd(expr); err != nil {
 			return err
 		}
 	}
@@ -54,4 +56,33 @@ func (w *walker) walkFunDecl(v Visitor, fd *FunDecl) error {
 	}
 
 	return nil
+}
+
+func (w *walker) walkExpr(v Visitor, expr Expr) error {
+	switch e := expr.(type) {
+	case *IdentifierExpr:
+		if err := v.VisitIdentifierExpr(e); err != nil {
+			return err
+		}
+	case *LiteralExpr:
+		if err := v.VisitLiteralExpr(e); err != nil {
+			return err
+		}
+	case *CallExpr:
+		if err := w.walkCallExpr(v, e); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (w *walker) walkCallExpr(v Visitor, ce *CallExpr) error {
+	if err := w.walkExpr(v, ce.Callee); err != nil {
+		return err
+	}
+
+	// TODO: walk arguments
+
+	return v.VisitCallExpr(ce)
 }

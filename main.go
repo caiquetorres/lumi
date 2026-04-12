@@ -29,7 +29,6 @@ func main() {
 	switch mode {
 	case "run":
 		args := parseRunArgs()
-		log.Printf("running bytecode file: %s", args.execPath)
 
 		f, err := os.Open(args.execPath)
 		if err != nil {
@@ -41,7 +40,6 @@ func main() {
 			log.Fatal(err)
 		}
 
-		log.Println("execution finished successfully")
 	case "compile":
 		args := parseArgs()
 		log.Printf("running with file: %s", args.filePath)

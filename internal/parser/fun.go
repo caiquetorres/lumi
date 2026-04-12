@@ -6,7 +6,7 @@ import (
 
 type FunDecl struct {
 	Identifier token.Token
-	Body       []Expression
+	Body       []Expr
 }
 
 func (p *Parser) parseFunDecl() (*FunDecl, error) {
@@ -19,7 +19,7 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 		return nil, err
 	}
 
-	var body []Expression
+	var body []Expr
 	if p.is(token.OpenBrace) {
 		// The function body is optional, so we only parse it if we see an
 		// opening brace.
@@ -36,8 +36,8 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 	}, nil
 }
 
-func (p *Parser) parseFunDeclBody() ([]Expression, error) {
-	body := make([]Expression, 0)
+func (p *Parser) parseFunDeclBody() ([]Expr, error) {
+	body := make([]Expr, 0)
 
 	_, err := p.expect(token.OpenBrace)
 	if err != nil {

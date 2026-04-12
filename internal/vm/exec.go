@@ -40,5 +40,9 @@ func Execute(src io.ReadSeeker) error {
 		frames: []frame{{ptr: entryPoint}},
 	}
 
+	if err := machine.load(); err != nil {
+		return err
+	}
+
 	return machine.run()
 }

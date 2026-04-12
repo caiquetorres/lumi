@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"io"
+	"strconv"
 
 	"github.com/caiquetorres/lumi/internal/lexer"
 	"github.com/caiquetorres/lumi/internal/parser"
@@ -84,7 +85,8 @@ func (e *emitter) VisitFunDeclStart(fn *parser.FunDecl) error {
 
 	// load the function's name
 	id := e.l.Lexeme(fn.Identifier)
-	e.loadConst(id)
+	idx := e.pool.internConstant(id)
+	e.writeInt(idx)
 
 	// the function body will be emitted after the main code, so we write
 	// a placeholder for the function's entry point
@@ -111,13 +113,30 @@ func (e *emitter) VisitLiteralExpr(lit *parser.LiteralExpr) error {
 
 	switch lit.Kind {
 	case parser.LiteralString:
+		value, _ = strconv.Unquote(value)
 		e.loadConst(value)
 	}
 
 	return e.flush()
 }
 
-func (e *emitter) VisitExprEnd(_ parser.Expression) error {
+func (e *emitter) VisitIdentifierExpr(id *parser.IdentifierExpr) error {
+	e.write(GetSymbol)
+
+	value := e.l.Lexeme(id.Name)
+	idx := e.pool.internConstant(value)
+	e.writeInt(idx)
+
+	return e.flush()
+}
+
+func (e *emitter) VisitCallExpr(call *parser.CallExpr) error {
+	e.write(Call)
+
+	return e.flush()
+}
+
+func (e *emitter) VisitStmtEnd(_ parser.Expr) error {
 	e.write(Pop)
 
 	return e.flush()
@@ -141,11 +160,7 @@ func (e *emitter) loadConst(value any) {
 
 func (e *emitter) writeLoadConst(idx int) {
 	e.write(LoadConst)
-
-	buf := make([]byte, 4)
-	binary.BigEndian.PutUint32(buf, uint32(idx))
-
-	e.write(buf...)
+	e.writeInt(idx)
 }
 
 func (e *emitter) writeInt(value int) {

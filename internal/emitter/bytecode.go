@@ -7,5 +7,8 @@ const (
 	EndScope
 	DeclFun
 
+	GetSymbol
+	Call
+
 	Pop
 )
