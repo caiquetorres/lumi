@@ -20,7 +20,9 @@ func (w *walker) walkAsk(v Visitor, ast *Ast) error {
 	for _, stmt := range ast.Statements {
 		switch s := stmt.(type) {
 		case *FunDecl:
-			return w.walkFunDecl(v, s)
+			if err := w.walkFunDecl(v, s); err != nil {
+				return err
+			}
 		}
 	}
 

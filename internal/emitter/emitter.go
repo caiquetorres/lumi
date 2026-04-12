@@ -80,17 +80,24 @@ func (e *emitter) VisitAst(*parser.Ast) error {
 }
 
 func (e *emitter) VisitFunDecl(fn *parser.FunDecl) error {
-	startIdx := e.ptr
-	e.loadConst(startIdx)
+	e.write(DeclFun)
 
+	// load the function's name
 	id := e.l.Lexeme(fn.Identifier)
 	e.loadConst(id)
 
-	if id == "main" {
-		e.entryPoint = startIdx
-	}
+	// the function body will be emitted after the main code, so we write
+	// a placeholder for the function's entry point
+	startPtr := e.ptr + 4
+	e.writeInt(startPtr)
 
-	e.write(DeclFun)
+	// emit the function body
+
+	e.write(End)
+
+	if id == "main" {
+		e.entryPoint = startPtr
+	}
 
 	return e.flush()
 }
@@ -116,6 +123,13 @@ func (e *emitter) writeLoadConst(idx int) {
 
 	buf := make([]byte, 4)
 	binary.BigEndian.PutUint32(buf, uint32(idx))
+
+	e.write(buf...)
+}
+
+func (e *emitter) writeInt(value int) {
+	buf := make([]byte, 4)
+	binary.BigEndian.PutUint32(buf, uint32(value))
 
 	e.write(buf...)
 }

@@ -34,11 +34,11 @@ func (c *constantPool) internConstant(value any) int {
 	return idx
 }
 
-func (c *constantPool) setContant(index int, value any) {
-	if index < len(c.constants) {
-		c.constants[index] = value
-	}
-}
+// func (c *constantPool) setContant(index int, value any) {
+// 	if index < len(c.constants) {
+// 		c.constants[index] = value
+// 	}
+// }
 
 func (c *constantPool) serialize() []byte {
 	var buf bytes.Buffer
