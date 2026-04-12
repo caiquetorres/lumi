@@ -16,6 +16,8 @@ func (l *Lexer) next() (token.Token, error) {
 		return l.newToken(token.EOF), nil
 	case l.isPunctuation():
 		return l.readPunctuation()
+	case l.isString():
+		return l.readString()
 	case l.isKeywordOrIdentifier():
 		return l.readKeywordOrIdentifier()
 	default:

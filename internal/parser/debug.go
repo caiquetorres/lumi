@@ -25,7 +25,7 @@ func (d *debugVisitor) VisitAst(ast *Ast) error {
 	return nil
 }
 
-func (d *debugVisitor) VisitFunDecl(fd *FunDecl) error {
+func (d *debugVisitor) VisitFunDeclStart(fd *FunDecl) error {
 	mustWrite(d.w.WriteString("fun "))
 
 	id := d.l.Lexeme(fd.Identifier)
@@ -36,6 +36,21 @@ func (d *debugVisitor) VisitFunDecl(fd *FunDecl) error {
 	mustWrite(d.w.WriteRune('\n'))
 
 	return d.w.Flush()
+}
+
+func (d *debugVisitor) VisitFunDeclEnd(fd *FunDecl) error {
+	return nil
+}
+
+func (d *debugVisitor) VisitLiteralExpr(expr *LiteralExpr) error {
+	id := d.l.Lexeme(expr.Value)
+	mustWrite(d.w.WriteString(id))
+
+	return nil
+}
+
+func (d *debugVisitor) VisitExprEnd(Expression) error {
+	return nil
 }
 
 var _ Visitor = (*debugVisitor)(nil)

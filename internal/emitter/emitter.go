@@ -79,7 +79,7 @@ func (e *emitter) VisitAst(*parser.Ast) error {
 	return nil
 }
 
-func (e *emitter) VisitFunDecl(fn *parser.FunDecl) error {
+func (e *emitter) VisitFunDeclStart(fn *parser.FunDecl) error {
 	e.write(DeclFun)
 
 	// load the function's name
@@ -93,11 +93,32 @@ func (e *emitter) VisitFunDecl(fn *parser.FunDecl) error {
 
 	// emit the function body
 
-	e.write(End)
-
 	if id == "main" {
 		e.entryPoint = startPtr
 	}
+
+	return e.flush()
+}
+
+func (e *emitter) VisitFunDeclEnd(fn *parser.FunDecl) error {
+	e.write(End)
+
+	return e.flush()
+}
+
+func (e *emitter) VisitLiteralExpr(lit *parser.LiteralExpr) error {
+	value := e.l.Lexeme(lit.Value)
+
+	switch lit.Kind {
+	case parser.LiteralString:
+		e.loadConst(value)
+	}
+
+	return e.flush()
+}
+
+func (e *emitter) VisitExprEnd(_ parser.Expression) error {
+	e.write(Pop)
 
 	return e.flush()
 }

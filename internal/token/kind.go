@@ -12,6 +12,9 @@ const (
 	CloseParen
 	OpenBrace
 	CloseBrace
+	Semicolon
+
+	String
 
 	Pub
 	Fun
@@ -33,6 +36,8 @@ func (k Kind) String() string {
 		return "{"
 	case CloseBrace:
 		return "}"
+	case String:
+		return "string"
 	case Pub:
 		return "pub"
 	case Fun:

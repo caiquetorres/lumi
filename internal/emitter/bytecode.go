@@ -6,4 +6,6 @@ const (
 	BeginScope
 	EndScope
 	DeclFun
+
+	Pop
 )

@@ -2,7 +2,10 @@ package parser
 
 type Visitor interface {
 	VisitAst(*Ast) error
-	VisitFunDecl(*FunDecl) error
+	VisitFunDeclStart(*FunDecl) error
+	VisitFunDeclEnd(*FunDecl) error
+	VisitLiteralExpr(*LiteralExpr) error
+	VisitExprEnd(Expression) error
 }
 
 func Walk(v Visitor, ast *Ast) error {
@@ -30,5 +33,25 @@ func (w *walker) walkAsk(v Visitor, ast *Ast) error {
 }
 
 func (w *walker) walkFunDecl(v Visitor, fd *FunDecl) error {
-	return v.VisitFunDecl(fd)
+	if err := v.VisitFunDeclStart(fd); err != nil {
+		return err
+	}
+
+	for _, expr := range fd.Body {
+		switch e := expr.(type) {
+		case *LiteralExpr:
+			if err := v.VisitLiteralExpr(e); err != nil {
+				return err
+			}
+		}
+		if err := v.VisitExprEnd(expr); err != nil {
+			return err
+		}
+	}
+
+	if err := v.VisitFunDeclEnd(fd); err != nil {
+		return err
+	}
+
+	return nil
 }

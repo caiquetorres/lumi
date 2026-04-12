@@ -39,7 +39,25 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 func (p *Parser) parseFunDeclBody() ([]Expression, error) {
 	body := make([]Expression, 0)
 
-	_, err := p.expectSequence(token.OpenBrace, token.CloseBrace)
+	_, err := p.expect(token.OpenBrace)
+	if err != nil {
+		return nil, err
+	}
+
+	for !p.is(token.CloseBrace) {
+		expr, err := p.parseExpression()
+		if err != nil {
+			return nil, err
+		}
+
+		if _, err := p.expect(token.Semicolon); err != nil {
+			return nil, err
+		}
+
+		body = append(body, expr)
+	}
+
+	_, err = p.expect(token.CloseBrace)
 	if err != nil {
 		return nil, err
 	}

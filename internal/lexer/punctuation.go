@@ -22,6 +22,7 @@ var punctuations = map[rune]token.Kind{
 	')': token.CloseParen,
 	'{': token.OpenBrace,
 	'}': token.CloseBrace,
+	';': token.Semicolon,
 }
 
 func (l *Lexer) readPunctuation() (token.Token, error) {
