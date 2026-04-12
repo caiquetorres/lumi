@@ -1,8 +1,10 @@
 package vm
 
+import "os"
+
 type vm struct{}
 
-func Execute() error {
+func Execute(f *os.File) error {
 	return nil
 }
 

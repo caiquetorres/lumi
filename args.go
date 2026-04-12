@@ -3,12 +3,17 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
 )
 
 type arguments struct {
 	filePath string
 	outPath  string
 	debug    bool
+}
+
+type runArguments struct {
+	execPath string
 }
 
 func parseArgs() arguments {
@@ -34,5 +39,22 @@ func parseArgs() arguments {
 		filePath: *file,
 		outPath:  *out,
 		debug:    *debug,
+	}
+}
+
+func parseRunArgs() runArguments {
+	runFlags := flag.NewFlagSet("run", flag.ExitOnError)
+	exec := runFlags.String("exec", "", "path to compiled bytecode file")
+
+	if err := runFlags.Parse(os.Args[1:]); err != nil {
+		log.Fatal(err)
+	}
+
+	if exec == nil || *exec == "" {
+		log.Fatal("exec argument is required")
+	}
+
+	return runArguments{
+		execPath: *exec,
 	}
 }
