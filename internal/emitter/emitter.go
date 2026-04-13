@@ -76,11 +76,11 @@ type emitter struct {
 	pool *constantPool
 }
 
-func (e *emitter) VisitAst(*parser.Ast) error {
+func (e *emitter) BeforeAst(*parser.Ast) error {
 	return nil
 }
 
-func (e *emitter) VisitFunDeclStart(fn *parser.FunDecl) error {
+func (e *emitter) BeforeFunDecl(fn *parser.FunDecl) error {
 	e.write(DeclFun)
 
 	// load the function's name
@@ -102,13 +102,13 @@ func (e *emitter) VisitFunDeclStart(fn *parser.FunDecl) error {
 	return e.flush()
 }
 
-func (e *emitter) VisitFunDeclEnd(fn *parser.FunDecl) error {
+func (e *emitter) AfterFunDecl(fn *parser.FunDecl) error {
 	e.write(End)
 
 	return e.flush()
 }
 
-func (e *emitter) VisitLiteralExpr(lit *parser.LiteralExpr) error {
+func (e *emitter) BeforeLiteralExpr(lit *parser.LiteralExpr) error {
 	value := e.l.Lexeme(lit.Value)
 
 	switch lit.Kind {
@@ -120,7 +120,7 @@ func (e *emitter) VisitLiteralExpr(lit *parser.LiteralExpr) error {
 	return e.flush()
 }
 
-func (e *emitter) VisitIdentifierExpr(id *parser.IdentifierExpr) error {
+func (e *emitter) BeforeIdentifierExpr(id *parser.IdentifierExpr) error {
 	e.write(GetSymbol)
 
 	value := e.l.Lexeme(id.Name)
@@ -130,13 +130,13 @@ func (e *emitter) VisitIdentifierExpr(id *parser.IdentifierExpr) error {
 	return e.flush()
 }
 
-func (e *emitter) VisitCallExpr(call *parser.CallExpr) error {
+func (e *emitter) AfterCallExpr(call *parser.CallExpr) error {
 	e.write(Call)
 
 	return e.flush()
 }
 
-func (e *emitter) VisitStmtEnd(_ parser.Expr) error {
+func (e *emitter) AfterStmt(_ parser.Stmt) error {
 	e.write(Pop)
 
 	return e.flush()

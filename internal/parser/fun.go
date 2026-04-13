@@ -6,7 +6,7 @@ import (
 
 type FunDecl struct {
 	Identifier token.Token
-	Body       []Expr
+	Body       []Stmt
 }
 
 func (p *Parser) parseFunDecl() (*FunDecl, error) {
@@ -19,7 +19,7 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 		return nil, err
 	}
 
-	var body []Expr
+	var body []Stmt
 	if p.is(token.OpenBrace) {
 		// The function body is optional, so we only parse it if we see an
 		// opening brace.
@@ -36,29 +36,23 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 	}, nil
 }
 
-func (p *Parser) parseFunDeclBody() ([]Expr, error) {
-	body := make([]Expr, 0)
+func (p *Parser) parseFunDeclBody() ([]Stmt, error) {
+	body := make([]Stmt, 0)
 
-	_, err := p.expect(token.OpenBrace)
-	if err != nil {
+	if _, err := p.expect(token.OpenBrace); err != nil {
 		return nil, err
 	}
 
 	for !p.is(token.CloseBrace) {
-		expr, err := p.parseExpression()
+		stmt, err := p.parseStmt()
 		if err != nil {
 			return nil, err
 		}
 
-		if _, err := p.expect(token.Semicolon); err != nil {
-			return nil, err
-		}
-
-		body = append(body, expr)
+		body = append(body, stmt)
 	}
 
-	_, err = p.expect(token.CloseBrace)
-	if err != nil {
+	if _, err := p.expect(token.CloseBrace); err != nil {
 		return nil, err
 	}
 

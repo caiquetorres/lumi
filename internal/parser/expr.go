@@ -4,7 +4,10 @@ import (
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
-type Expr any
+type (
+	Expr any
+	Stmt Expr
+)
 
 type LiteralKind int
 
