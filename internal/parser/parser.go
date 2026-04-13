@@ -47,6 +47,10 @@ func (p *Parser) peek() (token.Token, error) {
 	return p.l.Peek()
 }
 
+func (p *Parser) next() (token.Token, error) {
+	return p.l.Next()
+}
+
 func (p *Parser) expect(k token.Kind) (token.Token, error) {
 	tok, err := p.l.Next()
 	if err != nil {

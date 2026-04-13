@@ -6,6 +6,7 @@ type Visitor interface {
 	AfterFunDecl(*FunDecl) error
 	BeforeLiteralExpr(*LiteralExpr) error
 	BeforeIdentifierExpr(*IdentifierExpr) error
+	BeforeCallExpr(*CallExpr) error
 	AfterCallExpr(*CallExpr) error
 	AfterStmt(Stmt) error
 }

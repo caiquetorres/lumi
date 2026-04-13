@@ -74,6 +74,10 @@ func (w *walker) walkLiteralExpr(v Visitor, le *LiteralExpr) error {
 }
 
 func (w *walker) walkCallExpr(v Visitor, ce *CallExpr) error {
+	if err := v.BeforeCallExpr(ce); err != nil {
+		return err
+	}
+
 	if err := w.walkExpr(v, ce.Callee); err != nil {
 		return err
 	}

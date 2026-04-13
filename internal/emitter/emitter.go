@@ -130,6 +130,10 @@ func (e *emitter) BeforeIdentifierExpr(id *parser.IdentifierExpr) error {
 	return e.flush()
 }
 
+func (d *emitter) BeforeCallExpr(expr *parser.CallExpr) error {
+	return nil
+}
+
 func (e *emitter) AfterCallExpr(call *parser.CallExpr) error {
 	e.write(Call)
 
