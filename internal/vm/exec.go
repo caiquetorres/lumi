@@ -37,7 +37,7 @@ func Execute(src io.ReadSeeker) error {
 	machine := &vm{
 		c:      c,
 		src:    instructions,
-		frames: []frame{{ptr: entryPoint}},
+		frames: newFrames(entryPoint),
 	}
 
 	if err := machine.load(); err != nil {

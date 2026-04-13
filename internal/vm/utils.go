@@ -43,7 +43,7 @@ func getConstants(fp io.ReadSeeker) ([]byte, error) {
 	return constants, nil
 }
 
-func getEntryPoint(fp io.ReadSeeker) (int, bool, error) {
+func getEntryPoint(fp io.ReadSeeker) (uint32, bool, error) {
 	entryPointFlag := make([]byte, 1)
 
 	n, err := fp.Read(entryPointFlag)
@@ -62,7 +62,7 @@ func getEntryPoint(fp io.ReadSeeker) (int, bool, error) {
 		return 0, false, err
 	}
 
-	return int(binary.BigEndian.Uint32(entryPointBuf)), true, nil
+	return binary.BigEndian.Uint32(entryPointBuf), true, nil
 }
 
 func getInstructions(fp io.ReadSeeker) ([]byte, error) {

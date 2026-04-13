@@ -11,19 +11,15 @@ import (
 type vm struct {
 	stack  []any
 	c      *constantPool
-	frames []frame
+	frames frames
 	src    []byte
 
 	symbolTable map[string]any
 }
 
-type frame struct {
-	ptr int
-}
-
 type fn struct {
 	name  string
-	entry int
+	entry uint32
 }
 
 func (m *vm) load() error {
@@ -44,7 +40,7 @@ func (m *vm) load() error {
 				return io.EOF
 			}
 
-			nameIdx := int(binary.BigEndian.Uint32(m.src[scanPtr : scanPtr+4]))
+			nameIdx := binary.BigEndian.Uint32(m.src[scanPtr : scanPtr+4])
 			scanPtr += 4
 
 			// Read function entry point address
@@ -52,7 +48,7 @@ func (m *vm) load() error {
 				return io.EOF
 			}
 
-			entryPoint := int(binary.BigEndian.Uint32(m.src[scanPtr : scanPtr+4]))
+			entryPoint := binary.BigEndian.Uint32(m.src[scanPtr : scanPtr+4])
 			scanPtr += 4
 
 			// Get function name from constant pool
@@ -66,7 +62,6 @@ func (m *vm) load() error {
 				return fmt.Errorf("expected string constant for function name, got %T", name)
 			}
 
-			// Store in symbol table
 			m.symbolTable[fnName] = fn{
 				name:  fnName,
 				entry: entryPoint,
@@ -91,7 +86,9 @@ func (m *vm) run() error {
 				return err
 			}
 
-			m.stack = append(m.stack, constant)
+			// REVIEW: How does it know that the constant has a value that can be pushed onto the stack?
+
+			m.pushObject(constant)
 
 		case emitter.GetSymbol:
 			constant, err := m.readConstant()
@@ -109,7 +106,7 @@ func (m *vm) run() error {
 				return fmt.Errorf("symbol %q not found", name)
 			}
 
-			m.stack = append(m.stack, value)
+			m.pushObject(value)
 
 		case emitter.Call:
 			obj := m.popObject()
@@ -118,7 +115,7 @@ func (m *vm) run() error {
 				return fmt.Errorf("expected function object on stack, got %T", obj)
 			}
 
-			m.frames = append(m.frames, frame{ptr: fnObj.entry})
+			m.frames.push(fnObj.entry)
 
 		case emitter.Pop:
 			obj := m.popObject()
@@ -127,54 +124,55 @@ func (m *vm) run() error {
 			}
 
 		case emitter.End:
-			m.frames = m.frames[:len(m.frames)-1]
+			m.frames.pop()
 
-			if len(m.frames) == 0 {
+			if m.frames.isEmpty() {
 				return nil
 			}
 		}
 	}
 }
 
-func (m *vm) ptr() int {
-	return m.frames[len(m.frames)-1].ptr
-}
-
-func (m *vm) setPtr(ptr int) {
-	m.frames[len(m.frames)-1].ptr = ptr
-}
-
 func (m *vm) nextInstruction() (byte, error) {
-	if m.ptr() >= len(m.src) {
+	if m.frames.current().ptr >= uint32(len(m.src)) {
 		return 0, io.EOF
 	}
 
-	b := m.src[m.ptr()]
-	m.setPtr(m.ptr() + 1)
+	b := m.src[m.frames.current().ptr]
+	m.frames.incrementCurrentPtr(1)
+
 	return b, nil
 }
 
-func (m *vm) readInt() (int, error) {
-	if m.ptr()+4 > len(m.src) {
+func (m *vm) readUint32() (uint32, error) {
+	if m.frames.current().ptr+4 > uint32(len(m.src)) {
 		return 0, io.EOF
 	}
 
-	buf := m.src[m.ptr() : m.ptr()+4]
-	m.setPtr(m.ptr() + 4)
-	return int(binary.BigEndian.Uint32(buf)), nil
+	ptr := m.frames.current().ptr
+
+	buf := m.src[ptr : ptr+4]
+	m.frames.incrementCurrentPtr(4)
+
+	return binary.BigEndian.Uint32(buf), nil
 }
 
 func (m *vm) readConstant() (any, error) {
-	idx, err := m.readInt()
+	idx, err := m.readUint32()
 	if err != nil {
 		return nil, err
 	}
 
-	c, exists := m.c.getConstant(idx)
+	constant, exists := m.c.getConstant(idx)
 	if !exists {
 		return nil, fmt.Errorf("constant with index %d not found", idx)
 	}
-	return c, nil
+
+	return constant, nil
+}
+
+func (m *vm) pushObject(obj any) {
+	m.stack = append(m.stack, obj)
 }
 
 func (m *vm) popObject() any {

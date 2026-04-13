@@ -94,8 +94,8 @@ func parseConstantLine(line string) (int, any, string, error) {
 	}
 }
 
-func (c *constantPool) getConstant(index int) (any, bool) {
-	if index < len(c.constants) {
+func (c *constantPool) getConstant(index uint32) (any, bool) {
+	if index < uint32(len(c.constants)) {
 		return c.constants[index], true
 	}
 	return nil, false
