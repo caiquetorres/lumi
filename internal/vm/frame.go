@@ -2,34 +2,30 @@ package vm
 
 const MAX_STACK_SIZE = 1024
 
-type frame struct {
-	ptr uint32
-}
-
 type frames struct {
-	data []frame
+	data []uint32
 }
 
 func newFrames(entry uint32) frames {
 	return frames{
-		data: []frame{{ptr: entry}},
+		data: []uint32{entry},
 	}
 }
 
-func (f *frames) current() *frame {
+func (f *frames) current() uint32 {
 	if len(f.data) == 0 {
-		return nil
+		panic("no frames available: cannot get current frame")
 	}
 
-	return &f.data[len(f.data)-1]
+	return f.data[len(f.data)-1]
 }
 
-func (f *frames) incrementCurrentPtr(offset uint32) {
+func (f *frames) incCurrentPtr(offset uint32) {
 	if len(f.data) == 0 {
 		return
 	}
 
-	f.data[len(f.data)-1].ptr += offset
+	f.data[len(f.data)-1] += offset
 }
 
 func (f *frames) isEmpty() bool {
@@ -49,5 +45,5 @@ func (f *frames) push(ptr uint32) {
 		panic("stack overflow: too many frames")
 	}
 
-	f.data = append(f.data, frame{ptr: ptr})
+	f.data = append(f.data, ptr)
 }
