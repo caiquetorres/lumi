@@ -10,7 +10,7 @@ import (
 )
 
 type Lexer struct {
-	start, end int
+	start, end uint32
 
 	currToken token.Token
 	currErr   error
@@ -84,7 +84,7 @@ func (l *Lexer) isAtEOF() bool {
 func (l *Lexer) newToken(k token.Kind) token.Token {
 	id := l.symTable.intern(l.currLexeme)
 
-	tok := token.NewWithSymbol(id, k, span.New(l.start, l.end))
+	tok := token.New(id, k, span.New(l.start, l.end))
 	l.resetSpan()
 	return tok
 }
@@ -95,4 +95,8 @@ func (l *Lexer) resetSpan() {
 
 func (l *Lexer) extendSpan() {
 	l.end++
+}
+
+func (l *Lexer) resetLexeme() {
+	l.currLexeme = ""
 }

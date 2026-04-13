@@ -8,9 +8,6 @@ func (l *Lexer) isString() bool {
 		return false
 	}
 
-	x := string(r)
-	_ = x
-
 	return r == '"'
 }
 
@@ -19,14 +16,12 @@ func (l *Lexer) readString() (token.Token, error) {
 		return token.Token{}, err
 	}
 
-	value, err := l.takeWhile(func(r rune) bool {
+	_, err := l.takeWhile(func(r rune) bool {
 		return r != '"'
 	})
 	if err != nil {
 		return token.Token{}, err
 	}
-
-	_ = value
 
 	if _, err := l.nextRune(); err != nil {
 		return token.Token{}, err

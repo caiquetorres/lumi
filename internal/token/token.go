@@ -14,13 +14,6 @@ type Token struct {
 
 func New(id SymbolID, kind Kind, s span.Span) Token {
 	return Token{
-		kind: kind,
-		s:    s,
-	}
-}
-
-func NewWithSymbol(id SymbolID, kind Kind, s span.Span) Token {
-	return Token{
 		kind:      kind,
 		s:         s,
 		symbolID:  id,

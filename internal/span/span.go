@@ -5,29 +5,29 @@ type Spanner interface {
 }
 
 type Span struct {
-	start, end int
+	start, end uint32
 }
 
-func (s Span) Span() Span {
-	return s
-}
-
-func New(start, end int) Span {
+func New(start, end uint32) Span {
 	return Span{
 		start: start,
 		end:   end,
 	}
 }
 
-func (s Span) Start() int {
+func (s Span) Span() Span {
+	return s
+}
+
+func (s Span) Start() uint32 {
 	return s.start
 }
 
-func (s Span) End() int {
+func (s Span) End() uint32 {
 	return s.end
 }
 
-func (s Span) Len() int {
+func (s Span) Len() uint32 {
 	return s.end - s.start
 }
 

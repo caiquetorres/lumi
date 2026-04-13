@@ -9,7 +9,7 @@ type symbolTable struct {
 
 func newSymbolTable() *symbolTable {
 	return &symbolTable{
-		symbols: []string{},
+		symbols: make([]string, 0),
 		index:   make(map[string]token.SymbolID),
 	}
 }

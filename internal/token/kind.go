@@ -36,6 +36,8 @@ func (k Kind) String() string {
 		return "{"
 	case CloseBrace:
 		return "}"
+	case Semicolon:
+		return ";"
 	case String:
 		return "string"
 	case Pub:

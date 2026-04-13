@@ -15,7 +15,6 @@ func (l *Lexer) bumpUntil(fn func(rune) bool) error {
 		if errors.Is(err, io.EOF) {
 			break
 		}
-
 		if err != nil {
 			return err
 		}
@@ -26,7 +25,6 @@ func (l *Lexer) bumpUntil(fn func(rune) bool) error {
 
 		l.bump()
 	}
-
 	return nil
 }
 
@@ -36,7 +34,6 @@ func (l *Lexer) bumpWhile(fn func(rune) bool) error {
 		if errors.Is(err, io.EOF) {
 			break
 		}
-
 		if err != nil {
 			return err
 		}
@@ -47,6 +44,5 @@ func (l *Lexer) bumpWhile(fn func(rune) bool) error {
 
 		l.bump()
 	}
-
 	return nil
 }
