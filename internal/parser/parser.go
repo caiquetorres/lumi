@@ -54,7 +54,9 @@ func (p *Parser) expect(k token.Kind) (token.Token, error) {
 	}
 
 	if tok.Kind() != k {
-		return token.Token{}, fmt.Errorf("expected token of kind %s, got %s", k.String(), tok.Kind().String())
+		return token.Token{}, fmt.Errorf("expected token of kind %s, got %s: %w",
+			k.String(), tok.Kind().String(), ErrUnexpectedToken,
+		)
 	}
 
 	return tok, nil
@@ -67,7 +69,9 @@ func (p *Parser) expectOneOf(ks ...token.Kind) (token.Token, error) {
 	}
 
 	if !slices.Contains(ks, tok.Kind()) {
-		return token.Token{}, fmt.Errorf("expected token of kind one of %v, got %s", ks, tok.Kind().String())
+		return token.Token{}, fmt.Errorf("expected token of kind one of %v, got %s: %w",
+			ks, tok.Kind().String(), ErrUnexpectedToken,
+		)
 	}
 
 	return tok, nil
@@ -76,9 +80,14 @@ func (p *Parser) expectOneOf(ks ...token.Kind) (token.Token, error) {
 func (p *Parser) expectSequence(ks ...token.Kind) ([]token.Token, error) {
 	toks := make([]token.Token, len(ks))
 	for i, k := range ks {
-		tok, err := p.expect(k)
+		tok, err := p.l.Next()
 		if err != nil {
-			return nil, fmt.Errorf("expected token of kind %s at position %d: %w", k.String(), i, err)
+			return nil, err
+		}
+
+		if tok.Kind() != k {
+			return nil, fmt.Errorf("expected token of kind %s at position %d: %w",
+				k.String(), i, ErrUnexpectedToken)
 		}
 
 		toks[i] = tok

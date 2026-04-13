@@ -14,10 +14,6 @@ func (p *Parser) parseTopLevelStmt() (TopLevelStmt, error) {
 	case p.is(token.Fun):
 		return p.parseFunDecl()
 	default:
-		if err := p.err(); err != nil {
-			return nil, err
-		}
-
 		return p.expectOneOf(token.Fun)
 	}
 }

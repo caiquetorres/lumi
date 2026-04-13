@@ -37,19 +37,23 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 }
 
 func (p *Parser) parseFunDeclBody() ([]Stmt, error) {
-	body := make([]Stmt, 0)
-
 	if _, err := p.expect(token.OpenBrace); err != nil {
 		return nil, err
 	}
 
-	for !p.is(token.CloseBrace) {
+	body := make([]Stmt, 0)
+
+	for !p.isOneOf(token.CloseBrace, token.EOF) {
 		stmt, err := p.parseStmt()
 		if err != nil {
 			return nil, err
 		}
 
 		body = append(body, stmt)
+	}
+
+	if p.is(token.EOF) {
+		return nil, ErrUnexpectedEOF
 	}
 
 	if _, err := p.expect(token.CloseBrace); err != nil {
