@@ -7,19 +7,19 @@ import (
 
 type constantPool struct {
 	constants  []any
-	indexByKey map[string]int
+	indexByKey map[string]uint32
 }
 
 func newConstantPool() *constantPool {
 	return &constantPool{
-		constants:  []any{},
-		indexByKey: map[string]int{},
+		constants:  make([]any, 0),
+		indexByKey: make(map[string]uint32),
 	}
 }
 
-func (c *constantPool) internConstant(value any) int {
+func (c *constantPool) internConstant(value any) uint32 {
 	if c.indexByKey == nil {
-		c.indexByKey = map[string]int{}
+		c.indexByKey = make(map[string]uint32)
 	}
 
 	key := constantKey(value)
@@ -28,7 +28,7 @@ func (c *constantPool) internConstant(value any) int {
 	}
 
 	c.constants = append(c.constants, value)
-	idx := len(c.constants) - 1
+	idx := uint32(len(c.constants) - 1)
 	c.indexByKey[key] = idx
 
 	return idx

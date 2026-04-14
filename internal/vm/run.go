@@ -35,7 +35,7 @@ func (m *vm) run() error {
 				return fmt.Errorf("expected string constant for symbol name, got %T", constant)
 			}
 
-			value, exists := m.symbolTable[name]
+			value, exists := m.symbolTable.lookup(name)
 			if !exists {
 				return fmt.Errorf("symbol %q not found", name)
 			}

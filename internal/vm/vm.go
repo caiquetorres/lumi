@@ -8,7 +8,7 @@ import (
 
 type vm struct {
 	c           *constantPool
-	symbolTable map[string]any
+	symbolTable *symbolTable
 
 	stack  []any
 	frames frames

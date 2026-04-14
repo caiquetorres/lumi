@@ -8,7 +8,7 @@ import (
 
 func (m *vm) load() error {
 	if m.symbolTable == nil {
-		m.symbolTable = make(map[string]any)
+		m.symbolTable = newSymbolTable(nil)
 	}
 
 	pc := uint32(0)
@@ -50,10 +50,10 @@ func (m *vm) registerFunction(nameIdx uint32, entryPoint uint32) error {
 		return fmt.Errorf("expected string constant for function name, got %T", name)
 	}
 
-	m.symbolTable[fnName] = fn{
+	m.symbolTable.define(fnName, fn{
 		name:  fnName,
 		entry: entryPoint,
-	}
+	})
 
 	return nil
 }

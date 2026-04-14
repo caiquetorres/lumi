@@ -12,68 +12,34 @@ import (
 )
 
 func Emit(ast *parser.Ast, l *lexer.Lexer, w io.Writer) error {
-	var tmp bytes.Buffer
+	tmp := &bytes.Buffer{}
+	e := newEmitter(l, tmp)
 
-	e := emitter{
-		w:          bufio.NewWriter(&tmp),
-		l:          l,
-		entryPoint: -1,
-		pool:       newConstantPool(),
-	}
-
-	if err := parser.Walk(&e, ast); err != nil {
+	if err := parser.Walk(e, ast); err != nil {
 		return err
 	}
 
-	outFile := bufio.NewWriter(w)
-
-	if _, err := outFile.WriteString("LUMI"); err != nil {
-		return err
-	}
-
-	// Write the constant pool
-	{
-		s := e.pool.serialize()
-		size := make([]byte, 4)
-		binary.BigEndian.PutUint32(size, uint32(len(s)))
-
-		if _, err := outFile.Write(size); err != nil {
-			return err
-		}
-
-		if _, err := outFile.Write(s); err != nil {
-			return err
-		}
-	}
-
-	if e.entryPoint != -1 {
-		outFile.WriteByte(1)
-
-		buf := make([]byte, 4)
-		binary.BigEndian.PutUint32(buf, uint32(e.entryPoint))
-
-		if _, err := outFile.Write(buf); err != nil {
-			return err
-		}
-	} else {
-		outFile.WriteByte(0)
-	}
-
-	if _, err := io.Copy(outFile, &tmp); err != nil {
-		return err
-	}
-
-	return outFile.Flush()
+	builder := newBuilder(w)
+	return builder.build(e.pool.serialize(), e.hasEntryPoint, e.entryPoint, tmp)
 }
 
 type emitter struct {
-	ptr        int
-	entryPoint int
+	ptr uint32
 
-	w *bufio.Writer
+	entryPoint    uint32
+	hasEntryPoint bool
 
+	w    *bufio.Writer
 	l    *lexer.Lexer
 	pool *constantPool
+}
+
+func newEmitter(l *lexer.Lexer, w io.Writer) *emitter {
+	return &emitter{
+		w:    bufio.NewWriter(w),
+		l:    l,
+		pool: newConstantPool(),
+	}
 }
 
 func (e *emitter) BeforeAst(*parser.Ast) error {
@@ -81,51 +47,70 @@ func (e *emitter) BeforeAst(*parser.Ast) error {
 }
 
 func (e *emitter) BeforeFunDecl(fn *parser.FunDecl) error {
-	e.write(DeclFun)
+	e.emit(DeclFun)
 
-	// load the function's name
-	id := e.l.Lexeme(fn.Identifier)
-	idx := e.pool.internConstant(id)
-	e.writeInt(idx)
+	fnName := e.l.Lexeme(fn.Identifier)
+	constIdx := e.pool.internConstant(fnName)
+	if err := e.writeUint32(constIdx); err != nil {
+		return err
+	}
 
 	// the function body will be emitted after the main code, so we write
 	// a placeholder for the function's entry point
-	startPtr := e.ptr + 4
-	e.writeInt(startPtr)
+	entryPoint := e.ptr + 4
+	if err := e.writeUint32(entryPoint); err != nil {
+		return err
+	}
 
-	// emit the function body
-
-	if id == "main" {
-		e.entryPoint = startPtr
+	if fnName == "main" {
+		e.entryPoint = entryPoint
+		e.hasEntryPoint = true
 	}
 
 	return e.flush()
 }
 
 func (e *emitter) AfterFunDecl(fn *parser.FunDecl) error {
-	e.write(End)
+	if err := e.emit(End); err != nil {
+		return err
+	}
 
 	return e.flush()
 }
 
 func (e *emitter) BeforeLiteralExpr(lit *parser.LiteralExpr) error {
-	value := e.l.Lexeme(lit.Value)
+	litValue := e.l.Lexeme(lit.Value)
 
 	switch lit.Kind {
 	case parser.LiteralString:
-		value, _ = strconv.Unquote(value)
-		e.loadConst(value)
+		value, err := strconv.Unquote(litValue)
+		if err != nil {
+			return err
+		}
+
+		constIdx := e.pool.internConstant(value)
+		if err := e.emit(LoadConst); err != nil {
+			return err
+		}
+		if err := e.writeUint32(constIdx); err != nil {
+			return err
+		}
 	}
 
 	return e.flush()
 }
 
 func (e *emitter) BeforeIdentifierExpr(id *parser.IdentifierExpr) error {
-	e.write(GetSymbol)
+	if err := e.emit(GetSymbol); err != nil {
+		return err
+	}
 
-	value := e.l.Lexeme(id.Name)
-	idx := e.pool.internConstant(value)
-	e.writeInt(idx)
+	idName := e.l.Lexeme(id.Name)
+
+	constIdx := e.pool.internConstant(idName)
+	if err := e.writeUint32(constIdx); err != nil {
+		return err
+	}
 
 	return e.flush()
 }
@@ -135,13 +120,17 @@ func (d *emitter) BeforeCallExpr(expr *parser.CallExpr) error {
 }
 
 func (e *emitter) AfterCallExpr(call *parser.CallExpr) error {
-	e.write(Call)
+	if err := e.emit(Call); err != nil {
+		return err
+	}
 
 	return e.flush()
 }
 
 func (e *emitter) AfterStmt(_ parser.Stmt) error {
-	e.write(Pop)
+	if err := e.emit(Pop); err != nil {
+		return err
+	}
 
 	return e.flush()
 }
@@ -156,28 +145,21 @@ func (e *emitter) BeforeParam(*parser.Param) error {
 
 var _ parser.Visitor = (*emitter)(nil)
 
+func (e *emitter) emit(b byte) error {
+	e.ptr++
+	return e.w.WriteByte(b)
+}
+
+func (e *emitter) writeUint32(value uint32) error {
+	var buf [4]byte
+	binary.BigEndian.PutUint32(buf[:], value)
+
+	e.ptr += 4 // 4 bytes for the uint32
+
+	_, err := e.w.Write(buf[:])
+	return err
+}
+
 func (e *emitter) flush() error {
 	return e.w.Flush()
-}
-
-func (e *emitter) write(bytes ...byte) {
-	e.ptr += len(bytes)
-	_, _ = e.w.Write(bytes)
-}
-
-func (e *emitter) loadConst(value any) {
-	idx := e.pool.internConstant(value)
-	e.writeLoadConst(idx)
-}
-
-func (e *emitter) writeLoadConst(idx int) {
-	e.write(LoadConst)
-	e.writeInt(idx)
-}
-
-func (e *emitter) writeInt(value int) {
-	buf := make([]byte, 4)
-	binary.BigEndian.PutUint32(buf, uint32(value))
-
-	e.write(buf...)
 }
