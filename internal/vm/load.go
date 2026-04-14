@@ -17,22 +17,37 @@ func (m *vm) load() error {
 		opcode := m.src[pc]
 		pc++
 
-		if opcode == emitter.DeclFun {
+		switch opcode {
+		case emitter.DeclFun:
 			nameIdx, nextPC, err := m.readUint32At(pc)
 			if err != nil {
-				return err
+				return fmt.Errorf("invalid function declaration name index at pc=%d: %w", pc, err)
 			}
 			pc = nextPC
 
 			entryPoint, nextPC, err := m.readUint32At(pc)
 			if err != nil {
-				return err
+				return fmt.Errorf("invalid function declaration entry point at pc=%d: %w", pc, err)
 			}
 			pc = nextPC
 
 			if err := m.registerFunction(nameIdx, entryPoint); err != nil {
 				return err
 			}
+
+		case emitter.LoadConst, emitter.GetSymbol:
+			_, nextPC, err := m.readUint32At(pc)
+			if err != nil {
+				return fmt.Errorf("invalid uint32 operand for opcode %d at pc=%d: %w", opcode, pc, err)
+			}
+			pc = nextPC
+
+		case emitter.End, emitter.BeginScope, emitter.EndScope,
+			emitter.Call, emitter.Pop:
+			// No operands to consume.
+
+		default:
+			return fmt.Errorf("unknown opcode %d at pc=%d", opcode, pc-1)
 		}
 	}
 
