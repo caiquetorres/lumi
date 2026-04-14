@@ -1,3 +1,5 @@
+import "io"
+
 fun main() {
     sayHello(name: "Jane")
     sayHello("John")

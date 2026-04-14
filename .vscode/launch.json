@@ -5,21 +5,21 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug Compilation",
+      "name": "Debug Build",
       "type": "go",
       "request": "launch",
       "mode": "auto",
       "program": "main.go",
-      "args": ["compile", "--file", "main.lumi", "--out", "bin"],
+      "args": ["build", "--file", "main.lumi", "--out", "out.lbc"],
       "cwd": "."
     },
     {
-      "name": "Debug Exec",
+      "name": "Debug Run",
       "type": "go",
       "request": "launch",
       "mode": "auto",
       "program": "main.go",
-      "args": ["run", "--exec", "bin"],
+      "args": ["run", "out.lbc"],
       "cwd": "."
     }
   ]
