@@ -17,10 +17,10 @@ import (
 )
 
 func main() {
-	mode := "compile"
+	mode := "build"
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
-		case "compile", "run":
+		case "build", "run":
 			mode = os.Args[1]
 			os.Args = append([]string{os.Args[0]}, os.Args[2:]...)
 		}
@@ -30,7 +30,7 @@ func main() {
 	case "run":
 		args := parseRunArgs()
 
-		f, err := os.Open(args.execPath)
+		f, err := os.Open(args.filePath)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -40,7 +40,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-	case "compile":
+	case "build":
 		args := parseArgs()
 		log.Printf("running with file: %s", args.filePath)
 
@@ -63,7 +63,7 @@ func main() {
 			log.Fatal(err)
 		}
 	default:
-		log.Fatalf("unknown mode: %s", mode)
+		log.Fatalf("unknown command: %s", mode)
 	}
 }
 
@@ -131,7 +131,7 @@ type arguments struct {
 }
 
 type runArguments struct {
-	execPath string
+	filePath string
 }
 
 func parseArgs() arguments {
@@ -161,18 +161,11 @@ func parseArgs() arguments {
 }
 
 func parseRunArgs() runArguments {
-	runFlags := flag.NewFlagSet("run", flag.ExitOnError)
-	exec := runFlags.String("exec", "", "path to compiled bytecode file")
-
-	if err := runFlags.Parse(os.Args[1:]); err != nil {
-		log.Fatal(err)
-	}
-
-	if exec == nil || *exec == "" {
-		log.Fatal("exec argument is required")
+	if len(os.Args) < 2 || os.Args[1] == "" {
+		log.Fatal("run requires a file argument")
 	}
 
 	return runArguments{
-		execPath: *exec,
+		filePath: os.Args[1],
 	}
 }

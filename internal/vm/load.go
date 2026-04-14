@@ -69,6 +69,14 @@ func (m *vm) load() error {
 		}
 	}
 
+	m.symbolTable.define("printf", nativeFn{
+		name: "printf",
+		fn: func(args ...any) (any, error) {
+			fmt.Printf(args[0].(string), args[1:]...)
+			return nil, nil
+		},
+	})
+
 	return nil
 }
 

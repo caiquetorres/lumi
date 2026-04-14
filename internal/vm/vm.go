@@ -77,13 +77,13 @@ func (m *vm) pushObject(obj any) {
 	m.stack = append(m.stack, obj)
 }
 
-func (m *vm) popObject() any {
+func (m *vm) popObject() (any, error) {
 	if len(m.stack) == 0 {
-		return nil
+		return nil, fmt.Errorf("stack is empty")
 	}
 
 	obj := m.stack[len(m.stack)-1]
 	m.stack = m.stack[:len(m.stack)-1]
 
-	return obj
+	return obj, nil
 }
