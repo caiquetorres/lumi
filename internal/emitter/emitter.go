@@ -55,6 +55,19 @@ func (e *emitter) BeforeFunDecl(fn *parser.FunDecl) error {
 		return err
 	}
 
+	paramCount := uint32(len(fn.Params))
+	if err := e.writeUint32(paramCount); err != nil {
+		return err
+	}
+
+	for _, param := range fn.Params {
+		paramName := e.l.Lexeme(param.Name)
+		paramIdx := e.pool.internConstant(paramName)
+		if err := e.writeUint32(paramIdx); err != nil {
+			return err
+		}
+	}
+
 	// the function body will be emitted after the main code, so we write
 	// a placeholder for the function's entry point
 	entryPoint := e.ptr + 4
@@ -115,7 +128,7 @@ func (e *emitter) BeforeIdentifierExpr(id *parser.IdentifierExpr) error {
 	return e.flush()
 }
 
-func (d *emitter) BeforeCallExpr(expr *parser.CallExpr) error {
+func (e *emitter) BeforeCallExpr(expr *parser.CallExpr) error {
 	return nil
 }
 

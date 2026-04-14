@@ -16,8 +16,14 @@ type vm struct {
 }
 
 type fn struct {
-	name  string
-	entry uint32
+	name       string
+	entry      uint32
+	paramNames []string
+}
+
+type nativeFn struct {
+	name string
+	fn   func(args ...any) (any, error)
 }
 
 func (m *vm) nextInstruction() (byte, error) {

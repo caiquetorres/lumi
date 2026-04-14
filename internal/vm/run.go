@@ -2,11 +2,20 @@ package vm
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/caiquetorres/lumi/internal/emitter"
 )
 
 func (m *vm) run() error {
+	m.symbolTable.define("printf", nativeFn{
+		name: "printf",
+		fn: func(args ...any) (any, error) {
+			fmt.Printf(args[0].(string), args[1:]...)
+			return nil, nil
+		},
+	})
+
 	for {
 		i, err := m.nextInstruction()
 		if err != nil {
@@ -44,18 +53,47 @@ func (m *vm) run() error {
 
 		case emitter.Call:
 			obj := m.popObject()
-			fnObj, ok := obj.(fn)
-			if !ok {
-				return fmt.Errorf("expected function object on stack, got %T", obj)
-			}
 
-			m.frames.push(fnObj.entry)
+			switch fnObj := obj.(type) {
+			case fn:
+				params := make(map[string]any, len(fnObj.paramNames))
+
+				for i := len(fnObj.paramNames) - 1; i >= 0; i-- {
+					paramName := fnObj.paramNames[i]
+					paramValue := m.popObject()
+
+					params[paramName] = paramValue
+				}
+
+				m.frames.push(fnObj.entry)
+				m.symbolTable = newSymbolTable(m.symbolTable)
+				for name, value := range params {
+					m.symbolTable.define(name, value)
+				}
+			case nativeFn:
+				args := make([]any, 0)
+
+				for {
+					arg := m.popObject()
+					if arg == nil {
+						break
+					}
+
+					args = append(args, arg)
+				}
+
+				slices.Reverse(args)
+
+				result, err := fnObj.fn(args...)
+				if err != nil {
+					return fmt.Errorf("error calling native function %q: %w", fnObj.name, err)
+				}
+
+				m.pushObject(result)
+			}
 
 		case emitter.Pop:
-			obj := m.popObject()
-			if obj != nil {
-				fmt.Println(obj)
-			}
+			_ = m.popObject()
 
 		case emitter.End:
 			m.frames.pop()

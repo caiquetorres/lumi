@@ -7,7 +7,7 @@ fun main() {
     io::printf("fib de %d é igual a %d", n, res)
 }
 
-fun fib(n int) int {
+fun fib(n i32) i32 {
     let prev = 1
     let curr = 1
 

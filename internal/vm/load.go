@@ -25,15 +25,33 @@ func (m *vm) load() error {
 			}
 			pc = nextPC
 
+			paramCount, nextPC, err := m.readUint32At(pc)
+			if err != nil {
+				return fmt.Errorf("invalid function declaration parameter count at pc=%d: %w", pc, err)
+			}
+			pc = nextPC
+
+			var params []uint32
+			for range paramCount {
+				paramIdx, nextPC, err := m.readUint32At(pc)
+				if err != nil {
+					return fmt.Errorf("invalid function declaration parameter index at pc=%d: %w", pc, err)
+				}
+				params = append(params, paramIdx)
+				pc = nextPC
+			}
+
 			entryPoint, nextPC, err := m.readUint32At(pc)
 			if err != nil {
 				return fmt.Errorf("invalid function declaration entry point at pc=%d: %w", pc, err)
 			}
 			pc = nextPC
 
-			if err := m.registerFunction(nameIdx, entryPoint); err != nil {
+			err = m.registerFunction(nameIdx, params, entryPoint)
+			if err != nil {
 				return err
 			}
+			pc = nextPC
 
 		case emitter.LoadConst, emitter.GetSymbol:
 			_, nextPC, err := m.readUint32At(pc)
@@ -54,7 +72,7 @@ func (m *vm) load() error {
 	return nil
 }
 
-func (m *vm) registerFunction(nameIdx uint32, entryPoint uint32) error {
+func (m *vm) registerFunction(nameIdx uint32, params []uint32, entryPoint uint32) error {
 	name, exists := m.c.getConstant(nameIdx)
 	if !exists {
 		return fmt.Errorf("constant with index %d not found", nameIdx)
@@ -65,9 +83,25 @@ func (m *vm) registerFunction(nameIdx uint32, entryPoint uint32) error {
 		return fmt.Errorf("expected string constant for function name, got %T", name)
 	}
 
+	var paramNames []string
+	for _, paramIdx := range params {
+		paramNameConst, exists := m.c.getConstant(paramIdx)
+		if !exists {
+			return fmt.Errorf("constant with index %d not found", paramIdx)
+		}
+
+		paramName, ok := paramNameConst.(string)
+		if !ok {
+			return fmt.Errorf("expected string constant for parameter name, got %T", paramNameConst)
+		}
+
+		paramNames = append(paramNames, paramName)
+	}
+
 	m.symbolTable.define(fnName, fn{
-		name:  fnName,
-		entry: entryPoint,
+		name:       fnName,
+		entry:      entryPoint,
+		paramNames: paramNames,
 	})
 
 	return nil

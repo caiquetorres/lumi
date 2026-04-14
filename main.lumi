@@ -1,7 +1,7 @@
 fun main() {
-    sayHelloWorld();
+    sayHelloTo("Jane");
 }
 
-fun sayHelloWorld() {
-    "hello world";
+fun sayHelloTo(name string) {
+    printf("Hello %s how are you?\n", name);
 }

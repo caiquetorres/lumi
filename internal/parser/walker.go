@@ -88,11 +88,15 @@ func (w *walker) walkCallExpr(v Visitor, ce *CallExpr) error {
 		return err
 	}
 
+	for _, arg := range ce.Args {
+		if err := w.walkExpr(v, arg); err != nil {
+			return err
+		}
+	}
+
 	if err := w.walkExpr(v, ce.Callee); err != nil {
 		return err
 	}
-
-	// TODO: walk arguments
 
 	return v.AfterCallExpr(ce)
 }
