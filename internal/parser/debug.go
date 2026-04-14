@@ -32,7 +32,7 @@ func (d *debugVisitor) BeforeAst(ast *Ast) error {
 }
 
 func (d *debugVisitor) BeforeFunDecl(fd *FunDecl) error {
-	str := fmt.Sprintf("fun %s()\n", d.l.Lexeme(fd.Identifier))
+	str := fmt.Sprintf("fun %s\n", d.l.Lexeme(fd.Identifier))
 	mustWrite(d.w.WriteString(str))
 
 	d.indentIn()
@@ -44,6 +44,20 @@ func (d *debugVisitor) AfterFunDecl(fd *FunDecl) error {
 	d.indentOut()
 
 	return nil
+}
+
+func (d *debugVisitor) AfterParam(param *Param) error {
+	d.writeIndent()
+
+	name := d.l.Lexeme(param.Name)
+	str := fmt.Sprintf("param %s\n", name)
+	mustWrite(d.w.WriteString(str))
+
+	return d.flush()
+}
+
+func (d *debugVisitor) BeforeParam(param *Param) error {
+	return d.flush()
 }
 
 func (d *debugVisitor) BeforeLiteralExpr(expr *LiteralExpr) error {

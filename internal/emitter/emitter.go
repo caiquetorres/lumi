@@ -146,6 +146,14 @@ func (e *emitter) AfterStmt(_ parser.Stmt) error {
 	return e.flush()
 }
 
+func (e *emitter) AfterParam(*parser.Param) error {
+	return nil
+}
+
+func (e *emitter) BeforeParam(*parser.Param) error {
+	return nil
+}
+
 var _ parser.Visitor = (*emitter)(nil)
 
 func (e *emitter) flush() error {

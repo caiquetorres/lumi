@@ -13,6 +13,7 @@ const (
 	OpenBrace
 	CloseBrace
 	Semicolon
+	Comma
 
 	String
 
@@ -38,6 +39,8 @@ func (k Kind) String() string {
 		return "}"
 	case Semicolon:
 		return ";"
+	case Comma:
+		return ","
 	case String:
 		return "string"
 	case Pub:

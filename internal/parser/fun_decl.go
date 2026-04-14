@@ -6,18 +6,48 @@ import (
 
 type FunDecl struct {
 	Identifier token.Token
+	Params     []Param
 	Body       []Stmt
+}
+
+type Param struct {
+	Name token.Token
+	Type Type
 }
 
 func (p *Parser) parseFunDecl() (*FunDecl, error) {
 	// func <identifier>() { <body> }
 	// func <identifier>()
 
-	toks, err := p.expectSequence(token.Fun, token.Identifier,
-		token.OpenParen, token.CloseParen)
+	toks, err := p.expectSequence(token.Fun, token.Identifier, token.OpenParen)
 	if err != nil {
 		return nil, err
 	}
+
+	var params []Param
+	for !p.is(token.CloseParen) {
+		param, err := p.parseParam()
+		if err != nil {
+			return nil, err
+		}
+
+		params = append(params, *param)
+
+		if !p.isOneOf(token.Comma, token.CloseParen) {
+			_, err := p.expectOneOf(token.Comma, token.CloseParen)
+			return nil, err
+		}
+
+		if p.is(token.Comma) {
+			_, _ = p.next()
+		}
+	}
+
+	if p.is(token.EOF) {
+		return nil, ErrUnexpectedEOF
+	}
+
+	_, _ = p.next()
 
 	var body []Stmt
 	if p.is(token.OpenBrace) {
@@ -32,7 +62,28 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 
 	return &FunDecl{
 		Identifier: toks[1],
+		Params:     params,
 		Body:       body,
+	}, nil
+}
+
+func (p *Parser) parseParam() (*Param, error) {
+	tok, err := p.expect(token.Identifier)
+	if err != nil {
+		return nil, err
+	}
+
+	var ty *Type
+	if p.isType() {
+		ty, err = p.parseType()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &Param{
+		Name: tok,
+		Type: *ty,
 	}, nil
 }
 

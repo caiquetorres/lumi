@@ -33,6 +33,16 @@ func (w *walker) walkFunDecl(v Visitor, fd *FunDecl) error {
 		return err
 	}
 
+	for _, param := range fd.Params {
+		if err := v.BeforeParam(&param); err != nil {
+			return err
+		}
+
+		if err := v.AfterParam(&param); err != nil {
+			return err
+		}
+	}
+
 	for _, expr := range fd.Body {
 		if err := w.walkStmt(v, expr); err != nil {
 			return err
