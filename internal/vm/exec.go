@@ -1,7 +1,6 @@
 package vm
 
 import (
-	"fmt"
 	"io"
 )
 
@@ -20,14 +19,14 @@ func Execute(src io.ReadSeeker) error {
 		return err
 	}
 
-	entryPoint, hasEntryPoint, err := getEntryPoint(src)
+	_, _, err = getEntryPoint(src)
 	if err != nil {
 		return err
 	}
 
-	if !hasEntryPoint {
-		return fmt.Errorf("no entry point found")
-	}
+	// if !hasEntryPoint {
+	// 	return fmt.Errorf("no entry point found")
+	// }
 
 	instructions, err := getInstructions(src)
 	if err != nil {
@@ -35,9 +34,9 @@ func Execute(src io.ReadSeeker) error {
 	}
 
 	machine := &vm{
-		c:      c,
-		src:    instructions,
-		frames: newFrames(entryPoint),
+		c:       c,
+		src:     instructions,
+		globals: newSymbolTable(nil),
 	}
 
 	if err := machine.load(); err != nil {

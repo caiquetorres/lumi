@@ -73,7 +73,7 @@ func (m *vm) load() error {
 		}
 	}
 
-	m.symbolTable.define("printf", nativeFn{
+	m.globals.define("printf", nativeFn{
 		fn: func(args ...any) (any, error) {
 			fmt.Printf(args[0].(string), args[1:]...)
 			return nil, nil
@@ -94,7 +94,7 @@ func (m *vm) registerFunction(nameIdx uint32, params []uint32, entryPoint uint32
 		return fmt.Errorf("expected string constant for function name, got %T", fnNameObj)
 	}
 
-	m.symbolTable.define(fnName, fn{
+	m.globals.define(fnName, fn{
 		entry:  entryPoint,
 		params: params,
 	})

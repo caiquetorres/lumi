@@ -7,6 +7,16 @@ import (
 )
 
 func (m *vm) run() error {
+	mainFnObj, hasMain := m.globals.lookup("main")
+	if !hasMain {
+		return fmt.Errorf("no main function found")
+	}
+
+	mainFn := mainFnObj.(fn)
+	if err := m.callFn(&mainFn, 0); err != nil {
+		return err
+	}
+
 	for {
 		i, err := m.nextInstruction()
 		if err != nil {
@@ -70,6 +80,10 @@ func (m *vm) run() error {
 
 		case emitter.End:
 			m.frames.pop()
+
+			if m.symbolTable.parent != nil {
+				m.symbolTable = m.symbolTable.parent
+			}
 
 			if m.frames.isEmpty() {
 				return nil

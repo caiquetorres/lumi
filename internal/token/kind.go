@@ -49,6 +49,8 @@ func (k Kind) String() string {
 		return "pub"
 	case Fun:
 		return "fun"
+	case Let:
+		return "let"
 	default:
 		return "unknown"
 	}

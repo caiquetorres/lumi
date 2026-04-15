@@ -7,7 +7,9 @@ import (
 )
 
 type vm struct {
-	c           *constantPool
+	c *constantPool
+
+	globals     *symbolTable
 	symbolTable *symbolTable
 
 	stack  []any

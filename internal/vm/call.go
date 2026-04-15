@@ -59,7 +59,7 @@ func (m *vm) callFn(fnObj *fn, arity uint8) error {
 	}
 
 	m.frames.push(fnObj.entry)
-	m.symbolTable = newSymbolTable(m.symbolTable)
+	m.symbolTable = newSymbolTable(m.globals)
 
 	for name, value := range params {
 		m.symbolTable.define(name, value)
