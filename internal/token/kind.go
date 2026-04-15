@@ -14,11 +14,13 @@ const (
 	CloseBrace
 	Semicolon
 	Comma
+	Equals
 
 	String
 
 	Pub
 	Fun
+	Let
 )
 
 func (k Kind) String() string {

@@ -1,7 +1,9 @@
 fun main() {
-    sayHelloTo("Jane");
+    let first = "John";
+    let last = "Doe";
+    introduce(first, last);
 }
 
-fun sayHelloTo(name string) {
-    printf("Hello %s how are you?\n", name);
+fun introduce(first string, last string) {
+    printf("My name is %s %s\n", first, last);
 }

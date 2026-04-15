@@ -28,6 +28,18 @@ func (w *walker) walkAst(v Visitor, ast *Ast) error {
 	return nil
 }
 
+func (w *walker) walkVarDecl(v Visitor, vd *VarDecl) error {
+	if err := v.BeforeVarDecl(vd); err != nil {
+		return err
+	}
+
+	if err := w.walkExpr(v, vd.Expr); err != nil {
+		return err
+	}
+
+	return v.AfterVarDecl(vd)
+}
+
 func (w *walker) walkFunDecl(v Visitor, fd *FunDecl) error {
 	if err := v.BeforeFunDecl(fd); err != nil {
 		return err
@@ -53,7 +65,16 @@ func (w *walker) walkFunDecl(v Visitor, fd *FunDecl) error {
 }
 
 func (w *walker) walkStmt(v Visitor, stmt Stmt) error {
-	if err := w.walkExpr(v, stmt.(Expr)); err != nil {
+	var err error
+
+	switch s := stmt.(type) {
+	case *VarDecl:
+		err = w.walkVarDecl(v, s)
+	default:
+		err = w.walkExpr(v, stmt.(Expr))
+	}
+
+	if err != nil {
 		return err
 	}
 

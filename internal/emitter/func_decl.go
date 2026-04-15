@@ -12,7 +12,7 @@ func (e *emitter) writeStringConstant(val string) error {
 }
 
 func (e *emitter) BeforeFunDecl(fn *parser.FunDecl) error {
-	if err := e.emit(DeclFun); err != nil {
+	if err := e.emit(FnDecl); err != nil {
 		return err
 	}
 

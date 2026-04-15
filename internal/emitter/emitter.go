@@ -56,11 +56,11 @@ func (e *emitter) BeforeLiteralExpr(lit *parser.LiteralExpr) error {
 			return err
 		}
 
-		constIdx := e.pool.internConstant(value)
 		if err := e.emit(LoadConst); err != nil {
 			return err
 		}
-		if err := e.writeUint32(constIdx); err != nil {
+
+		if err := e.writeStringConstant(value); err != nil {
 			return err
 		}
 	}

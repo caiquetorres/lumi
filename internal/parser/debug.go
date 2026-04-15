@@ -31,6 +31,20 @@ func (d *debugVisitor) BeforeAst(ast *Ast) error {
 	return nil
 }
 
+func (d *debugVisitor) BeforeVarDecl(vd *VarDecl) error {
+	d.writeIndent()
+
+	name := d.l.Lexeme(vd.Identifier)
+	str := fmt.Sprintf("var %s\n", name)
+	mustWrite(d.w.WriteString(str))
+
+	return d.flush()
+}
+
+func (d *debugVisitor) AfterVarDecl(vd *VarDecl) error {
+	return nil
+}
+
 func (d *debugVisitor) BeforeFunDecl(fd *FunDecl) error {
 	str := fmt.Sprintf("fun %s\n", d.l.Lexeme(fd.Identifier))
 	mustWrite(d.w.WriteString(str))

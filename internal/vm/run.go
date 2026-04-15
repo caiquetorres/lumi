@@ -24,6 +24,24 @@ func (m *vm) run() error {
 
 			m.pushObject(constant)
 
+		case emitter.VarDecl:
+			constant, err := m.readConstant()
+			if err != nil {
+				return err
+			}
+
+			name, ok := constant.(string)
+			if !ok {
+				return fmt.Errorf("expected string constant for symbol name, got %T", constant)
+			}
+
+			value, err := m.popObject()
+			if err != nil {
+				return err
+			}
+
+			m.symbolTable.define(name, value)
+
 		case emitter.GetSymbol:
 			constant, err := m.readConstant()
 			if err != nil {

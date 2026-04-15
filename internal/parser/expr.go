@@ -15,7 +15,7 @@ const (
 	LiteralString LiteralKind = iota + 1
 )
 
-func (p *Parser) parseExpression() (Expr, error) {
+func (p *Parser) parseExpr() (Expr, error) {
 	unit, err := p.parseUnit()
 	if err != nil {
 		return nil, err
@@ -73,7 +73,7 @@ func (p *Parser) parseCallExpr(callee Expr) (Expr, error) {
 
 	var args []Expr
 	for !p.peekIs(token.CloseParen) {
-		arg, err := p.parseExpression()
+		arg, err := p.parseExpr()
 		if err != nil {
 			return nil, err
 		}

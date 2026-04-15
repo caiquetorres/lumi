@@ -18,7 +18,7 @@ func (m *vm) load() error {
 		pc++
 
 		switch opcode {
-		case emitter.DeclFun:
+		case emitter.FnDecl:
 			nameIdx, nextPC, err := m.readUint32At(pc)
 			if err != nil {
 				return fmt.Errorf("invalid function declaration name index at pc=%d: %w", pc, err)
@@ -53,7 +53,7 @@ func (m *vm) load() error {
 			}
 			pc = nextPC
 
-		case emitter.LoadConst, emitter.GetSymbol:
+		case emitter.LoadConst, emitter.GetSymbol, emitter.VarDecl:
 			_, nextPC, err := m.readUint32At(pc)
 			if err != nil {
 				return fmt.Errorf("invalid uint32 operand for opcode %d at pc=%d: %w", opcode, pc, err)

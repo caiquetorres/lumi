@@ -5,7 +5,9 @@ const (
 	End
 	BeginScope
 	EndScope
-	DeclFun
+
+	FnDecl
+	VarDecl
 
 	GetSymbol
 	Call
