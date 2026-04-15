@@ -16,9 +16,9 @@ type vm struct {
 }
 
 type fn struct {
-	name       string
-	entry      uint32
-	paramNames []string
+	name   string
+	entry  uint32
+	params []uint32
 }
 
 type nativeFn struct {
@@ -37,6 +37,17 @@ func (m *vm) nextInstruction() (byte, error) {
 	return b, nil
 }
 
+func (m *vm) readUint8() (uint8, error) {
+	if int(m.frames.current()) >= len(m.src) {
+		return 0, io.EOF
+	}
+
+	value := m.src[m.frames.current()]
+	m.frames.incCurrentPtr(1)
+
+	return value, nil
+}
+
 func (m *vm) readUint32() (uint32, error) {
 	val, _, err := m.readUint32At(m.frames.current())
 	if err != nil {
@@ -46,6 +57,17 @@ func (m *vm) readUint32() (uint32, error) {
 	m.frames.incCurrentPtr(4)
 
 	return val, nil
+}
+
+func (m *vm) readUint8At(pc uint32) (uint8, uint32, error) {
+	const uint8Size = 1
+
+	if pc+uint8Size > uint32(len(m.src)) {
+		return 0, pc, io.EOF
+	}
+
+	value := m.src[pc]
+	return value, pc + uint8Size, nil
 }
 
 func (m *vm) readUint32At(pc uint32) (uint32, uint32, error) {

@@ -2,7 +2,6 @@ package vm
 
 import (
 	"fmt"
-	"slices"
 
 	"github.com/caiquetorres/lumi/internal/emitter"
 )
@@ -59,67 +58,4 @@ func (m *vm) run() error {
 			}
 		}
 	}
-}
-
-func (m *vm) execCall() error {
-	obj, err := m.popObject()
-	if err != nil {
-		return err
-	}
-
-	switch fnObj := obj.(type) {
-	case fn:
-		return m.callFn(&fnObj)
-	case nativeFn:
-		return m.callNativeFn(fnObj)
-	}
-
-	return nil
-}
-
-func (m *vm) callFn(fnObj *fn) error {
-	params := make(map[string]any, len(fnObj.paramNames))
-
-	for i := len(fnObj.paramNames) - 1; i >= 0; i-- {
-		paramName := fnObj.paramNames[i]
-		paramValue, err := m.popObject()
-		if err != nil {
-			return err
-		}
-
-		params[paramName] = paramValue
-	}
-
-	m.frames.push(fnObj.entry)
-	m.symbolTable = newSymbolTable(m.symbolTable)
-
-	for name, value := range params {
-		m.symbolTable.define(name, value)
-	}
-
-	return nil
-}
-
-func (m *vm) callNativeFn(fnObj nativeFn) error {
-	args := make([]any, 0)
-
-	for {
-		arg, _ := m.popObject()
-		if arg == nil {
-			break
-		}
-
-		args = append(args, arg)
-	}
-
-	slices.Reverse(args)
-
-	result, err := fnObj.fn(args...)
-	if err != nil {
-		return fmt.Errorf("error calling native function %q: %w", fnObj.name, err)
-	}
-
-	m.pushObject(result)
-
-	return nil
 }

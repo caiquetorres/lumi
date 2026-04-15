@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	"io"
 	"strconv"
 
@@ -55,8 +56,12 @@ func (e *emitter) BeforeFunDecl(fn *parser.FunDecl) error {
 		return err
 	}
 
-	paramCount := uint32(len(fn.Params))
-	if err := e.writeUint32(paramCount); err != nil {
+	paramCount := len(fn.Params)
+	if paramCount > 255 {
+		return fmt.Errorf("function '%s' has too many parameters: %d (max 255)", fnName, paramCount)
+	}
+
+	if err := e.writeUint8(uint8(paramCount)); err != nil {
 		return err
 	}
 
@@ -137,6 +142,10 @@ func (e *emitter) AfterCallExpr(call *parser.CallExpr) error {
 		return err
 	}
 
+	if err := e.writeUint8(uint8(len(call.Args))); err != nil {
+		return err
+	}
+
 	return e.flush()
 }
 
@@ -159,8 +168,12 @@ func (e *emitter) BeforeParam(*parser.Param) error {
 var _ parser.Visitor = (*emitter)(nil)
 
 func (e *emitter) emit(b byte) error {
+	return e.writeUint8(b)
+}
+
+func (e *emitter) writeUint8(value uint8) error {
 	e.ptr++
-	return e.w.WriteByte(b)
+	return e.w.WriteByte(value)
 }
 
 func (e *emitter) writeUint32(value uint32) error {

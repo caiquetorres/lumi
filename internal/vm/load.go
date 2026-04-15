@@ -25,7 +25,7 @@ func (m *vm) load() error {
 			}
 			pc = nextPC
 
-			paramCount, nextPC, err := m.readUint32At(pc)
+			paramCount, nextPC, err := m.readUint8At(pc)
 			if err != nil {
 				return fmt.Errorf("invalid function declaration parameter count at pc=%d: %w", pc, err)
 			}
@@ -60,8 +60,12 @@ func (m *vm) load() error {
 			}
 			pc = nextPC
 
-		case emitter.End, emitter.BeginScope, emitter.EndScope,
-			emitter.Call, emitter.Pop:
+		case emitter.Call:
+			if err := m.skipCall(&pc); err != nil {
+				return fmt.Errorf("failed to skip operands for opcode %d at pc=%d: %w", opcode, pc, err)
+			}
+
+		case emitter.End, emitter.BeginScope, emitter.EndScope, emitter.Pop:
 			// No operands to consume.
 
 		default:
@@ -81,35 +85,19 @@ func (m *vm) load() error {
 }
 
 func (m *vm) registerFunction(nameIdx uint32, params []uint32, entryPoint uint32) error {
-	name, exists := m.c.getConstant(nameIdx)
+	fnNameObj, exists := m.c.getConstant(nameIdx)
 	if !exists {
 		return fmt.Errorf("constant with index %d not found", nameIdx)
 	}
 
-	fnName, ok := name.(string)
+	fnName, ok := fnNameObj.(string)
 	if !ok {
-		return fmt.Errorf("expected string constant for function name, got %T", name)
-	}
-
-	var paramNames []string
-	for _, paramIdx := range params {
-		paramNameConst, exists := m.c.getConstant(paramIdx)
-		if !exists {
-			return fmt.Errorf("constant with index %d not found", paramIdx)
-		}
-
-		paramName, ok := paramNameConst.(string)
-		if !ok {
-			return fmt.Errorf("expected string constant for parameter name, got %T", paramNameConst)
-		}
-
-		paramNames = append(paramNames, paramName)
+		return fmt.Errorf("expected string constant for function name, got %T", fnNameObj)
 	}
 
 	m.symbolTable.define(fnName, fn{
-		name:       fnName,
-		entry:      entryPoint,
-		paramNames: paramNames,
+		entry:  entryPoint,
+		params: params,
 	})
 
 	return nil
