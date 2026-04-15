@@ -101,10 +101,16 @@ func (c *constantPool) getConstant(index uint32) (any, bool) {
 	return nil, false
 }
 
-func (c *constantPool) getIndex(key string) (int, bool) {
-	if c.indexByKey == nil {
-		return 0, false
+func (c *constantPool) getConstantAsString(index uint32) (string, error) {
+	value, exists := c.getConstant(index)
+	if !exists {
+		return "", fmt.Errorf("constant with index %d not found", index)
 	}
-	idx, ok := c.indexByKey[key]
-	return idx, ok
+
+	strValue, ok := value.(string)
+	if !ok {
+		return "", fmt.Errorf("expected string constant at index %d, got %T", index, value)
+	}
+
+	return strValue, nil
 }

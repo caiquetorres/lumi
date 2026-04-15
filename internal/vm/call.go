@@ -2,7 +2,6 @@ package vm
 
 import (
 	"fmt"
-	"slices"
 )
 
 func (m *vm) skipCall(pc *uint32) error {
@@ -46,14 +45,9 @@ func (m *vm) callFn(fnObj *fn, arity uint8) error {
 			continue
 		}
 
-		paramNameConst, exists := m.c.getConstant(fnObj.params[i])
-		if !exists {
-			return fmt.Errorf("constant with index %d not found", fnObj.params[i])
-		}
-
-		paramName, ok := paramNameConst.(string)
-		if !ok {
-			return fmt.Errorf("expected string constant for parameter name, got %T", paramNameConst)
+		paramName, err := m.c.getConstantAsString(fnObj.params[i])
+		if err != nil {
+			return err
 		}
 
 		paramValue, err := m.popObject()
@@ -75,22 +69,19 @@ func (m *vm) callFn(fnObj *fn, arity uint8) error {
 }
 
 func (m *vm) callNativeFn(fnObj *nativeFn, arity uint8) error {
-	args := make([]any, 0, arity)
-
+	args := make([]any, arity)
 	for i := int(arity) - 1; i >= 0; i-- {
 		arg, err := m.popObject()
 		if err != nil {
 			return err
 		}
 
-		args = append(args, arg)
+		args[i] = arg
 	}
-
-	slices.Reverse(args)
 
 	result, err := fnObj.fn(args...)
 	if err != nil {
-		return fmt.Errorf("error calling native function %q: %w", fnObj.name, err)
+		return fmt.Errorf("error calling native function: %w", err)
 	}
 
 	m.pushObject(result)
