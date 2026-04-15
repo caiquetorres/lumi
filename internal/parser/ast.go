@@ -1,20 +1,17 @@
 package parser
 
 import (
-	"github.com/caiquetorres/lumi/internal/lexer"
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
 type Ast struct {
-	l *lexer.Lexer
-
 	Statements []TopLevelStmt
 }
 
 func (p *Parser) Parse() (*Ast, error) {
 	ast := Ast{}
 
-	for !p.is(token.EOF) {
+	for !p.peekIs(token.EOF) {
 		stmt, err := p.parseTopLevelStmt()
 		if err != nil {
 			return nil, err

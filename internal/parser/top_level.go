@@ -11,7 +11,7 @@ type TopLevelStmt any
 // statement.
 func (p *Parser) parseTopLevelStmt() (TopLevelStmt, error) {
 	switch {
-	case p.is(token.Fun):
+	case p.peekIs(token.Fun):
 		return p.parseFunDecl()
 	default:
 		return p.expectOneOf(token.Fun)

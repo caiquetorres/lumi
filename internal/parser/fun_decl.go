@@ -25,7 +25,7 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 	}
 
 	var params []Param
-	for !p.is(token.CloseParen) {
+	for !p.peekIs(token.CloseParen) {
 		param, err := p.parseParam()
 		if err != nil {
 			return nil, err
@@ -33,24 +33,22 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 
 		params = append(params, *param)
 
-		if !p.isOneOf(token.Comma, token.CloseParen) {
-			_, err := p.expectOneOf(token.Comma, token.CloseParen)
+		_, err = p.expectOneOfPeek(token.Comma, token.CloseParen, token.EOF)
+		if err != nil {
 			return nil, err
 		}
 
-		if p.is(token.Comma) {
-			_, _ = p.next()
-		}
+		p.maybeNext(token.Comma)
 	}
 
-	if p.is(token.EOF) {
+	if p.peekIs(token.EOF) {
 		return nil, ErrUnexpectedEOF
 	}
 
-	_, _ = p.next()
+	p.bump() // consume the ')'
 
 	var body []Stmt
-	if p.is(token.OpenBrace) {
+	if p.peekIs(token.OpenBrace) {
 		// The function body is optional, so we only parse it if we see an
 		// opening brace.
 
@@ -94,7 +92,7 @@ func (p *Parser) parseFunDeclBody() ([]Stmt, error) {
 
 	body := make([]Stmt, 0)
 
-	for !p.isOneOf(token.CloseBrace, token.EOF) {
+	for !p.peekIsOneOf(token.CloseBrace, token.EOF) {
 		stmt, err := p.parseStmt()
 		if err != nil {
 			return nil, err
@@ -103,13 +101,11 @@ func (p *Parser) parseFunDeclBody() ([]Stmt, error) {
 		body = append(body, stmt)
 	}
 
-	if p.is(token.EOF) {
+	if p.peekIs(token.EOF) {
 		return nil, ErrUnexpectedEOF
 	}
 
-	if _, err := p.expect(token.CloseBrace); err != nil {
-		return nil, err
-	}
+	p.bump() // consume the '}'
 
 	return body, nil
 }

@@ -21,7 +21,7 @@ func (p *Parser) parseExpression() (Expr, error) {
 		return nil, err
 	}
 
-	if p.is(token.OpenParen) {
+	if p.peekIs(token.OpenParen) {
 		return p.parseCallExpr(unit)
 	}
 
@@ -39,14 +39,14 @@ type IdentifierExpr struct {
 
 func (p *Parser) parseUnit() (Expr, error) {
 	switch {
-	case p.is(token.String):
+	case p.peekIs(token.String):
 		tok, _ := p.expect(token.String)
 
 		return &LiteralExpr{
 			Kind:  LiteralString,
 			Value: tok,
 		}, nil
-	case p.is(token.Identifier):
+	case p.peekIs(token.Identifier):
 		tok, _ := p.expect(token.Identifier)
 
 		return &IdentifierExpr{
@@ -72,7 +72,7 @@ func (p *Parser) parseCallExpr(callee Expr) (Expr, error) {
 	}
 
 	var args []Expr
-	for !p.is(token.CloseParen) {
+	for !p.peekIs(token.CloseParen) {
 		arg, err := p.parseExpression()
 		if err != nil {
 			return nil, err
@@ -80,17 +80,17 @@ func (p *Parser) parseCallExpr(callee Expr) (Expr, error) {
 
 		args = append(args, arg)
 
-		if !p.isOneOf(token.Comma, token.CloseParen) {
+		if !p.peekIsOneOf(token.Comma, token.CloseParen) {
 			_, err := p.expectOneOf(token.Comma, token.CloseParen)
 			return nil, err
 		}
 
-		if p.is(token.Comma) {
+		if p.peekIs(token.Comma) {
 			_, _ = p.next()
 		}
 	}
 
-	if p.is(token.EOF) {
+	if p.peekIs(token.EOF) {
 		return nil, ErrUnexpectedEOF
 	}
 
