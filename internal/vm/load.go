@@ -80,14 +80,9 @@ func (m *vm) load() error {
 }
 
 func (m *vm) registerFunction(nameIdx uint32, params []uint32, entryPoint uint32) error {
-	fnNameObj, exists := m.c.getConstant(nameIdx)
-	if !exists {
-		return fmt.Errorf("constant with index %d not found", nameIdx)
-	}
-
-	fnName, ok := fnNameObj.(string)
-	if !ok {
-		return fmt.Errorf("expected string constant for function name, got %T", fnNameObj)
+	fnName, err := m.c.getConstantAsString(nameIdx)
+	if err != nil {
+		return err
 	}
 
 	m.globals.define(fnName, fn{
