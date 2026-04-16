@@ -1,9 +1,7 @@
 package vm
 
 import (
-	"encoding/binary"
 	"fmt"
-	"io"
 )
 
 type vm struct {
@@ -27,64 +25,23 @@ type nativeFn struct {
 }
 
 func (m *vm) nextInstruction() (byte, error) {
-	if int(m.frames.current()) >= len(m.src) {
-		return 0, io.EOF
-	}
-
-	b := m.src[m.frames.current()]
-	m.frames.incCurrentPtr(1)
-
-	return b, nil
-}
-
-func (m *vm) readUint8() (uint8, error) {
-	if int(m.frames.current()) >= len(m.src) {
-		return 0, io.EOF
-	}
-
-	value := m.src[m.frames.current()]
-	m.frames.incCurrentPtr(1)
-
-	return value, nil
+	b, err := m.frames.current().readUint8()
+	return b, err
 }
 
 func (m *vm) readUint32() (uint32, error) {
-	val, _, err := m.readUint32At(m.frames.current())
+	val, err := m.frames.current().readUint32()
 	if err != nil {
 		return 0, err
 	}
 
-	m.frames.incCurrentPtr(4)
-
 	return val, nil
 }
 
-func (m *vm) readUint8At(pc uint32) (uint8, uint32, error) {
-	const uint8Size = 1
-
-	if pc+uint8Size > uint32(len(m.src)) {
-		return 0, pc, io.EOF
-	}
-
-	value := m.src[pc]
-	return value, pc + uint8Size, nil
-}
-
-func (m *vm) readUint32At(pc uint32) (uint32, uint32, error) {
-	const uint32Size = 4
-
-	if pc+uint32Size > uint32(len(m.src)) {
-		return 0, pc, io.EOF
-	}
-
-	value := binary.BigEndian.Uint32(m.src[pc : pc+uint32Size])
-	return value, pc + uint32Size, nil
-}
-
 func (m *vm) readConstant() (any, error) {
-	idx, err := m.readUint32()
+	idx, err := m.frames.current().readUint32()
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
 
 	constant, exists := m.c.getConstant(idx)

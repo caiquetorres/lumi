@@ -11,65 +11,64 @@ func (m *vm) load() error {
 		m.symbolTable = newSymbolTable(nil)
 	}
 
-	pc := uint32(0)
+	c := newCursor(m.src)
 
-	for pc < uint32(len(m.src)) {
-		opcode := m.src[pc]
-		pc++
+	for c.hasMore() {
+		opcode, err := c.readUint8()
+		if err != nil {
+			return fmt.Errorf("failed to read opcode at pc=%d: %w", c.pc, err)
+		}
 
 		switch opcode {
 		case emitter.FnDecl:
-			nameIdx, nextPC, err := m.readUint32At(pc)
+			nameIdx, err := c.readUint32()
 			if err != nil {
-				return fmt.Errorf("invalid function declaration name index at pc=%d: %w", pc, err)
+				return fmt.Errorf("invalid function declaration name index at pc=%d: %w", c.pc, err)
 			}
-			pc = nextPC
 
-			paramCount, nextPC, err := m.readUint8At(pc)
+			paramCount, err := c.readUint8()
 			if err != nil {
-				return fmt.Errorf("invalid function declaration parameter count at pc=%d: %w", pc, err)
+				return fmt.Errorf("invalid function declaration parameter count at pc=%d: %w", c.pc, err)
 			}
-			pc = nextPC
 
 			var params []uint32
 			for range paramCount {
-				paramIdx, nextPC, err := m.readUint32At(pc)
+				paramIdx, err := c.readUint32()
 				if err != nil {
-					return fmt.Errorf("invalid function declaration parameter index at pc=%d: %w", pc, err)
+					return fmt.Errorf("invalid function declaration parameter index at pc=%d: %w", c.pc, err)
 				}
 				params = append(params, paramIdx)
-				pc = nextPC
 			}
 
-			entryPoint, nextPC, err := m.readUint32At(pc)
+			entryPoint, err := c.readUint32()
 			if err != nil {
-				return fmt.Errorf("invalid function declaration entry point at pc=%d: %w", pc, err)
+				return fmt.Errorf("invalid function declaration entry point at pc=%d: %w", c.pc, err)
 			}
-			pc = nextPC
 
 			err = m.registerFunction(nameIdx, params, entryPoint)
 			if err != nil {
 				return err
 			}
-			pc = nextPC
 
 		case emitter.LoadConst, emitter.GetSymbol, emitter.VarDecl:
-			_, nextPC, err := m.readUint32At(pc)
+			_, err := c.readUint32()
 			if err != nil {
-				return fmt.Errorf("invalid uint32 operand for opcode %d at pc=%d: %w", opcode, pc, err)
+				return fmt.Errorf("invalid uint32 operand for opcode %d at pc=%d: %w", opcode, c.pc, err)
 			}
-			pc = nextPC
 
 		case emitter.Call:
-			if err := m.skipCall(&pc); err != nil {
-				return fmt.Errorf("failed to skip operands for opcode %d at pc=%d: %w", opcode, pc, err)
+			// Skip the call arity operand (1 byte)
+
+			_, err := c.readUint8()
+			if err != nil {
+				return fmt.Errorf("invalid call arity operand at pc=%d: %w", c.pc, err)
 			}
 
 		case emitter.End, emitter.BeginScope, emitter.EndScope, emitter.Pop:
 			// No operands to consume.
 
 		default:
-			return fmt.Errorf("unknown opcode %d at pc=%d", opcode, pc-1)
+			return fmt.Errorf("unknown opcode %d at pc=%d", opcode, c.pc-1)
 		}
 	}
 

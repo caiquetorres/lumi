@@ -1,20 +1,6 @@
 package vm
 
-import (
-	"fmt"
-)
-
-func (m *vm) skipCall(pc *uint32) error {
-	// Skip the call arity operand (1 byte)
-	_, nextPC, err := m.readUint8At(*pc)
-	if err != nil {
-		return err
-	}
-
-	*pc = nextPC
-
-	return nil
-}
+import "fmt"
 
 func (m *vm) execCall() error {
 	obj, err := m.popObject()
@@ -22,7 +8,7 @@ func (m *vm) execCall() error {
 		return err
 	}
 
-	arity, err := m.readUint8()
+	arity, err := m.frames.current().readUint8()
 	if err != nil {
 		return err
 	}
@@ -58,7 +44,7 @@ func (m *vm) callFn(fnObj *fn, arity uint8) error {
 		params[paramName] = paramValue
 	}
 
-	m.frames.push(fnObj.entry)
+	m.frames.push(fnObj.entry, m.src)
 	m.symbolTable = newSymbolTable(m.globals)
 
 	for name, value := range params {
