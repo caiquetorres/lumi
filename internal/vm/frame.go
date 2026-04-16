@@ -14,14 +14,6 @@ func (f *frames) current() *cursor {
 	return &f.data[len(f.data)-1]
 }
 
-func (f *frames) incCurrentPtr(offset uint32) {
-	if len(f.data) == 0 {
-		return
-	}
-
-	f.data[len(f.data)-1].move(offset)
-}
-
 func (f *frames) isEmpty() bool {
 	return len(f.data) == 0
 }

@@ -18,12 +18,12 @@ func (m *vm) run() error {
 	}
 
 	for {
-		i, err := m.nextInstruction()
+		opcode, err := m.frames.current().readUint8()
 		if err != nil {
 			return err
 		}
 
-		switch i {
+		switch opcode {
 		case emitter.LoadConst:
 			constant, err := m.readConstant()
 			if err != nil {

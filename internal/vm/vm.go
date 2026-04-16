@@ -24,20 +24,6 @@ type nativeFn struct {
 	fn func(args ...any) (any, error)
 }
 
-func (m *vm) nextInstruction() (byte, error) {
-	b, err := m.frames.current().readUint8()
-	return b, err
-}
-
-func (m *vm) readUint32() (uint32, error) {
-	val, err := m.frames.current().readUint32()
-	if err != nil {
-		return 0, err
-	}
-
-	return val, nil
-}
-
 func (m *vm) readConstant() (any, error) {
 	idx, err := m.frames.current().readUint32()
 	if err != nil {

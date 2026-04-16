@@ -45,22 +45,19 @@ func (m *vm) load() error {
 				return fmt.Errorf("invalid function declaration entry point at pc=%d: %w", c.pc, err)
 			}
 
-			err = m.registerFunction(nameIdx, params, entryPoint)
-			if err != nil {
+			if err := m.registerFunction(nameIdx, params, entryPoint); err != nil {
 				return err
 			}
 
 		case emitter.LoadConst, emitter.GetSymbol, emitter.VarDecl:
-			_, err := c.readUint32()
-			if err != nil {
+			if _, err := c.readUint32(); err != nil {
 				return fmt.Errorf("invalid uint32 operand for opcode %d at pc=%d: %w", opcode, c.pc, err)
 			}
 
 		case emitter.Call:
 			// Skip the call arity operand (1 byte)
 
-			_, err := c.readUint8()
-			if err != nil {
+			if _, err := c.readUint8(); err != nil {
 				return fmt.Errorf("invalid call arity operand at pc=%d: %w", c.pc, err)
 			}
 
