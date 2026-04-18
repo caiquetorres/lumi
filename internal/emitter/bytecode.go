@@ -11,6 +11,7 @@ const (
 
 	GetSymbol
 	Call
+	Return
 
 	Pop
 )

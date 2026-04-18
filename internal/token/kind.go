@@ -21,6 +21,7 @@ const (
 	Pub
 	Fun
 	Let
+	Return
 )
 
 func (k Kind) String() string {

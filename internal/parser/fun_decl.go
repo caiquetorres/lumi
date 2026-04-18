@@ -8,6 +8,7 @@ type FunDecl struct {
 	Identifier token.Token
 	Params     []Param
 	Body       []Stmt
+	Return     *Type
 }
 
 type Param struct {
@@ -47,6 +48,14 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 
 	p.bump() // consume the ')'
 
+	var ty *Type
+	if p.isType() {
+		ty, err = p.parseType()
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	var body []Stmt
 	if p.peekIs(token.OpenBrace) {
 		// The function body is optional, so we only parse it if we see an
@@ -62,6 +71,7 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 		Identifier: toks[1],
 		Params:     params,
 		Body:       body,
+		Return:     ty,
 	}, nil
 }
 

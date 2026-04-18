@@ -70,6 +70,8 @@ func (w *walker) walkStmt(v Visitor, stmt Stmt) error {
 	switch s := stmt.(type) {
 	case *VarDecl:
 		err = w.walkVarDecl(v, s)
+	case *Return:
+		err = w.walkReturn(v, s)
 	default:
 		err = w.walkExpr(v, stmt.(Expr))
 	}
@@ -79,6 +81,20 @@ func (w *walker) walkStmt(v Visitor, stmt Stmt) error {
 	}
 
 	return v.AfterStmt(stmt)
+}
+
+func (w *walker) walkReturn(v Visitor, r *Return) error {
+	if err := v.BeforeReturnStmt(r); err != nil {
+		return err
+	}
+
+	if r.Expr != nil {
+		if err := w.walkExpr(v, r.Expr); err != nil {
+			return err
+		}
+	}
+
+	return v.AfterReturnStmt(r)
 }
 
 func (w *walker) walkExpr(v Visitor, expr Expr) error {

@@ -15,8 +15,8 @@ func TestTakeUntil(t *testing.T) {
 		input         string
 		predicate     func(rune) bool
 		wantText      string
-		wantStart     int
-		wantEnd       int
+		wantStart     uint32
+		wantEnd       uint32
 		wantNextRune  rune
 		wantNextIsEOF bool
 	}{
@@ -86,8 +86,8 @@ func TestTakeWhile(t *testing.T) {
 		input         string
 		predicate     func(rune) bool
 		wantText      string
-		wantStart     int
-		wantEnd       int
+		wantStart     uint32
+		wantEnd       uint32
 		wantNextRune  rune
 		wantNextIsEOF bool
 	}{

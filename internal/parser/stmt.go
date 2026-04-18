@@ -11,6 +11,8 @@ func (p *Parser) parseStmt() (Stmt, error) {
 	switch {
 	case p.peekIs(token.Let):
 		expr, err = p.parseVarDecl()
+	case p.peekIs(token.Return):
+		expr, err = p.parseReturn()
 	default:
 		expr, err = p.parseExpr()
 	}

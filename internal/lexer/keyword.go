@@ -7,8 +7,9 @@ import (
 )
 
 var keywords = map[string]token.Kind{
-	"fun": token.Fun,
-	"let": token.Let,
+	"fun":    token.Fun,
+	"let":    token.Let,
+	"return": token.Return,
 }
 
 func (l *Lexer) isKeywordOrIdentifier() bool {

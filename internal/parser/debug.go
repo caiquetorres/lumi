@@ -112,6 +112,18 @@ func (d *debugVisitor) AfterCallExpr(expr *CallExpr) error {
 	return d.flush()
 }
 
+func (d *debugVisitor) BeforeReturnStmt(*Return) error {
+	d.writeIndent()
+
+	mustWrite(d.w.WriteString("return\n"))
+
+	return d.flush()
+}
+
+func (d *debugVisitor) AfterReturnStmt(*Return) error {
+	return nil
+}
+
 func (d *debugVisitor) AfterStmt(Stmt) error {
 	return nil
 }

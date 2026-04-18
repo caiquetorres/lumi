@@ -99,6 +99,18 @@ func (e *emitter) AfterCallExpr(call *parser.CallExpr) error {
 	return e.flush()
 }
 
+func (e *emitter) BeforeReturnStmt(*parser.Return) error {
+	return nil
+}
+
+func (e *emitter) AfterReturnStmt(*parser.Return) error {
+	if err := e.emit(Return); err != nil {
+		return err
+	}
+
+	return e.flush()
+}
+
 func (e *emitter) AfterStmt(_ parser.Stmt) error {
 	if err := e.emit(Pop); err != nil {
 		return err

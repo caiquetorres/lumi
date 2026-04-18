@@ -16,12 +16,20 @@ go run . run <file>.lbc
 
 ```lumi
 fun main() {
-    let first = "John";
-    let last = "Doe";
-    introduce(first, last);
+    let firstName = "Jane";
+    let lastName = "Doe";
+
+    let name = getPreferredName(firstName, lastName);
+    let greeting = buildGreeting(name);
+
+    printf("%s, %s!\n", greeting, name);
 }
 
-fun introduce(first string, last string) {
-    printf("My name is %s %s\n", first, last);
+fun getPreferredName(first string, last string) string {
+    return first;
+}
+
+fun buildGreeting(name string) string {
+    return "Hello";
 }
 ```

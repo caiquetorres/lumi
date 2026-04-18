@@ -12,5 +12,7 @@ type Visitor interface {
 	BeforeIdentifierExpr(*IdentifierExpr) error
 	BeforeCallExpr(*CallExpr) error
 	AfterCallExpr(*CallExpr) error
+	BeforeReturnStmt(*Return) error
+	AfterReturnStmt(*Return) error
 	AfterStmt(Stmt) error
 }

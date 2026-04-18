@@ -78,6 +78,9 @@ func (m *vm) run() error {
 		case emitter.Pop:
 			_, _ = m.popObject()
 
+		case emitter.Return:
+			m.pushObject(nil)
+
 		case emitter.End:
 			m.frames.pop()
 

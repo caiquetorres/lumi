@@ -16,9 +16,9 @@ func TestLexer(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.Equal(t, token.Identifier, tok.Kind())
-		assert.Equal(t, 0, tok.Span().Start())
-		assert.Equal(t, 3, tok.Span().End())
-		assert.Equal(t, 3, tok.Span().Len())
+		assert.Equal(t, uint32(0), tok.Span().Start())
+		assert.Equal(t, uint32(3), tok.Span().End())
+		assert.Equal(t, uint32(3), tok.Span().Len())
 	})
 
 	t.Run("peek", func(t *testing.T) {
@@ -27,17 +27,17 @@ func TestLexer(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.Equal(t, token.Identifier, tok.Kind())
-		assert.Equal(t, 0, tok.Span().Start())
-		assert.Equal(t, 3, tok.Span().End())
-		assert.Equal(t, 3, tok.Span().Len())
+		assert.Equal(t, uint32(0), tok.Span().Start())
+		assert.Equal(t, uint32(3), tok.Span().End())
+		assert.Equal(t, uint32(3), tok.Span().Len())
 
 		tok2, err := l.Next()
 
 		assert.NoError(t, err)
 		assert.Equal(t, token.Identifier, tok2.Kind())
-		assert.Equal(t, 0, tok2.Span().Start())
-		assert.Equal(t, 3, tok2.Span().End())
-		assert.Equal(t, 3, tok2.Span().Len())
+		assert.Equal(t, uint32(0), tok2.Span().Start())
+		assert.Equal(t, uint32(3), tok2.Span().End())
+		assert.Equal(t, uint32(3), tok2.Span().Len())
 	})
 
 	t.Run("handles multibyte identifier runes", func(t *testing.T) {
@@ -57,8 +57,8 @@ func TestLexer(t *testing.T) {
 
 				assert.NoError(t, err, "expected no error when lexing input with multibyte runes")
 				assert.Equal(t, token.Identifier, tok.Kind(), "expected token kind to be Identifier")
-				assert.Equal(t, 0, tok.Span().Start(), "expected token span to start at 0")
-				assert.Equal(t, len([]rune(tt.input)), tok.Span().Len(), "expected token span length to match input length")
+				assert.Equal(t, uint32(0), tok.Span().Start(), "expected token span to start at 0")
+				assert.Equal(t, uint32(len([]rune(tt.input))), tok.Span().Len(), "expected token span length to match input length")
 			})
 		}
 	})
