@@ -24,10 +24,6 @@ func Execute(src io.ReadSeeker) error {
 		return err
 	}
 
-	// if !hasEntryPoint {
-	// 	return fmt.Errorf("no entry point found")
-	// }
-
 	instructions, err := getInstructions(src)
 	if err != nil {
 		return err

@@ -77,6 +77,12 @@ func (m *vm) load() error {
 		},
 	})
 
+	m.globals.define("sprintf", nativeFn{
+		fn: func(args ...any) (any, error) {
+			return fmt.Sprintf(args[0].(string), args[1:]...), nil
+		},
+	})
+
 	return nil
 }
 

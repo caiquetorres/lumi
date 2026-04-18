@@ -22,7 +22,7 @@ fun main() {
     let name = getPreferredName(firstName, lastName);
     let greeting = buildGreeting(name);
 
-    printf("%s, %s!\n", greeting, name);
+    printf("%s\n", greeting);
 }
 
 fun getPreferredName(first string, last string) string {
@@ -30,6 +30,6 @@ fun getPreferredName(first string, last string) string {
 }
 
 fun buildGreeting(name string) string {
-    return "Hello";
+    return sprintf("Hello, %s!", name);
 }
 ```
