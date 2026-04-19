@@ -18,13 +18,14 @@ func (l *Lexer) isPunctuation() bool {
 }
 
 var punctuations = map[rune]token.Kind{
-	'(': token.OpenParen,
-	')': token.CloseParen,
-	'{': token.OpenBrace,
-	'}': token.CloseBrace,
-	';': token.Semicolon,
-	',': token.Comma,
-	'=': token.Equals,
+	'(':  token.OpenParen,
+	')':  token.CloseParen,
+	'{':  token.OpenBrace,
+	'}':  token.CloseBrace,
+	';':  token.Semicolon,
+	',':  token.Comma,
+	'=':  token.Equals,
+	'\n': token.NewLine,
 }
 
 func (l *Lexer) readPunctuation() (token.Token, error) {

@@ -34,14 +34,6 @@ func (t *tokenResult) err() error {
 	return t.e
 }
 
-// func (p *Parser) skip(ks ...token.Kind) *Parser {
-// 	for p.peek().isOneOf(ks...) {
-// 		p.next()
-// 	}
-
-// 	return p
-// }
-
 func (t *tokenResult) get() (token.Token, error) {
 	if t.err() != nil {
 		return token.Token{}, t.e

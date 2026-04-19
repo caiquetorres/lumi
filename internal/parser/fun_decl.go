@@ -104,6 +104,14 @@ func (p *Parser) parseFunDeclBody() ([]Stmt, error) {
 	body := make([]Stmt, 0)
 
 	for !p.peek().isOneOf(token.CloseBrace, token.EOF) {
+		for p.peek().isOneOf(token.Semicolon, token.NewLine) {
+			p.bump()
+		}
+
+		if p.peek().isOneOf(token.CloseBrace, token.EOF) {
+			break
+		}
+
 		stmt, err := p.parseStmt()
 		if err != nil {
 			return nil, err

@@ -15,6 +15,7 @@ const (
 	Semicolon
 	Comma
 	Equals
+	NewLine
 
 	String
 
@@ -44,6 +45,10 @@ func (k Kind) String() string {
 		return ";"
 	case Comma:
 		return ","
+	case Equals:
+		return "="
+	case NewLine:
+		return "new line"
 	case String:
 		return "string"
 	case Pub:

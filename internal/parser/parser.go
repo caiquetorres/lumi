@@ -58,7 +58,8 @@ func (p *Parser) expectSequence(ks ...token.Kind) ([]token.Token, error) {
 }
 
 func (p *Parser) expectEndOfLine() error {
-	// TODO: add \n for end of line
-	_, err := p.next().expectOneOf(token.Semicolon)
+	_, err := p.next().expectOneOf(
+		token.Semicolon, token.NewLine,
+	)
 	return err
 }
