@@ -21,7 +21,7 @@ func (p *Parser) parseExpr() (Expr, error) {
 		return nil, err
 	}
 
-	if p.peekIs(token.OpenParen) {
+	if p.peek().is(token.OpenParen) {
 		return p.parseCallExpr(unit)
 	}
 
@@ -39,25 +39,21 @@ type IdentifierExpr struct {
 
 func (p *Parser) parseUnit() (Expr, error) {
 	switch {
-	case p.peekIs(token.String):
-		tok, _ := p.expect(token.String)
+	case p.peek().is(token.String):
+		tok, _ := p.next().get()
 
 		return &LiteralExpr{
 			Kind:  LiteralString,
 			Value: tok,
 		}, nil
-	case p.peekIs(token.Identifier):
-		tok, _ := p.expect(token.Identifier)
+	case p.peek().is(token.Identifier):
+		tok, _ := p.next().get()
 
 		return &IdentifierExpr{
 			Name: tok,
 		}, nil
 	default:
-		if err := p.err(); err != nil {
-			return nil, err
-		}
-
-		return p.expectOneOf(token.String)
+		return p.peek().expectOneOf(token.String)
 	}
 }
 
@@ -67,12 +63,13 @@ type CallExpr struct {
 }
 
 func (p *Parser) parseCallExpr(callee Expr) (Expr, error) {
-	if _, err := p.expect(token.OpenParen); err != nil {
+	_, err := p.next().expect(token.OpenParen)
+	if err != nil {
 		return nil, err
 	}
 
 	var args []Expr
-	for !p.peekIs(token.CloseParen) {
+	for !p.peek().isOneOf(token.CloseParen, token.EOF) {
 		arg, err := p.parseExpr()
 		if err != nil {
 			return nil, err
@@ -80,24 +77,21 @@ func (p *Parser) parseCallExpr(callee Expr) (Expr, error) {
 
 		args = append(args, arg)
 
-		if !p.peekIsOneOf(token.Comma, token.CloseParen) {
-			_, err := p.expectOneOf(token.Comma, token.CloseParen)
+		if !p.peek().isOneOf(token.Comma, token.CloseParen) {
+			_, err := p.peek().expectOneOf(token.Comma, token.CloseParen)
 			return nil, err
 		}
 
-		if p.peekIs(token.Comma) {
-			_, _ = p.next()
+		if p.peek().is(token.Comma) {
+			p.bump() // comma
 		}
 	}
 
-	if p.peekIs(token.EOF) {
+	if p.peek().is(token.EOF) {
 		return nil, ErrUnexpectedEOF
 	}
 
-	_, _ = p.next() // close brace
+	p.bump() // close brace
 
-	return &CallExpr{
-		Callee: callee,
-		Args:   args,
-	}, nil
+	return &CallExpr{Callee: callee, Args: args}, nil
 }

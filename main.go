@@ -70,7 +70,7 @@ func main() {
 func compilePipeline(src io.Reader, out io.Writer, debugMode bool) error {
 	var (
 		l = lexer.New(src)
-		p = parser.New(src, l)
+		p = parser.New(l)
 	)
 
 	ast, err := p.Parse()

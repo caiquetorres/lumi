@@ -11,7 +11,7 @@ type Ast struct {
 func (p *Parser) Parse() (*Ast, error) {
 	ast := Ast{}
 
-	for !p.peekIs(token.EOF) {
+	for !p.peek().is(token.EOF) {
 		stmt, err := p.parseTopLevelStmt()
 		if err != nil {
 			return nil, err

@@ -7,7 +7,8 @@ type Return struct {
 }
 
 func (p *Parser) parseReturn() (*Return, error) {
-	if _, err := p.expect(token.Return); err != nil {
+	_, err := p.next().expect(token.Return)
+	if err != nil {
 		return nil, err
 	}
 
@@ -16,5 +17,7 @@ func (p *Parser) parseReturn() (*Return, error) {
 		return nil, err
 	}
 
-	return &Return{Expr: expr}, nil
+	return &Return{
+		Expr: expr,
+	}, nil
 }

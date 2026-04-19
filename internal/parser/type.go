@@ -7,14 +7,16 @@ type Type struct {
 }
 
 func (p *Parser) isType() bool {
-	return p.peekIs(token.Identifier)
+	return p.peek().is(token.Identifier)
 }
 
 func (p *Parser) parseType() (*Type, error) {
-	tok, err := p.expect(token.Identifier)
+	tok, err := p.next().expect(token.Identifier)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Type{Name: tok}, nil
+	return &Type{
+		Name: tok,
+	}, nil
 }
