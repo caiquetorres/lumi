@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/caiquetorres/lumi/internal/span"
 	"github.com/caiquetorres/lumi/internal/token"
@@ -17,7 +18,7 @@ type Lexer struct {
 
 	b *bufio.Reader
 
-	currLexeme string
+	currLexeme strings.Builder
 	symTable   *symbolTable
 }
 
@@ -58,7 +59,7 @@ func (l *Lexer) nextRune() (rune, error) {
 	r, _, err := l.b.ReadRune()
 
 	l.extendSpan()
-	l.currLexeme += string(r)
+	l.currLexeme.WriteRune(r)
 
 	return r, err
 }
@@ -82,7 +83,8 @@ func (l *Lexer) isAtEOF() bool {
 }
 
 func (l *Lexer) newToken(k token.Kind) token.Token {
-	id := l.symTable.intern(l.currLexeme)
+	lexeme := l.currLexeme.String()
+	id := l.symTable.intern(lexeme)
 
 	tok := token.New(id, k, span.New(l.start, l.end))
 	l.resetSpan()
@@ -98,5 +100,5 @@ func (l *Lexer) extendSpan() {
 }
 
 func (l *Lexer) resetLexeme() {
-	l.currLexeme = ""
+	l.currLexeme.Reset()
 }
