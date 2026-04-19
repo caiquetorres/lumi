@@ -103,10 +103,8 @@ func (p *Parser) parseFunDeclBody() ([]Stmt, error) {
 
 	body := make([]Stmt, 0)
 
-	for !p.peek().isOneOf(token.CloseBrace, token.EOF) {
-		for p.peek().isOneOf(token.Semicolon, token.NewLine) {
-			p.bump()
-		}
+	for {
+		p.skipWhitespace()
 
 		if p.peek().isOneOf(token.CloseBrace, token.EOF) {
 			break

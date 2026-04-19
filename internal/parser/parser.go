@@ -19,6 +19,28 @@ type Parser struct {
 	e error
 }
 
+func (p *Parser) peek() *tokenResult {
+	t := tokenResult{}
+	t.tok, t.e = p.l.Peek()
+	return &t
+}
+
+func (p *Parser) next() *tokenResult {
+	t := tokenResult{}
+	t.tok, t.e = p.l.Next()
+	return &t
+}
+
+// skipWhitespace consumes any semicolons or newlines until it finds a
+// non-whitespace token. It is useful for ignoring optional semicolons at
+// the end of statements, or for allowing multiple statements on the same
+// line.
+func (p *Parser) skipWhitespace() {
+	for p.peek().isOneOf(token.Semicolon, token.NewLine) {
+		p.bump()
+	}
+}
+
 // bump consumes the next token without returning it. It is useful for
 // skipping tokens that we don't care about, such as semicolons or commas.
 //

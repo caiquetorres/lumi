@@ -82,9 +82,7 @@ func (p *Parser) parseCallExpr(callee Expr) (Expr, error) {
 			return nil, err
 		}
 
-		if p.peek().is(token.Comma) {
-			p.bump() // comma
-		}
+		p.maybeNext(token.Comma)
 	}
 
 	if p.peek().is(token.EOF) {

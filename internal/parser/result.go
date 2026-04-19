@@ -12,24 +12,6 @@ type tokenResult struct {
 	e   error
 }
 
-func (p *Parser) peek() *tokenResult {
-	p.t, p.e = p.l.Peek()
-
-	return &tokenResult{
-		tok: p.t,
-		e:   p.e,
-	}
-}
-
-func (p *Parser) next() *tokenResult {
-	p.t, p.e = p.l.Next()
-
-	return &tokenResult{
-		tok: p.t,
-		e:   p.e,
-	}
-}
-
 func (t *tokenResult) err() error {
 	return t.e
 }

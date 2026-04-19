@@ -11,10 +11,8 @@ type Ast struct {
 func (p *Parser) Parse() (*Ast, error) {
 	ast := Ast{}
 
-	for !p.peek().is(token.EOF) {
-		for p.peek().isOneOf(token.Semicolon, token.NewLine) {
-			p.bump()
-		}
+	for {
+		p.skipWhitespace()
 
 		if p.peek().is(token.EOF) {
 			break
