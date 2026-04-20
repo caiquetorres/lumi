@@ -79,7 +79,7 @@ func (m *vm) run() error {
 			_, _ = m.popObject()
 
 		case emitter.Return:
-			m.pushObject(nil)
+			// m.pushObject(nil)
 
 		case emitter.BeginScope:
 			m.symbolTable = newSymbolTable(m.symbolTable)

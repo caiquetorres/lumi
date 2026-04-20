@@ -19,11 +19,6 @@ func Execute(src io.ReadSeeker) error {
 		return err
 	}
 
-	_, _, err = getEntryPoint(src)
-	if err != nil {
-		return err
-	}
-
 	instructions, err := getInstructions(src)
 	if err != nil {
 		return err

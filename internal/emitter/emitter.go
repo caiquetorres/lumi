@@ -1,44 +1,37 @@
 package emitter
 
 import (
-	"bufio"
-	"bytes"
-	"encoding/binary"
+	"fmt"
 	"io"
-	"strconv"
+	"os"
 
 	"github.com/caiquetorres/lumi/internal/lexer"
 	"github.com/caiquetorres/lumi/internal/parser"
 )
 
 func Emit(ast *parser.Ast, l *lexer.Lexer, w io.Writer) error {
-	tmp := &bytes.Buffer{}
-	e := newEmitter(l, tmp)
+	e := newEmitter(l)
 
 	if err := parser.Walk(e, ast); err != nil {
 		return err
 	}
 
+	formatBytecode(e.ch.code, os.Stdout)
+
 	builder := newBuilder(w)
-	return builder.build(e.pool.serialize(), e.hasEntryPoint, e.entryPoint, tmp)
+
+	return builder.build(e.ch.pool.serialize(), e.ch.code)
 }
 
 type emitter struct {
-	ptr uint32
-
-	entryPoint    uint32
-	hasEntryPoint bool
-
-	w    *bufio.Writer
-	l    *lexer.Lexer
-	pool *constantPool
+	ch  *chunk
+	lex *lexer.Lexer
 }
 
-func newEmitter(l *lexer.Lexer, w io.Writer) *emitter {
+func newEmitter(lex *lexer.Lexer) *emitter {
 	return &emitter{
-		w:    bufio.NewWriter(w),
-		l:    l,
-		pool: newConstantPool(),
+		ch:  newChunk(),
+		lex: lex,
 	}
 }
 
@@ -46,137 +39,20 @@ func (e *emitter) BeforeAst(*parser.Ast) error {
 	return nil
 }
 
-func (e *emitter) BeforeLiteralExpr(lit *parser.LiteralExpr) error {
-	litValue := e.l.Lexeme(lit.Value)
-
-	switch lit.Kind {
-	case parser.LiteralString:
-		value, err := strconv.Unquote(litValue)
-		if err != nil {
-			return err
-		}
-
-		if err := e.emit(LoadConst); err != nil {
-			return err
-		}
-
-		if err := e.writeStringConstant(value); err != nil {
-			return err
-		}
-	}
-
-	return e.flush()
-}
-
-func (e *emitter) BeforeIdentifierExpr(id *parser.IdentifierExpr) error {
-	if err := e.emit(GetSymbol); err != nil {
-		return err
-	}
-
-	idName := e.l.Lexeme(id.Name)
-
-	constIdx := e.pool.internConstant(idName)
-	if err := e.writeUint32(constIdx); err != nil {
-		return err
-	}
-
-	return e.flush()
-}
-
-func (e *emitter) BeforeCallExpr(expr *parser.CallExpr) error {
-	return nil
-}
-
-func (e *emitter) AfterCallExpr(call *parser.CallExpr) error {
-	if err := e.emit(Call); err != nil {
-		return err
-	}
-
-	if err := e.writeUint8(uint8(len(call.Args))); err != nil {
-		return err
-	}
-
-	return e.flush()
-}
-
-func (e *emitter) BeforeBlockExpr(block *parser.BlockExpr) error {
-	if err := e.emit(BeginScope); err != nil {
-		return err
-	}
-
-	return e.flush()
-}
-
-func (e *emitter) AfterBlockExpr(block *parser.BlockExpr) error {
-	if err := e.emit(EndScope); err != nil {
-		return err
-	}
-
-	return e.flush()
-}
-
-func (e *emitter) AfterBreakStmt(brk *parser.Break) error {
-	if err := e.emit(Return); err != nil {
-		return err
-	}
-
-	return e.flush()
-}
-
-func (e *emitter) BeforeBreakStmt(brk *parser.Break) error {
-	return nil
-}
-
-func (e *emitter) BeforeReturnStmt(ret *parser.Return) error {
-	return nil
-}
-
-func (e *emitter) AfterReturnStmt(*parser.Return) error {
-	if err := e.emit(Return); err != nil {
-		return err
-	}
-
-	return e.flush()
-}
-
-func (e *emitter) AfterStmt(_ parser.Stmt) error {
-	if err := e.emit(Pop); err != nil {
-		return err
-	}
-
-	return e.flush()
-}
-
-func (e *emitter) AfterParam(*parser.Param) error {
-	return nil
-}
-
-func (e *emitter) BeforeParam(*parser.Param) error {
-	return nil
-}
-
 var _ parser.Visitor = (*emitter)(nil)
 
-func (e *emitter) emit(b byte) error {
-	return e.writeUint8(b)
-}
+func formatBytecode(code []byte, w io.Writer) {
+	if len(code) == 0 {
+		return
+	}
 
-func (e *emitter) writeUint8(value uint8) error {
-	e.ptr++ // 1 byte for the uint8
+	for idx, b := range code {
+		if idx > 0 {
+			w.Write([]byte{' '})
+		}
 
-	return e.w.WriteByte(value)
-}
+		_, _ = fmt.Fprintf(w, "0x%02X", b)
+	}
 
-func (e *emitter) writeUint32(value uint32) error {
-	var buf [4]byte
-	binary.BigEndian.PutUint32(buf[:], value)
-
-	e.ptr += 4 // 4 bytes for the uint32
-
-	_, err := e.w.Write(buf[:])
-	return err
-}
-
-func (e *emitter) flush() error {
-	return e.w.Flush()
+	fmt.Fprintf(w, "\n")
 }

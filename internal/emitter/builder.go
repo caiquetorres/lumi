@@ -16,8 +16,7 @@ func newBuilder(w io.Writer) *builder {
 	return &builder{w: bufio.NewWriter(w)}
 }
 
-func (b *builder) build(constantPool []byte, hasEntryPoint bool,
-	entryPoint uint32, instructions io.Reader) error {
+func (b *builder) build(constantPool []byte, instructions []byte) error {
 	if err := b.writeMagic(); err != nil {
 		return err
 	}
@@ -26,11 +25,7 @@ func (b *builder) build(constantPool []byte, hasEntryPoint bool,
 		return err
 	}
 
-	if err := b.writeEntryPoint(hasEntryPoint, entryPoint); err != nil {
-		return err
-	}
-
-	if _, err := io.Copy(b.w, instructions); err != nil {
+	if _, err := b.w.Write(instructions); err != nil {
 		return err
 	}
 
