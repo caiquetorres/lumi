@@ -14,7 +14,7 @@ func (p *Parser) Parse() (*Ast, error) {
 	for {
 		p.skipWhitespace()
 
-		if p.peek().is(token.EOF) {
+		if p.lookahead().peek().is(token.EOF) {
 			break
 		}
 

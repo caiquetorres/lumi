@@ -21,7 +21,7 @@ func (p *Parser) parseExpr() (Expr, error) {
 		return nil, err
 	}
 
-	if p.peek().is(token.OpenParen) {
+	if p.lookahead().peek().is(token.OpenParen) {
 		return p.parseCallExpr(unit)
 	}
 
@@ -39,21 +39,21 @@ type IdentifierExpr struct {
 
 func (p *Parser) parseUnit() (Expr, error) {
 	switch {
-	case p.peek().is(token.String):
-		tok, _ := p.next().get()
+	case p.lookahead().peek().is(token.String):
+		tok, _ := p.lookahead().next().get()
 
 		return &LiteralExpr{
 			Kind:  LiteralString,
 			Value: tok,
 		}, nil
-	case p.peek().is(token.Identifier):
-		tok, _ := p.next().get()
+	case p.lookahead().peek().is(token.Identifier):
+		tok, _ := p.lookahead().next().get()
 
 		return &IdentifierExpr{
 			Name: tok,
 		}, nil
 	default:
-		return p.peek().expectOneOf(token.String)
+		return p.lookahead().peek().expectOneOf(token.String)
 	}
 }
 
@@ -63,13 +63,13 @@ type CallExpr struct {
 }
 
 func (p *Parser) parseCallExpr(callee Expr) (Expr, error) {
-	_, err := p.next().expect(token.OpenParen)
+	_, err := p.lookahead().next().expect(token.OpenParen)
 	if err != nil {
 		return nil, err
 	}
 
 	var args []Expr
-	for !p.peek().isOneOf(token.CloseParen, token.EOF) {
+	for !p.lookahead().peek().isOneOf(token.CloseParen, token.EOF) {
 		arg, err := p.parseExpr()
 		if err != nil {
 			return nil, err
@@ -77,15 +77,15 @@ func (p *Parser) parseCallExpr(callee Expr) (Expr, error) {
 
 		args = append(args, arg)
 
-		if !p.peek().isOneOf(token.Comma, token.CloseParen) {
-			_, err := p.peek().expectOneOf(token.Comma, token.CloseParen)
+		if !p.lookahead().peek().isOneOf(token.Comma, token.CloseParen) {
+			_, err := p.lookahead().peek().expectOneOf(token.Comma, token.CloseParen)
 			return nil, err
 		}
 
 		p.maybeNext(token.Comma)
 	}
 
-	if p.peek().is(token.EOF) {
+	if p.lookahead().peek().is(token.EOF) {
 		return nil, ErrUnexpectedEOF
 	}
 

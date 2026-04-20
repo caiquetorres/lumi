@@ -9,9 +9,9 @@ func (p *Parser) parseStmt() (Stmt, error) {
 	)
 
 	switch {
-	case p.peek().is(token.Let):
+	case p.lookahead().peek().is(token.Let):
 		expr, err = p.parseVarDecl()
-	case p.peek().is(token.Return):
+	case p.lookahead().peek().is(token.Return):
 		expr, err = p.parseReturn()
 	default:
 		expr, err = p.parseExpr()

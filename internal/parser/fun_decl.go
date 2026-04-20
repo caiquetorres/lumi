@@ -26,7 +26,7 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 	}
 
 	var params []Param
-	for !p.peek().isOneOf(token.CloseParen, token.EOF) {
+	for !p.lookahead().peek().isOneOf(token.CloseParen, token.EOF) {
 		param, err := p.parseParam()
 		if err != nil {
 			return nil, err
@@ -34,7 +34,7 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 
 		params = append(params, *param)
 
-		_, err = p.peek().expectOneOf(token.Comma, token.CloseParen, token.EOF)
+		_, err = p.lookahead().peek().expectOneOf(token.Comma, token.CloseParen, token.EOF)
 		if err != nil {
 			return nil, err
 		}
@@ -42,7 +42,7 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 		p.maybeNext(token.Comma)
 	}
 
-	if p.peek().is(token.EOF) {
+	if p.lookahead().peek().is(token.EOF) {
 		return nil, ErrUnexpectedEOF
 	}
 
@@ -57,7 +57,7 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 	}
 
 	var body []Stmt
-	if p.peek().is(token.OpenBrace) {
+	if p.lookahead().peek().is(token.OpenBrace) {
 		// The function body is optional, so we only parse it if we see an
 		// opening brace.
 
@@ -76,7 +76,7 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 }
 
 func (p *Parser) parseParam() (*Param, error) {
-	tok, err := p.next().expect(token.Identifier)
+	tok, err := p.lookahead().next().expect(token.Identifier)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +96,7 @@ func (p *Parser) parseParam() (*Param, error) {
 }
 
 func (p *Parser) parseFunDeclBody() ([]Stmt, error) {
-	_, err := p.next().expect(token.OpenBrace)
+	_, err := p.lookahead().next().expect(token.OpenBrace)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +106,7 @@ func (p *Parser) parseFunDeclBody() ([]Stmt, error) {
 	for {
 		p.skipWhitespace()
 
-		if p.peek().isOneOf(token.CloseBrace, token.EOF) {
+		if p.lookahead().peek().isOneOf(token.CloseBrace, token.EOF) {
 			break
 		}
 
@@ -118,7 +118,7 @@ func (p *Parser) parseFunDeclBody() ([]Stmt, error) {
 		body = append(body, stmt)
 	}
 
-	if p.peek().is(token.EOF) {
+	if p.lookahead().peek().is(token.EOF) {
 		return nil, ErrUnexpectedEOF
 	}
 
