@@ -24,7 +24,11 @@ func (e *emitter) BeforeBreakStmt(*parser.Break) error {
 }
 
 func (e *emitter) AfterBreakStmt(brk *parser.Break) error {
-	e.ch.emit(Return)
+	e.ch.emit(Jump)
+	patchOffset := e.ch.emitUint32(0)
+
+	top := len(e.blockStack) - 1
+	e.blockStack[top].breakPatches = append(e.blockStack[top].breakPatches, patchOffset)
 
 	return nil
 }

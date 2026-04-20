@@ -9,10 +9,13 @@ fun main() {
 }
 
 fun getPreferredName(first string, last string) string {
-    let fullName = sprintf("%s %s", first, last)
-    let shortName = first
+    let selected = {
+        let fullName = sprintf("%s %s", first, last)
+        let shortName = first
+        break sprintf("%s (%s)", shortName, fullName)
+    }
 
-    return sprintf("%s (%s)", shortName, fullName)
+    return selected
 }
 
 fun buildGreeting(name string) string {

@@ -13,5 +13,6 @@ const (
 	Call
 	Return
 
+	Jump
 	Pop
 )

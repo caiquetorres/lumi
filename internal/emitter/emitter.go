@@ -23,9 +23,15 @@ func Emit(ast *parser.Ast, l *lexer.Lexer, w io.Writer) error {
 	return builder.build(e.ch.pool.serialize(), e.ch.code)
 }
 
+type blockContext struct {
+	breakPatches []uint32
+}
+
 type emitter struct {
 	ch  *chunk
 	lex *lexer.Lexer
+
+	blockStack []blockContext
 }
 
 func newEmitter(lex *lexer.Lexer) *emitter {

@@ -17,8 +17,8 @@ func newCursor(data []byte) *cursor {
 	}
 }
 
-func (c *cursor) move(offset uint32) {
-	c.pc += offset
+func (c *cursor) moveTo(offset uint32) {
+	c.pc = offset
 }
 
 func (c *cursor) hasMore() bool {

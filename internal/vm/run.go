@@ -78,8 +78,15 @@ func (m *vm) run() error {
 		case emitter.Pop:
 			_, _ = m.popObject()
 
+		case emitter.Jump:
+			offset, err := m.frames.current().readUint32()
+			if err != nil {
+				return fmt.Errorf("invalid jump offset operand: %w", err)
+			}
+
+			m.frames.current().moveTo(offset)
+
 		case emitter.Return:
-			// m.pushObject(nil)
 
 		case emitter.BeginScope:
 			m.symbolTable = newSymbolTable(m.symbolTable)

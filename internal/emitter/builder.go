@@ -46,18 +46,6 @@ func (b *builder) writeConstantPool(constantPool []byte) error {
 	return err
 }
 
-func (b *builder) writeEntryPoint(hasEntryPoint bool, entryPoint uint32) error {
-	if hasEntryPoint {
-		if err := b.w.WriteByte(1); err != nil {
-			return err
-		}
-
-		return b.writeUint32(entryPoint)
-	}
-
-	return b.w.WriteByte(0)
-}
-
 func (b *builder) writeUint32(value uint32) error {
 	var buf [4]byte
 	binary.BigEndian.PutUint32(buf[:], value)

@@ -65,6 +65,11 @@ func (m *vm) load() error {
 			emitter.Return:
 			// No operands to consume.
 
+		case emitter.Jump:
+			if _, err := c.readUint32(); err != nil {
+				return fmt.Errorf("invalid jump offset operand at pc=%d: %w", c.pc, err)
+			}
+
 		default:
 			return fmt.Errorf("unknown opcode %d at pc=%d", opcode, c.pc-1)
 		}

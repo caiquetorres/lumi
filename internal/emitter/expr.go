@@ -36,6 +36,7 @@ func (e *emitter) BeforeIdentifierExpr(id *parser.IdentifierExpr) error {
 }
 
 func (e *emitter) BeforeBlockExpr(block *parser.BlockExpr) error {
+	e.blockStack = append(e.blockStack, blockContext{})
 	e.ch.emit(BeginScope)
 
 	return nil
@@ -43,6 +44,15 @@ func (e *emitter) BeforeBlockExpr(block *parser.BlockExpr) error {
 
 func (e *emitter) AfterBlockExpr(block *parser.BlockExpr) error {
 	e.ch.emit(EndScope)
+
+	endOffset := e.ch.ip
+	top := len(e.blockStack) - 1
+
+	for _, off := range e.blockStack[top].breakPatches {
+		e.ch.patchUint32(off, endOffset)
+	}
+
+	e.blockStack = e.blockStack[:top]
 
 	return nil
 }
