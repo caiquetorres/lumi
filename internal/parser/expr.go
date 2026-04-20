@@ -77,12 +77,14 @@ func (p *Parser) parseCallExpr(callee Expr) (Expr, error) {
 
 		args = append(args, arg)
 
-		if !p.lookahead().peek().isOneOf(token.Comma, token.CloseParen) {
-			_, err := p.lookahead().peek().expectOneOf(token.Comma, token.CloseParen)
+		_, err = p.lookahead().peek().expectOneOf(token.Comma, token.CloseParen)
+		if err != nil {
 			return nil, err
 		}
 
-		p.maybeNext(token.Comma)
+		if p.lookahead().peek().is(token.CloseParen) {
+			p.bump() // close paren
+		}
 	}
 
 	if p.lookahead().peek().is(token.EOF) {
@@ -91,5 +93,8 @@ func (p *Parser) parseCallExpr(callee Expr) (Expr, error) {
 
 	p.bump() // close brace
 
-	return &CallExpr{Callee: callee, Args: args}, nil
+	return &CallExpr{
+		Callee: callee,
+		Args:   args,
+	}, nil
 }

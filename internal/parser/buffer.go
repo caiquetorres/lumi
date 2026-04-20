@@ -16,20 +16,20 @@ func newCircularBuffer(size uint32) *circularBuffer {
 	}
 }
 
-func (c *circularBuffer) push(v any) {
+func (c *circularBuffer) pushBack(v any) {
 	tail := (c.head + c.len) % c.size
 	c.buf[tail] = v
 	c.len++
 }
 
-func (c *circularBuffer) pop() any {
+func (c *circularBuffer) popFront() any {
 	v := c.buf[c.head]
 	c.head = (c.head + 1) % c.size
 	c.len--
 	return v
 }
 
-func (c *circularBuffer) peek(n uint32) any {
+func (c *circularBuffer) at(n uint32) any {
 	return c.buf[(c.head+n)%c.size]
 }
 

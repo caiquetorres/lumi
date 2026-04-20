@@ -14,6 +14,8 @@ func (p *Parser) parseStmt() (Stmt, error) {
 	case p.lookahead().peek().is(token.Return):
 		expr, err = p.parseReturn()
 	default:
+		// REVIEW: Can we do better than just trying to parse an expression and returning an error if it fails? Maybe we can check for some other tokens that would indicate that it's not an expression, such as a keyword or a semicolon.
+
 		expr, err = p.parseExpr()
 	}
 

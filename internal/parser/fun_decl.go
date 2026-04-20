@@ -17,8 +17,11 @@ type Param struct {
 }
 
 func (p *Parser) parseFunDecl() (*FunDecl, error) {
-	// func <identifier>() { <body> }
 	// func <identifier>()
+	// func <identifier>() { <body> }
+	// func <identifier>() -> <type> { <body> }
+	// func <identifier>(param1, param2, ...) { <body> }
+	// func <identifier>(param1, param2, ...) -> <type> { <body> }
 
 	toks, err := p.expectSequence(token.Fun, token.Identifier, token.OpenParen)
 	if err != nil {
@@ -34,12 +37,14 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 
 		params = append(params, *param)
 
-		_, err = p.lookahead().peek().expectOneOf(token.Comma, token.CloseParen, token.EOF)
+		_, err = p.lookahead().peek().expectOneOf(token.Comma, token.CloseParen)
 		if err != nil {
 			return nil, err
 		}
 
-		p.maybeNext(token.Comma)
+		if p.lookahead().peek().is(token.CloseParen) {
+			p.bump() // close paren
+		}
 	}
 
 	if p.lookahead().peek().is(token.EOF) {
@@ -76,6 +81,9 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 }
 
 func (p *Parser) parseParam() (*Param, error) {
+	// <identifier>
+	// <identifier> <type>
+
 	tok, err := p.lookahead().next().expect(token.Identifier)
 	if err != nil {
 		return nil, err
