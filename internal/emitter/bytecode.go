@@ -7,9 +7,10 @@ const (
 	EndScope
 
 	FnDecl
-	VarDecl
 
 	GetSymbol
+	DefineSymbol
+
 	Call
 	Return
 

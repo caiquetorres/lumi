@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"flag"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -77,21 +76,24 @@ func compilePipeline(src io.Reader, out io.Writer, debugMode bool) error {
 		return err
 	}
 
-	if debugMode {
-		fmt.Println("Parsed AST:")
-		if err := parser.DebugAst(ast, l, os.Stdout); err != nil {
-			return err
-		}
-		fmt.Println("")
-	}
+	// if debugMode {
+	// 	fmt.Println("Parsed AST:")
+	// 	if err := parser.DebugAst(ast, l, os.Stdout); err != nil {
+	// 		return err
+	// 	}
+	// 	fmt.Println("")
+	// }
 
 	if err := semantic.Analyze(ast); err != nil {
 		return err
 	}
 
-	if err := emitter.Emit(ast, l, out); err != nil {
+	_, err = emitter.Emit(ast, l, out)
+	if err != nil {
 		return err
 	}
+
+	// ch.Disassemble()
 
 	// if debugMode {
 	// 	var buf bytes.Buffer
@@ -105,22 +107,6 @@ func compilePipeline(src io.Reader, out io.Writer, debugMode bool) error {
 	// }
 
 	return nil
-}
-
-func formatBytecode(w io.Writer, r io.Reader) {
-	code, _ := io.ReadAll(r)
-
-	if len(code) == 0 {
-		return
-	}
-
-	for idx, b := range code {
-		if idx > 0 {
-			w.Write([]byte{' '})
-		}
-
-		_, _ = fmt.Fprintf(w, "0x%02X", b)
-	}
 }
 
 type arguments struct {

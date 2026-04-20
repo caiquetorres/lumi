@@ -34,7 +34,7 @@ func (m *vm) run() error {
 
 			m.pushObject(constant)
 
-		case emitter.VarDecl:
+		case emitter.DefineSymbol:
 			constant, err := m.readConstant()
 			if err != nil {
 				return err

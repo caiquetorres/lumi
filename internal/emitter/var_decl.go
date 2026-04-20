@@ -1,18 +1,17 @@
 package emitter
 
-// func (e *emitter) BeforeVarDecl(vd *parser.VarDecl) error {
-// 	return nil
-// }
+import "github.com/caiquetorres/lumi/internal/parser"
 
-// func (e *emitter) AfterVarDecl(vd *parser.VarDecl) error {
-// 	if err := e.emit(VarDecl); err != nil {
-// 		return err
-// 	}
+func (e *emitter) AfterVarDecl(vd *parser.VarDecl) error {
+	e.ch.emit(DefineSymbol)
 
-// 	name := e.l.Lexeme(vd.Identifier)
-// 	if err := e.writeStringConstant(name); err != nil {
-// 		return err
-// 	}
+	name := e.lex.Lexeme(vd.Identifier)
+	idx := e.ch.pool.internConstant(name)
+	e.ch.emitUint32(idx)
 
-// 	return e.flush()
-// }
+	return nil
+}
+
+func (e *emitter) BeforeVarDecl(*parser.VarDecl) error {
+	return nil
+}

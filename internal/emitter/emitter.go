@@ -9,18 +9,18 @@ import (
 	"github.com/caiquetorres/lumi/internal/parser"
 )
 
-func Emit(ast *parser.Ast, l *lexer.Lexer, w io.Writer) error {
+func Emit(ast *parser.Ast, l *lexer.Lexer, w io.Writer) (*Chunk, error) {
 	e := newEmitter(l)
 
 	if err := parser.Walk(e, ast); err != nil {
-		return err
+		return nil, err
 	}
 
 	formatBytecode(e.ch.code, os.Stdout)
 
 	builder := newBuilder(w)
 
-	return builder.build(e.ch.pool.serialize(), e.ch.code)
+	return e.ch, builder.build(e.ch.pool.serialize(), e.ch.code)
 }
 
 type blockContext struct {
@@ -28,7 +28,7 @@ type blockContext struct {
 }
 
 type emitter struct {
-	ch  *chunk
+	ch  *Chunk
 	lex *lexer.Lexer
 
 	blockStack []blockContext

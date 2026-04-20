@@ -32,17 +32,3 @@ func (e *emitter) AfterBreakStmt(brk *parser.Break) error {
 
 	return nil
 }
-
-func (e *emitter) AfterVarDecl(vd *parser.VarDecl) error {
-	e.ch.emit(VarDecl)
-
-	name := e.lex.Lexeme(vd.Identifier)
-	idx := e.ch.pool.internConstant(name)
-	e.ch.emitUint32(idx)
-
-	return nil
-}
-
-func (e *emitter) BeforeVarDecl(*parser.VarDecl) error {
-	return nil
-}
