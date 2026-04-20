@@ -42,7 +42,7 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 			return nil, err
 		}
 
-		if p.lookahead().peek().is(token.CloseParen) {
+		if p.lookahead().peek().is(token.Comma) {
 			p.bump() // close paren
 		}
 	}

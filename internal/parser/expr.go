@@ -33,25 +33,41 @@ type LiteralExpr struct {
 	Value token.Token
 }
 
+func (p *Parser) parseLiteral() (*LiteralExpr, error) {
+	tok, err := p.lookahead().next().expect(token.String)
+	if err != nil {
+		return nil, err
+	}
+
+	return &LiteralExpr{
+		Kind:  LiteralString,
+		Value: tok,
+	}, nil
+}
+
 type IdentifierExpr struct {
 	Name token.Token
+}
+
+func (p *Parser) parseIdentifier() (*IdentifierExpr, error) {
+	tok, err := p.lookahead().next().expect(token.Identifier)
+	if err != nil {
+		return nil, err
+	}
+
+	return &IdentifierExpr{
+		Name: tok,
+	}, nil
 }
 
 func (p *Parser) parseUnit() (Expr, error) {
 	switch {
 	case p.lookahead().peek().is(token.String):
-		tok, _ := p.lookahead().next().get()
-
-		return &LiteralExpr{
-			Kind:  LiteralString,
-			Value: tok,
-		}, nil
+		return p.parseLiteral()
 	case p.lookahead().peek().is(token.Identifier):
-		tok, _ := p.lookahead().next().get()
-
-		return &IdentifierExpr{
-			Name: tok,
-		}, nil
+		return p.parseIdentifier()
+	case p.lookahead().peek().is(token.OpenBrace):
+		return p.parseBlock()
 	default:
 		return p.lookahead().peek().expectOneOf(token.String)
 	}
@@ -82,7 +98,7 @@ func (p *Parser) parseCallExpr(callee Expr) (Expr, error) {
 			return nil, err
 		}
 
-		if p.lookahead().peek().is(token.CloseParen) {
+		if p.lookahead().peek().is(token.Comma) {
 			p.bump() // close paren
 		}
 	}

@@ -81,12 +81,16 @@ func (m *vm) run() error {
 		case emitter.Return:
 			m.pushObject(nil)
 
-		case emitter.End:
-			m.frames.pop()
+		case emitter.BeginScope:
+			m.symbolTable = newSymbolTable(m.symbolTable)
 
+		case emitter.EndScope:
 			if m.symbolTable.parent != nil {
 				m.symbolTable = m.symbolTable.parent
 			}
+
+		case emitter.End:
+			m.frames.pop()
 
 			if m.frames.isEmpty() {
 				return nil

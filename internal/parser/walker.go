@@ -72,6 +72,8 @@ func (w *walker) walkStmt(v Visitor, stmt Stmt) error {
 		err = w.walkVarDecl(v, s)
 	case *Return:
 		err = w.walkReturn(v, s)
+	case *Break:
+		err = w.walkBreak(v, s)
 	default:
 		err = w.walkExpr(v, stmt.(Expr))
 	}
@@ -97,6 +99,20 @@ func (w *walker) walkReturn(v Visitor, r *Return) error {
 	return v.AfterReturnStmt(r)
 }
 
+func (w *walker) walkBreak(v Visitor, b *Break) error {
+	if err := v.BeforeBreakStmt(b); err != nil {
+		return err
+	}
+
+	if b.Expr != nil {
+		if err := w.walkExpr(v, b.Expr); err != nil {
+			return err
+		}
+	}
+
+	return v.AfterBreakStmt(b)
+}
+
 func (w *walker) walkExpr(v Visitor, expr Expr) error {
 	var err error
 
@@ -107,6 +123,8 @@ func (w *walker) walkExpr(v Visitor, expr Expr) error {
 		err = w.walkLiteralExpr(v, e)
 	case *CallExpr:
 		err = w.walkCallExpr(v, e)
+	case *BlockExpr:
+		err = w.walkBlockExpr(v, e)
 	}
 
 	return err
@@ -136,4 +154,18 @@ func (w *walker) walkCallExpr(v Visitor, ce *CallExpr) error {
 	}
 
 	return v.AfterCallExpr(ce)
+}
+
+func (w *walker) walkBlockExpr(v Visitor, be *BlockExpr) error {
+	if err := v.BeforeBlockExpr(be); err != nil {
+		return err
+	}
+
+	for _, stmt := range be.Stmts {
+		if err := w.walkStmt(v, stmt); err != nil {
+			return err
+		}
+	}
+
+	return v.AfterBlockExpr(be)
 }

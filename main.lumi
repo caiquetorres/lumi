@@ -1,17 +1,24 @@
 fun main() {
-    let firstName ="Jane"
+    let firstName = "Jane"
     let lastName = "Doe"
 
-    let name = getPreferredName(firstName, lastName)
-    let greeting = buildGreeting(name)
+    let displayName = getPreferredName(firstName, lastName)
+    let greeting = buildGreeting(displayName)
 
     printf("%s\n", greeting)
 }
 
 fun getPreferredName(first string, last string) string {
-    return first
+    let selected = {
+        let fullName = sprintf("%s %s", first, last)
+        let shortName = first
+        break sprintf("%s (%s)", shortName, fullName)
+    }
+
+    return selected
 }
 
 fun buildGreeting(name string) string {
-    return sprintf("Hello, %s!", name)
+    let salutation = "Hello"
+    return sprintf("%s, %s", salutation, name)
 }

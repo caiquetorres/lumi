@@ -53,6 +53,9 @@ func (e *emitter) BeforeFunDecl(fn *parser.FunDecl) error {
 }
 
 func (e *emitter) AfterFunDecl(fn *parser.FunDecl) error {
+	if err := e.emit(EndScope); err != nil {
+		return err
+	}
 	if err := e.emit(End); err != nil {
 		return err
 	}

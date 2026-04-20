@@ -10,9 +10,18 @@ type Visitor interface {
 	AfterParam(*Param) error
 	BeforeLiteralExpr(*LiteralExpr) error
 	BeforeIdentifierExpr(*IdentifierExpr) error
+
 	BeforeCallExpr(*CallExpr) error
 	AfterCallExpr(*CallExpr) error
+
+	BeforeBlockExpr(*BlockExpr) error
+	AfterBlockExpr(*BlockExpr) error
+
+	BeforeBreakStmt(*Break) error
+	AfterBreakStmt(*Break) error
+
 	BeforeReturnStmt(*Return) error
 	AfterReturnStmt(*Return) error
+
 	AfterStmt(Stmt) error
 }

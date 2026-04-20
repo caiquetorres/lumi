@@ -19,6 +19,22 @@ type debugVisitor struct {
 	currentIndent int
 }
 
+func (d *debugVisitor) AfterBlockExpr(*BlockExpr) error {
+	return nil
+}
+
+func (d *debugVisitor) AfterBreakStmt(*Break) error {
+	return nil
+}
+
+func (d *debugVisitor) BeforeBlockExpr(*BlockExpr) error {
+	return nil
+}
+
+func (d *debugVisitor) BeforeBreakStmt(*Break) error {
+	return nil
+}
+
 func DebugAst(ast *Ast, l *lexer.Lexer, w io.Writer) error {
 	d := &debugVisitor{
 		l: l,

@@ -99,7 +99,35 @@ func (e *emitter) AfterCallExpr(call *parser.CallExpr) error {
 	return e.flush()
 }
 
-func (e *emitter) BeforeReturnStmt(*parser.Return) error {
+func (e *emitter) BeforeBlockExpr(block *parser.BlockExpr) error {
+	if err := e.emit(BeginScope); err != nil {
+		return err
+	}
+
+	return e.flush()
+}
+
+func (e *emitter) AfterBlockExpr(block *parser.BlockExpr) error {
+	if err := e.emit(EndScope); err != nil {
+		return err
+	}
+
+	return e.flush()
+}
+
+func (e *emitter) AfterBreakStmt(brk *parser.Break) error {
+	if err := e.emit(Return); err != nil {
+		return err
+	}
+
+	return e.flush()
+}
+
+func (e *emitter) BeforeBreakStmt(brk *parser.Break) error {
+	return nil
+}
+
+func (e *emitter) BeforeReturnStmt(ret *parser.Return) error {
 	return nil
 }
 

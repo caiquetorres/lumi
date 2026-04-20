@@ -23,6 +23,7 @@ const (
 	Fun
 	Let
 	Return
+	Break
 )
 
 func (k Kind) String() string {
