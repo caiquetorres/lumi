@@ -13,6 +13,8 @@ func (p *Parser) parseStmt() (Stmt, error) {
 		expr, err = p.parseVarDecl()
 	case p.lookahead().peek().is(token.Return):
 		expr, err = p.parseReturn()
+	case p.lookahead().peek().is(token.OpenBrace):
+		return p.parseBlock()
 	case p.lookahead().peek().is(token.Break):
 		expr, err = p.parseBreak()
 	default:

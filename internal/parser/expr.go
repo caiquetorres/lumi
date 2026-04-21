@@ -66,8 +66,6 @@ func (p *Parser) parseUnit() (Expr, error) {
 		return p.parseLiteral()
 	case p.lookahead().peek().is(token.Identifier):
 		return p.parseIdentifier()
-	case p.lookahead().peek().is(token.OpenBrace):
-		return p.parseBlock()
 	default:
 		return p.lookahead().peek().expectOneOf(token.String)
 	}

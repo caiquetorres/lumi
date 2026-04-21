@@ -104,12 +104,6 @@ func (w *walker) walkBreak(v Visitor, b *Break) error {
 		return err
 	}
 
-	if b.Expr != nil {
-		if err := w.walkExpr(v, b.Expr); err != nil {
-			return err
-		}
-	}
-
 	return v.AfterBreakStmt(b)
 }
 
