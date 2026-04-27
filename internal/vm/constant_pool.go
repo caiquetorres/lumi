@@ -89,6 +89,14 @@ func parseConstantLine(line string) (int, any, string, error) {
 
 		return idx, value, value, nil
 
+	case "bool":
+		value, err := strconv.ParseBool(rawValue)
+		if err != nil {
+			return 0, nil, "", fmt.Errorf("invalid bool constant %q: %w", rawValue, err)
+		}
+
+		return idx, value, strconv.FormatBool(value), nil
+
 	default:
 		return 0, nil, "", fmt.Errorf("unsupported constant type %q", typ)
 	}

@@ -35,6 +35,13 @@ type LiteralExpr struct {
 	Value token.Token
 }
 
+func (p *Parser) isLiteral() bool {
+	return p.
+		lookahead().
+		peek().
+		isOneOf(token.String, token.True, token.False)
+}
+
 func (p *Parser) parseLiteral() (*LiteralExpr, error) {
 	tok, err := p.
 		lookahead().
@@ -72,7 +79,7 @@ func (p *Parser) parseIdentifier() (*IdentifierExpr, error) {
 
 func (p *Parser) parseUnit() (Expr, error) {
 	switch {
-	case p.lookahead().peek().is(token.String):
+	case p.isLiteral():
 		return p.parseLiteral()
 	case p.lookahead().peek().is(token.Identifier):
 		return p.parseIdentifier()

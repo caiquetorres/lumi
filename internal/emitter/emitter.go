@@ -1,9 +1,7 @@
 package emitter
 
 import (
-	"fmt"
 	"io"
-	"os"
 
 	"github.com/caiquetorres/lumi/internal/lexer"
 	"github.com/caiquetorres/lumi/internal/parser"
@@ -15,8 +13,6 @@ func Emit(ast *parser.Ast, l *lexer.Lexer, w io.Writer) (*Chunk, error) {
 	if err := parser.Walk(e, ast); err != nil {
 		return nil, err
 	}
-
-	formatBytecode(e.ch.code, os.Stdout)
 
 	builder := newBuilder(w)
 
@@ -47,18 +43,18 @@ func (e *emitter) BeforeAst(*parser.Ast) error {
 
 var _ parser.Visitor = (*emitter)(nil)
 
-func formatBytecode(code []byte, w io.Writer) {
-	if len(code) == 0 {
-		return
-	}
+// func formatBytecode(code []byte, w io.Writer) {
+// 	if len(code) == 0 {
+// 		return
+// 	}
 
-	for idx, b := range code {
-		if idx > 0 {
-			w.Write([]byte{' '})
-		}
+// 	for idx, b := range code {
+// 		if idx > 0 {
+// 			w.Write([]byte{' '})
+// 		}
 
-		_, _ = fmt.Fprintf(w, "0x%02X", b)
-	}
+// 		_, _ = fmt.Fprintf(w, "0x%02X", b)
+// 	}
 
-	fmt.Fprintf(w, "\n")
-}
+// 	fmt.Fprintf(w, "\n")
+// }

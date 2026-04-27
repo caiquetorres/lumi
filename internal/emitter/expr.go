@@ -19,6 +19,12 @@ func (e *emitter) BeforeLiteralExpr(lit *parser.LiteralExpr) error {
 		e.ch.emit(LoadConst)
 		idx := e.ch.pool.internConstant(value)
 		e.ch.emitUint32(idx)
+
+	case parser.LiteralTrue, parser.LiteralFalse:
+		e.ch.emit(LoadConst)
+		value := lit.Kind == parser.LiteralTrue
+		idx := e.ch.pool.internConstant(value)
+		e.ch.emitUint32(idx)
 	}
 
 	return nil

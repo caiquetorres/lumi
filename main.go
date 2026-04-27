@@ -66,6 +66,8 @@ func main() {
 }
 
 func compilePipeline(src io.Reader, out io.Writer, debugMode bool) error {
+	_ = debugMode
+
 	var (
 		l = lexer.New(src)
 		p = parser.New(l)
@@ -75,14 +77,6 @@ func compilePipeline(src io.Reader, out io.Writer, debugMode bool) error {
 	if err != nil {
 		return err
 	}
-
-	// if debugMode {
-	// 	fmt.Println("Parsed AST:")
-	// 	if err := parser.DebugAst(ast, l, os.Stdout); err != nil {
-	// 		return err
-	// 	}
-	// 	fmt.Println("")
-	// }
 
 	if err := semantic.Analyze(ast); err != nil {
 		return err
