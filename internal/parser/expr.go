@@ -13,6 +13,8 @@ type LiteralKind int
 
 const (
 	LiteralString LiteralKind = iota + 1
+	LiteralTrue
+	LiteralFalse
 )
 
 func (p *Parser) parseExpr() (Expr, error) {
@@ -34,15 +36,23 @@ type LiteralExpr struct {
 }
 
 func (p *Parser) parseLiteral() (*LiteralExpr, error) {
-	tok, err := p.lookahead().next().expect(token.String)
+	tok, err := p.
+		lookahead().
+		next().
+		expectOneOf(token.String, token.True, token.False)
+
 	if err != nil {
 		return nil, err
 	}
 
-	return &LiteralExpr{
-		Kind:  LiteralString,
-		Value: tok,
-	}, nil
+	switch tok.Kind() {
+	case token.True:
+		return &LiteralExpr{Kind: LiteralTrue, Value: tok}, nil
+	case token.False:
+		return &LiteralExpr{Kind: LiteralFalse, Value: tok}, nil
+	default:
+		return &LiteralExpr{Kind: LiteralString, Value: tok}, nil
+	}
 }
 
 type IdentifierExpr struct {

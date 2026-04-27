@@ -11,6 +11,8 @@ var keywords = map[string]token.Kind{
 	"let":    token.Let,
 	"return": token.Return,
 	"break":  token.Break,
+	"true":   token.True,
+	"false":  token.False,
 }
 
 func (l *Lexer) isKeywordOrIdentifier() bool {

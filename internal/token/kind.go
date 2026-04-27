@@ -19,6 +19,9 @@ const (
 
 	String
 
+	False
+	True
+
 	Pub
 	Fun
 	Let
