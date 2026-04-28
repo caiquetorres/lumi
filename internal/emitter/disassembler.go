@@ -63,9 +63,6 @@ func (d *Disassembler) disassembleInstruction() {
 	case EndScope:
 		d.simpleInstruction("ENDSCOPE")
 
-	case End:
-		d.simpleInstruction("END")
-
 	case Pop:
 		d.simpleInstruction("POP")
 

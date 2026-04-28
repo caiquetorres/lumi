@@ -7,8 +7,8 @@ import (
 )
 
 func (e *emitter) AfterFunDecl(*parser.FunDecl) error {
+	e.ch.emit(Return)
 	e.ch.emit(EndScope)
-	e.ch.emit(End)
 
 	return nil
 }

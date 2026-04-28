@@ -61,7 +61,7 @@ func (m *vm) load() error {
 				return fmt.Errorf("invalid call arity operand at pc=%d: %w", c.pc, err)
 			}
 
-		case emitter.End, emitter.BeginScope, emitter.EndScope, emitter.Pop,
+		case emitter.BeginScope, emitter.EndScope, emitter.Pop,
 			emitter.Return:
 			// No operands to consume.
 

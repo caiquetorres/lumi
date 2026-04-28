@@ -87,6 +87,11 @@ func (m *vm) run() error {
 			m.frames.current().moveTo(offset)
 
 		case emitter.Return:
+			m.frames.pop()
+
+			if m.frames.isEmpty() {
+				return nil
+			}
 
 		case emitter.BeginScope:
 			m.symbolTable = newSymbolTable(m.symbolTable)
@@ -96,12 +101,6 @@ func (m *vm) run() error {
 				m.symbolTable = m.symbolTable.parent
 			}
 
-		case emitter.End:
-			m.frames.pop()
-
-			if m.frames.isEmpty() {
-				return nil
-			}
 		}
 	}
 }
