@@ -49,7 +49,16 @@ func (d *Disassembler) disassembleInstruction() {
 		d.funDeclInstruction()
 
 	case DefineSymbol:
-		d.varDeclInstruction()
+		d.defineSymbolInstruction()
+
+	case GetSymbol:
+		d.getSymbolInstruction()
+
+	case Call:
+		d.callInstruction()
+
+	case BeginScope:
+		d.simpleInstruction("BEGINSCOPE")
 
 	case EndScope:
 		d.simpleInstruction("ENDSCOPE")
@@ -62,6 +71,7 @@ func (d *Disassembler) disassembleInstruction() {
 
 	case Return:
 		d.simpleInstruction("RETURN")
+
 	}
 }
 
@@ -77,6 +87,15 @@ func (d *Disassembler) loadConstInstruction() {
 	constIdx := d.readUint32()
 
 	_, _ = fmt.Fprintf(d.w, " #%d\n", constIdx)
+}
+
+func (d *Disassembler) callInstruction() {
+	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
+	_, _ = fmt.Fprintf(d.w, "%-10s", "CALL")
+
+	argCount := d.readByte()
+
+	_, _ = fmt.Fprintf(d.w, " args=%d\n", argCount)
 }
 
 func (d *Disassembler) funDeclInstruction() {
@@ -98,9 +117,18 @@ func (d *Disassembler) funDeclInstruction() {
 	_, _ = fmt.Fprintf(d.w, " name=#%d params=%s entry=%d\n", fnNameIdx, paramsStr, entryPoint)
 }
 
-func (d *Disassembler) varDeclInstruction() {
+func (d *Disassembler) defineSymbolInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
 	_, _ = fmt.Fprintf(d.w, "%-10s", "VARDECL")
+
+	nameIdx := d.readUint32()
+
+	_, _ = fmt.Fprintf(d.w, " name=#%d\n", nameIdx)
+}
+
+func (d *Disassembler) getSymbolInstruction() {
+	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
+	_, _ = fmt.Fprintf(d.w, "%-10s", "GETSYMBOL")
 
 	nameIdx := d.readUint32()
 

@@ -42,19 +42,3 @@ func (e *emitter) BeforeAst(*parser.Ast) error {
 }
 
 var _ parser.Visitor = (*emitter)(nil)
-
-// func formatBytecode(code []byte, w io.Writer) {
-// 	if len(code) == 0 {
-// 		return
-// 	}
-
-// 	for idx, b := range code {
-// 		if idx > 0 {
-// 			w.Write([]byte{' '})
-// 		}
-
-// 		_, _ = fmt.Fprintf(w, "0x%02X", b)
-// 	}
-
-// 	fmt.Fprintf(w, "\n")
-// }
