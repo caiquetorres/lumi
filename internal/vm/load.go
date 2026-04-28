@@ -88,8 +88,7 @@ func (m *vm) registerNativeFunctions() {
 
 	m.globals.define("sprintf", nativeFn{
 		fn: func(args ...any) (any, error) {
-			_ = fmt.Sprintf(args[0].(string), args[1:]...)
-			return nil, nil
+			return fmt.Sprintf(args[0].(string), args[1:]...), nil
 		},
 	})
 
