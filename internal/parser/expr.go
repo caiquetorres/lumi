@@ -4,10 +4,9 @@ import (
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
-type (
-	Expr any
-	Stmt Expr
-)
+type Expr interface {
+	expr() // marker method
+}
 
 type LiteralKind int
 
@@ -34,6 +33,10 @@ type LiteralExpr struct {
 	Kind  LiteralKind
 	Value token.Token
 }
+
+func (l *LiteralExpr) expr() {}
+
+var _ Expr = (*LiteralExpr)(nil)
 
 func (p *Parser) isLiteral() bool {
 	return p.
@@ -66,6 +69,10 @@ type IdentifierExpr struct {
 	Name token.Token
 }
 
+func (l *IdentifierExpr) expr() {}
+
+var _ Expr = (*IdentifierExpr)(nil)
+
 func (p *Parser) parseIdentifier() (*IdentifierExpr, error) {
 	tok, err := p.lookahead().next().expect(token.Identifier)
 	if err != nil {
@@ -84,7 +91,8 @@ func (p *Parser) parseUnit() (Expr, error) {
 	case p.lookahead().peek().is(token.Identifier):
 		return p.parseIdentifier()
 	default:
-		return p.lookahead().peek().expectOneOf(token.String)
+		_, err := p.lookahead().peek().expectOneOf(token.String)
+		return nil, err
 	}
 }
 
@@ -92,6 +100,10 @@ type CallExpr struct {
 	Callee Expr
 	Args   []Expr
 }
+
+var _ Expr = (*CallExpr)(nil)
+
+func (c *CallExpr) expr() {}
 
 func (p *Parser) parseCallExpr(callee Expr) (Expr, error) {
 	_, err := p.lookahead().next().expect(token.OpenParen)

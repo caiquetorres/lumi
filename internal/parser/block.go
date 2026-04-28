@@ -6,6 +6,10 @@ type BlockExpr struct {
 	Stmts []Stmt
 }
 
+func (b *BlockExpr) expr() {}
+
+var _ Expr = (*BlockExpr)(nil)
+
 func (p *Parser) parseBlock() (*BlockExpr, error) {
 	_, err := p.lookahead().next().expect(token.OpenBrace)
 	if err != nil {
