@@ -2,6 +2,8 @@ package vm
 
 import (
 	"io"
+
+	"github.com/caiquetorres/lumi/internal/constpool"
 )
 
 func Execute(src io.ReadSeeker) error {
@@ -14,7 +16,7 @@ func Execute(src io.ReadSeeker) error {
 		return err
 	}
 
-	c, err := parseConstantPool(constants)
+	pool, err := constpool.ParseConstantPool(constants)
 	if err != nil {
 		return err
 	}
@@ -24,13 +26,14 @@ func Execute(src io.ReadSeeker) error {
 		return err
 	}
 
-	globals := newSymbolTable(nil)
+	globals := newGlobalSymbolTable()
 
 	machine := &vm{
-		c:           c,
+		pool:        pool,
 		src:         instructions,
 		globals:     globals,
 		symbolTable: globals,
+		stack:       make([]any, 0, 16),
 	}
 
 	if err := machine.load(); err != nil {

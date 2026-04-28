@@ -2,10 +2,12 @@ package vm
 
 import (
 	"fmt"
+
+	"github.com/caiquetorres/lumi/internal/constpool"
 )
 
 type vm struct {
-	c *constantPool
+	pool *constpool.ConstantPool
 
 	globals     *symbolTable
 	symbolTable *symbolTable
@@ -29,7 +31,7 @@ func (m *vm) readConstant() (any, error) {
 		return 0, err
 	}
 
-	constant, exists := m.c.getConstant(idx)
+	constant, exists := m.pool.GetConstant(idx)
 	if !exists {
 		return nil, fmt.Errorf("constant with index %d not found", idx)
 	}

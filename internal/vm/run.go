@@ -78,7 +78,7 @@ func (m *vm) run() error {
 		case emitter.Pop:
 			_, _ = m.popObject()
 
-		case emitter.Jump:
+		case emitter.JumpTo:
 			offset, err := m.frames.current().readUint32()
 			if err != nil {
 				return fmt.Errorf("invalid jump offset operand: %w", err)

@@ -13,7 +13,7 @@ const (
 	Call
 	Return
 
-	Jump
+	JumpTo
 	JumpIfFalse
 
 	Pop

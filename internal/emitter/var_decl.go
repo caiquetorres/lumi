@@ -6,7 +6,7 @@ func (e *emitter) AfterVarDecl(vd *parser.VarDecl) error {
 	e.ch.emit(DefineSymbol)
 
 	name := e.lex.Lexeme(vd.Identifier)
-	idx := e.ch.pool.internConstant(name)
+	idx := e.ch.pool.InternConstant(name)
 	e.ch.emitUint32(idx)
 
 	return nil

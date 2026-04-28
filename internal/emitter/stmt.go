@@ -25,7 +25,7 @@ func (e *emitter) BeforeBreakStmt(*parser.Break) error {
 }
 
 func (e *emitter) AfterBreakStmt(brk *parser.Break) error {
-	e.ch.emit(Jump)
+	e.ch.emit(JumpTo)
 	patchOffset := e.ch.emitUint32(0)
 
 	top := len(e.blockStack) - 1

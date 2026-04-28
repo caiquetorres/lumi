@@ -6,6 +6,10 @@ type symbolTable struct {
 	parent *symbolTable
 }
 
+func newGlobalSymbolTable() *symbolTable {
+	return newSymbolTable(nil)
+}
+
 func newSymbolTable(parent *symbolTable) *symbolTable {
 	return &symbolTable{
 		table:  make(map[string]any),

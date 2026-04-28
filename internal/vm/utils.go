@@ -5,30 +5,32 @@ import (
 	"io"
 )
 
-func isLumiFile(fp io.ReadSeeker) bool {
-	magic := make([]byte, 4)
+const lumiMagic = "LUMI"
 
-	n, err := fp.Read(magic)
+func isLumiFile(fp io.ReadSeeker) bool {
+	var magic [4]byte
+
+	n, err := fp.Read(magic[:])
 	if err != nil || n != 4 {
 		return false
 	}
 
-	return string(magic) == "LUMI"
+	return string(magic[:]) == lumiMagic
 }
 
-func getConstantsSize(fp io.ReadSeeker) (int, error) {
-	sizeBuf := make([]byte, 4)
+func getConstantPoolLen(fp io.ReadSeeker) (int, error) {
+	var sizeBuf [4]byte
 
-	n, err := fp.Read(sizeBuf)
+	n, err := fp.Read(sizeBuf[:])
 	if err != nil || n != 4 {
 		return 0, err
 	}
 
-	return int(binary.BigEndian.Uint32(sizeBuf)), nil
+	return int(binary.BigEndian.Uint32(sizeBuf[:])), nil
 }
 
 func getConstants(fp io.ReadSeeker) ([]byte, error) {
-	size, err := getConstantsSize(fp)
+	size, err := getConstantPoolLen(fp)
 	if err != nil {
 		return nil, err
 	}
@@ -41,28 +43,6 @@ func getConstants(fp io.ReadSeeker) ([]byte, error) {
 	}
 
 	return constants, nil
-}
-
-func getEntryPoint(fp io.ReadSeeker) (uint32, bool, error) {
-	entryPointFlag := make([]byte, 1)
-
-	n, err := fp.Read(entryPointFlag)
-	if err != nil || n != 1 {
-		return 0, false, err
-	}
-
-	if entryPointFlag[0] == 0 {
-		return 0, false, nil
-	}
-
-	entryPointBuf := make([]byte, 4)
-
-	n, err = fp.Read(entryPointBuf)
-	if err != nil || n != 4 {
-		return 0, false, err
-	}
-
-	return binary.BigEndian.Uint32(entryPointBuf), true, nil
 }
 
 func getInstructions(fp io.ReadSeeker) ([]byte, error) {

@@ -17,7 +17,7 @@ func (e *emitter) BeforeFunDecl(fn *parser.FunDecl) error {
 	e.ch.emit(FnDecl)
 
 	fnName := e.lex.Lexeme(fn.Identifier)
-	idx := e.ch.pool.internConstant(fnName)
+	idx := e.ch.pool.InternConstant(fnName)
 	e.ch.emitUint32(idx)
 
 	paramCount := len(fn.Params)
@@ -36,7 +36,7 @@ func (e *emitter) BeforeFunDecl(fn *parser.FunDecl) error {
 		param := fn.Params[i]
 
 		paramName := e.lex.Lexeme(param.Name)
-		idx := e.ch.pool.internConstant(paramName)
+		idx := e.ch.pool.InternConstant(paramName)
 		e.ch.emitUint32(idx)
 	}
 

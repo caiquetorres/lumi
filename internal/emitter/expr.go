@@ -17,13 +17,13 @@ func (e *emitter) BeforeLiteralExpr(lit *parser.LiteralExpr) error {
 		}
 
 		e.ch.emit(LoadConst)
-		idx := e.ch.pool.internConstant(value)
+		idx := e.ch.pool.InternConstant(value)
 		e.ch.emitUint32(idx)
 
 	case parser.LiteralTrue, parser.LiteralFalse:
 		e.ch.emit(LoadConst)
 		value := lit.Kind == parser.LiteralTrue
-		idx := e.ch.pool.internConstant(value)
+		idx := e.ch.pool.InternConstant(value)
 		e.ch.emitUint32(idx)
 	}
 
@@ -35,7 +35,7 @@ func (e *emitter) BeforeIdentifierExpr(id *parser.IdentifierExpr) error {
 
 	name := e.lex.Lexeme(id.Name)
 
-	constIdx := e.ch.pool.internConstant(name)
+	constIdx := e.ch.pool.InternConstant(name)
 	e.ch.emitUint32(constIdx)
 
 	return nil

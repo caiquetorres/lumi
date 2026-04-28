@@ -3,6 +3,8 @@ package emitter
 import (
 	"encoding/binary"
 	"fmt"
+
+	"github.com/caiquetorres/lumi/internal/constpool"
 )
 
 const defaultChunkSize = 512
@@ -11,14 +13,13 @@ type Chunk struct {
 	ip uint32
 
 	code []byte
-	pool *constantPool
+	pool *constpool.ConstantPool
 }
 
 func newChunk() *Chunk {
 	return &Chunk{
-		ip:   0,
 		code: make([]byte, 0, defaultChunkSize),
-		pool: newConstantPool(),
+		pool: constpool.New(),
 	}
 }
 

@@ -51,7 +51,7 @@ func (m *vm) load() error {
 			emitter.Return:
 			// No operands to consume.
 
-		case emitter.Jump:
+		case emitter.JumpTo:
 			if _, err := c.readUint32(); err != nil {
 				return fmt.Errorf("invalid jump offset operand at pc=%d: %w", c.pc, err)
 			}
@@ -66,6 +66,12 @@ func (m *vm) load() error {
 		}
 	}
 
+	m.registerNativeFunctions()
+
+	return nil
+}
+
+func (m *vm) registerNativeFunctions() {
 	m.globals.define("printf", nativeFn{
 		fn: func(args ...any) (any, error) {
 			fmt.Printf(args[0].(string), args[1:]...)
@@ -73,9 +79,17 @@ func (m *vm) load() error {
 		},
 	})
 
+	m.globals.define("println", nativeFn{
+		fn: func(args ...any) (any, error) {
+			fmt.Println(args...)
+			return nil, nil
+		},
+	})
+
 	m.globals.define("sprintf", nativeFn{
 		fn: func(args ...any) (any, error) {
-			return fmt.Sprintf(args[0].(string), args[1:]...), nil
+			_ = fmt.Sprintf(args[0].(string), args[1:]...)
+			return nil, nil
 		},
 	})
 
@@ -89,12 +103,10 @@ func (m *vm) load() error {
 			return str == "", nil
 		},
 	})
-
-	return nil
 }
 
 func (m *vm) registerFunction(nameIdx uint32, entryPoint uint32) error {
-	fnName, err := m.c.getConstantAsString(nameIdx)
+	fnName, err := m.pool.GetConstantAsString(nameIdx)
 	if err != nil {
 		return err
 	}

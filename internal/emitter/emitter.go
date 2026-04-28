@@ -16,7 +16,7 @@ func Emit(ast *parser.Ast, l *lexer.Lexer, w io.Writer) (*Chunk, error) {
 
 	builder := newBuilder(w)
 
-	return e.ch, builder.build(e.ch.pool.serialize(), e.ch.code)
+	return e.ch, builder.build(e.ch.pool.Serialize(), e.ch.code)
 }
 
 type blockContext struct {

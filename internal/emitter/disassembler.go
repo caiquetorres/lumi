@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"log"
 )
 
 type Disassembler struct {
@@ -31,7 +32,7 @@ func (d *Disassembler) Disassemble() {
 
 func (d *Disassembler) move(n int) {
 	if d.offset+n > len(d.ch.code) {
-		panic("offset out of bounds")
+		log.Panic("offset out of bounds")
 	}
 
 	d.offset += n
