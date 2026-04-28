@@ -23,33 +23,8 @@ func (m *vm) execCall() error {
 	return nil
 }
 
-func (m *vm) callFn(fnObj *fn, arity uint8) error {
-	params := make(map[string]any, len(fnObj.params))
-
-	for i := int(arity) - 1; i >= 0; i-- {
-		if i >= len(fnObj.params) {
-			continue
-		}
-
-		paramName, err := m.c.getConstantAsString(fnObj.params[i])
-		if err != nil {
-			return err
-		}
-
-		paramValue, err := m.popObject()
-		if err != nil {
-			return err
-		}
-
-		params[paramName] = paramValue
-	}
-
+func (m *vm) callFn(fnObj *fn, _ uint8) error {
 	m.frames.push(fnObj.entry, m.src)
-	m.symbolTable = newSymbolTable(m.globals)
-
-	for name, value := range params {
-		m.symbolTable.define(name, value)
-	}
 
 	return nil
 }

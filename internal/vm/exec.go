@@ -24,10 +24,13 @@ func Execute(src io.ReadSeeker) error {
 		return err
 	}
 
+	globals := newSymbolTable(nil)
+
 	machine := &vm{
-		c:       c,
-		src:     instructions,
-		globals: newSymbolTable(nil),
+		c:           c,
+		src:         instructions,
+		globals:     globals,
+		symbolTable: globals,
 	}
 
 	if err := machine.load(); err != nil {

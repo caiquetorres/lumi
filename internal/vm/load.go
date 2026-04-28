@@ -26,26 +26,12 @@ func (m *vm) load() error {
 				return fmt.Errorf("invalid function declaration name index at pc=%d: %w", c.pc, err)
 			}
 
-			paramCount, err := c.readUint8()
-			if err != nil {
-				return fmt.Errorf("invalid function declaration parameter count at pc=%d: %w", c.pc, err)
-			}
-
-			var params []uint32
-			for range paramCount {
-				paramIdx, err := c.readUint32()
-				if err != nil {
-					return fmt.Errorf("invalid function declaration parameter index at pc=%d: %w", c.pc, err)
-				}
-				params = append(params, paramIdx)
-			}
-
 			entryPoint, err := c.readUint32()
 			if err != nil {
 				return fmt.Errorf("invalid function declaration entry point at pc=%d: %w", c.pc, err)
 			}
 
-			if err := m.registerFunction(nameIdx, params, entryPoint); err != nil {
+			if err := m.registerFunction(nameIdx, entryPoint); err != nil {
 				return err
 			}
 
@@ -91,15 +77,14 @@ func (m *vm) load() error {
 	return nil
 }
 
-func (m *vm) registerFunction(nameIdx uint32, params []uint32, entryPoint uint32) error {
+func (m *vm) registerFunction(nameIdx uint32, entryPoint uint32) error {
 	fnName, err := m.c.getConstantAsString(nameIdx)
 	if err != nil {
 		return err
 	}
 
 	m.globals.define(fnName, fn{
-		entry:  entryPoint,
-		params: params,
+		entry: entryPoint,
 	})
 
 	return nil

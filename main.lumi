@@ -15,6 +15,5 @@ fun getPreferredName(first string, last string) string {
 }
 
 fun buildGreeting(name string) string {
-    let salutation = "Hello"
-    return sprintf("%s, %s", salutation, name)
+    return sprintf("Hello, %s", name)
 }

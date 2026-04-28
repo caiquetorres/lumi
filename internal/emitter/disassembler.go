@@ -5,7 +5,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
-	"strings"
 )
 
 type Disassembler struct {
@@ -100,23 +99,14 @@ func (d *Disassembler) funDeclInstruction() {
 	_, _ = fmt.Fprintf(d.w, "%-10s", "FNDECL")
 
 	fnNameIdx := d.readUint32()
-	paramCount := int(d.readByte())
-
-	params := []string{}
-	for i := 0; i < int(paramCount); i++ {
-		paramIdx := d.readUint32()
-		params = append(params, fmt.Sprintf("#%d", paramIdx))
-	}
-
 	entryPoint := d.readUint32()
 
-	paramsStr := fmt.Sprintf("[%s]", strings.Join(params, ", "))
-	_, _ = fmt.Fprintf(d.w, " name=#%d params=%s entry=%d\n", fnNameIdx, paramsStr, entryPoint)
+	_, _ = fmt.Fprintf(d.w, " name=#%d entry=%d\n", fnNameIdx, entryPoint)
 }
 
 func (d *Disassembler) defineSymbolInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-10s", "VARDECL")
+	_, _ = fmt.Fprintf(d.w, "%-10s", "DEFSYMBOL")
 
 	nameIdx := d.readUint32()
 

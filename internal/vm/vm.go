@@ -16,8 +16,7 @@ type vm struct {
 }
 
 type fn struct {
-	entry  uint32
-	params []uint32
+	entry uint32
 }
 
 type nativeFn struct {
