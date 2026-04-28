@@ -11,6 +11,8 @@ func (p *Parser) parseStmt() (Stmt, error) {
 	switch {
 	case p.lookahead().peek().is(token.Let):
 		expr, err = p.parseVarDecl()
+	case p.lookahead().peek().is(token.If):
+		expr, err = p.parseIf()
 	case p.lookahead().peek().is(token.Return):
 		expr, err = p.parseReturn()
 	case p.lookahead().peek().is(token.OpenBrace):

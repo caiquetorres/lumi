@@ -57,7 +57,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		if err := compilePipeline(f, o, args.debug); err != nil {
+		if err := compilePipeline(f, o, args.disassemble); err != nil {
 			log.Fatal(err)
 		}
 	default:
@@ -65,9 +65,7 @@ func main() {
 	}
 }
 
-func compilePipeline(src io.Reader, out io.Writer, debugMode bool) error {
-	_ = debugMode
-
+func compilePipeline(src io.Reader, out io.Writer, disassemble bool) error {
 	var (
 		l = lexer.New(src)
 		p = parser.New(l)
@@ -87,7 +85,7 @@ func compilePipeline(src io.Reader, out io.Writer, debugMode bool) error {
 		return err
 	}
 
-	if debugMode {
+	if disassemble {
 		emitter.
 			NewDisassembler(os.Stdout, ch).
 			Disassemble()
@@ -97,9 +95,9 @@ func compilePipeline(src io.Reader, out io.Writer, debugMode bool) error {
 }
 
 type arguments struct {
-	filePath string
-	outPath  string
-	debug    bool
+	filePath    string
+	outPath     string
+	disassemble bool
 }
 
 type runArguments struct {
@@ -109,7 +107,7 @@ type runArguments struct {
 func parseArgs() arguments {
 	file := flag.String("file", "", "path to source file")
 	out := flag.String("out", "", "path to output file")
-	debug := flag.Bool("debug", false, "enable debug mode")
+	disassemble := flag.Bool("disassemble", false, "enable disassemble mode")
 
 	flag.Parse()
 
@@ -121,14 +119,14 @@ func parseArgs() arguments {
 		log.Fatal("out argument is required")
 	}
 
-	if debug == nil {
+	if disassemble == nil {
 		log.Fatal("debug argument is required")
 	}
 
 	return arguments{
-		filePath: *file,
-		outPath:  *out,
-		debug:    *debug,
+		filePath:    *file,
+		outPath:     *out,
+		disassemble: *disassemble,
 	}
 }
 

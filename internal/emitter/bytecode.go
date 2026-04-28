@@ -14,5 +14,7 @@ const (
 	Return
 
 	Jump
+	JumpIfFalse
+
 	Pop
 )

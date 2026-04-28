@@ -16,7 +16,7 @@ go run . run <file>.lbc
 
 ```lumi
 fun main() {
-    let firstName = "Jane"
+    let firstName = "John"
     let lastName = "Doe"
 
     let displayName = getPreferredName(firstName, lastName)
@@ -26,13 +26,14 @@ fun main() {
 }
 
 fun getPreferredName(first string, last string) string {
-    let fullName = sprintf("%s %s", first, last)
-    let shortName = first
-    return sprintf("%s (%s)", shortName, fullName)
+    if isEmpty(last) {
+        return first
+    }
+
+    return sprintf("Mr. %s", last)
 }
 
 fun buildGreeting(name string) string {
-    let salutation = "Hello"
-    return sprintf("%s, %s", salutation, name)
+    return sprintf("Hello, %s", name)
 }
 ```

@@ -27,6 +27,7 @@ const (
 	Let
 	Return
 	Break
+	If
 )
 
 func (k Kind) String() string {

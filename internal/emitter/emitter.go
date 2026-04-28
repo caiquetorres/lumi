@@ -28,12 +28,14 @@ type emitter struct {
 	lex *lexer.Lexer
 
 	blockStack []blockContext
+	jumpStack  []uint32
 }
 
 func newEmitter(lex *lexer.Lexer) *emitter {
 	return &emitter{
-		ch:  newChunk(),
-		lex: lex,
+		ch:        newChunk(),
+		lex:       lex,
+		jumpStack: make([]uint32, 0),
 	}
 }
 

@@ -128,6 +128,16 @@ func (d *debugVisitor) AfterCallExpr(expr *CallExpr) error {
 	return d.flush()
 }
 
+func (d *debugVisitor) AfterIfCondition(ifStmt *If) error {
+	return nil
+}
+
+func (d *debugVisitor) AfterIfThenBlock(ifStmt *If) error {
+	d.indentOut()
+
+	return nil
+}
+
 func (d *debugVisitor) BeforeReturnStmt(*Return) error {
 	d.writeIndent()
 

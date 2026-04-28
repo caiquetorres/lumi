@@ -56,6 +56,11 @@ func (m *vm) load() error {
 				return fmt.Errorf("invalid jump offset operand at pc=%d: %w", c.pc, err)
 			}
 
+		case emitter.JumpIfFalse:
+			if _, err := c.readUint32(); err != nil {
+				return fmt.Errorf("invalid jump offset operand at pc=%d: %w", c.pc, err)
+			}
+
 		default:
 			return fmt.Errorf("unknown opcode %d at pc=%d", opcode, c.pc-1)
 		}
@@ -71,6 +76,17 @@ func (m *vm) load() error {
 	m.globals.define("sprintf", nativeFn{
 		fn: func(args ...any) (any, error) {
 			return fmt.Sprintf(args[0].(string), args[1:]...), nil
+		},
+	})
+
+	m.globals.define("isEmpty", nativeFn{
+		fn: func(args ...any) (any, error) {
+			str, ok := args[0].(string)
+			if !ok {
+				return nil, fmt.Errorf("isEmpty expects a string argument")
+			}
+
+			return str == "", nil
 		},
 	})
 

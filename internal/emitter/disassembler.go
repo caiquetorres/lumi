@@ -53,6 +53,9 @@ func (d *Disassembler) disassembleInstruction() {
 	case GetSymbol:
 		d.getSymbolInstruction()
 
+	case JumpIfFalse:
+		d.jumpIfFalseInstruction()
+
 	case Call:
 		d.callInstruction()
 
@@ -73,12 +76,12 @@ func (d *Disassembler) disassembleInstruction() {
 
 func (d *Disassembler) simpleInstruction(name string) {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-10s\n", name)
+	_, _ = fmt.Fprintf(d.w, "%-12s\n", name)
 }
 
 func (d *Disassembler) loadConstInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-10s", "LOADCONST")
+	_, _ = fmt.Fprintf(d.w, "%-12s", "LOADCONST")
 
 	constIdx := d.readUint32()
 
@@ -87,7 +90,7 @@ func (d *Disassembler) loadConstInstruction() {
 
 func (d *Disassembler) callInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-10s", "CALL")
+	_, _ = fmt.Fprintf(d.w, "%-12s", "CALL")
 
 	argCount := d.readByte()
 
@@ -96,7 +99,7 @@ func (d *Disassembler) callInstruction() {
 
 func (d *Disassembler) funDeclInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-10s", "FNDECL")
+	_, _ = fmt.Fprintf(d.w, "%-12s", "FNDECL")
 
 	fnNameIdx := d.readUint32()
 	entryPoint := d.readUint32()
@@ -106,7 +109,7 @@ func (d *Disassembler) funDeclInstruction() {
 
 func (d *Disassembler) defineSymbolInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-10s", "DEFSYMBOL")
+	_, _ = fmt.Fprintf(d.w, "%-12s", "DEFSYMBOL")
 
 	nameIdx := d.readUint32()
 
@@ -115,11 +118,20 @@ func (d *Disassembler) defineSymbolInstruction() {
 
 func (d *Disassembler) getSymbolInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-10s", "GETSYMBOL")
+	_, _ = fmt.Fprintf(d.w, "%-12s", "GETSYMBOL")
 
 	nameIdx := d.readUint32()
 
 	_, _ = fmt.Fprintf(d.w, " name=#%d\n", nameIdx)
+}
+
+func (d *Disassembler) jumpIfFalseInstruction() {
+	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
+	_, _ = fmt.Fprintf(d.w, "%-12s", "JUMPIFFALSE")
+
+	jumpTo := d.readUint32()
+
+	_, _ = fmt.Fprintf(d.w, " to=%d\n", jumpTo)
 }
 
 func (d *Disassembler) readByte() byte {

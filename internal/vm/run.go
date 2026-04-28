@@ -86,6 +86,31 @@ func (m *vm) run() error {
 
 			m.frames.current().moveTo(offset)
 
+		case emitter.JumpIfFalse:
+			offset, err := m.frames.current().readUint32()
+			if err != nil {
+				return fmt.Errorf("invalid jump offset operand: %w", err)
+			}
+
+			condition, err := m.popObject()
+			if err != nil {
+				return err
+			}
+
+			switch v := condition.(type) {
+			case bool:
+				condition = v
+			case string:
+				condition = v != ""
+			default:
+				return fmt.Errorf("expected boolean condition for JumpIfFalse, got %T", condition)
+			}
+
+			isFalse := condition == false
+			if isFalse {
+				m.frames.current().moveTo(offset)
+			}
+
 		case emitter.Return:
 			m.frames.pop()
 
