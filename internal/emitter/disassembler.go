@@ -1,0 +1,121 @@
+package emitter
+
+import (
+	"bufio"
+	"encoding/binary"
+	"fmt"
+	"io"
+	"strings"
+)
+
+type Disassembler struct {
+	offset int
+
+	ch *Chunk
+	w  *bufio.Writer
+}
+
+func NewDisassembler(w io.Writer, ch *Chunk) *Disassembler {
+	return &Disassembler{
+		ch: ch,
+		w:  bufio.NewWriter(w),
+	}
+}
+
+func (d *Disassembler) Disassemble() {
+	for d.offset = 0; d.offset < len(d.ch.code); {
+		d.disassembleInstruction()
+	}
+
+	_ = d.w.Flush()
+}
+
+func (d *Disassembler) move(n int) {
+	if d.offset+n > len(d.ch.code) {
+		panic("offset out of bounds")
+	}
+
+	d.offset += n
+}
+
+func (d *Disassembler) disassembleInstruction() {
+	opcode := d.readByte()
+
+	switch opcode {
+	case LoadConst:
+		d.loadConstInstruction()
+
+	case FnDecl:
+		d.funDeclInstruction()
+
+	case DefineSymbol:
+		d.varDeclInstruction()
+
+	case EndScope:
+		d.simpleInstruction("ENDSCOPE")
+
+	case End:
+		d.simpleInstruction("END")
+
+	case Pop:
+		d.simpleInstruction("POP")
+
+	case Return:
+		d.simpleInstruction("RETURN")
+	}
+}
+
+func (d *Disassembler) simpleInstruction(name string) {
+	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
+	_, _ = fmt.Fprintf(d.w, "%-10s\n", name)
+}
+
+func (d *Disassembler) loadConstInstruction() {
+	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
+	_, _ = fmt.Fprintf(d.w, "%-10s", "LOADCONST")
+
+	constIdx := d.readUint32()
+
+	_, _ = fmt.Fprintf(d.w, " #%d\n", constIdx)
+}
+
+func (d *Disassembler) funDeclInstruction() {
+	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
+	_, _ = fmt.Fprintf(d.w, "%-10s", "FNDECL")
+
+	fnNameIdx := d.readUint32()
+	paramCount := int(d.readByte())
+
+	params := []string{}
+	for i := 0; i < int(paramCount); i++ {
+		paramIdx := d.readUint32()
+		params = append(params, fmt.Sprintf("#%d", paramIdx))
+	}
+
+	entryPoint := d.readUint32()
+
+	paramsStr := fmt.Sprintf("[%s]", strings.Join(params, ", "))
+	_, _ = fmt.Fprintf(d.w, " name=#%d params=%s entry=%d\n", fnNameIdx, paramsStr, entryPoint)
+}
+
+func (d *Disassembler) varDeclInstruction() {
+	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
+	_, _ = fmt.Fprintf(d.w, "%-10s", "VARDECL")
+
+	nameIdx := d.readUint32()
+
+	_, _ = fmt.Fprintf(d.w, " name=#%d\n", nameIdx)
+}
+
+func (d *Disassembler) readByte() byte {
+	b := d.ch.code[d.offset]
+	d.move(1)
+	return b
+}
+
+func (d *Disassembler) readUint32() uint32 {
+	buf := d.ch.code[d.offset : d.offset+4]
+	b := binary.BigEndian.Uint32(buf)
+	d.move(4)
+	return b
+}
