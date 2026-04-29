@@ -14,14 +14,15 @@ type Visitor interface {
 	BeforeCallExpr(*CallExpr) error
 	AfterCallExpr(*CallExpr) error
 
-	BeforeBlockExpr(*BlockExpr) error
-	AfterBlockExpr(*BlockExpr) error
+	BeforeBlockExpr(*Block) error
+	AfterBlockExpr(*Block) error
 
 	BeforeBreakStmt(*Break) error
 	AfterBreakStmt(*Break) error
 
 	AfterIfCondition(*If) error
 	AfterIfThenBlock(*If) error
+	AfterElseBlock(*If) error
 
 	BeforeReturnStmt(*Return) error
 	AfterReturnStmt(*Return) error

@@ -54,6 +54,9 @@ func (d *Disassembler) disassembleInstruction() {
 	case GetSymbol:
 		d.getSymbolInstruction()
 
+	case JumpTo:
+		d.jumpToInstruction()
+
 	case JumpIfFalse:
 		d.jumpIfFalseInstruction()
 
@@ -61,10 +64,10 @@ func (d *Disassembler) disassembleInstruction() {
 		d.callInstruction()
 
 	case BeginScope:
-		d.simpleInstruction("BEGINSCOPE")
+		d.simpleInstruction("BEGIN_SCOPE")
 
 	case EndScope:
-		d.simpleInstruction("ENDSCOPE")
+		d.simpleInstruction("END_SCOPE")
 
 	case Pop:
 		d.simpleInstruction("POP")
@@ -82,7 +85,7 @@ func (d *Disassembler) simpleInstruction(name string) {
 
 func (d *Disassembler) loadConstInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-12s", "LOADCONST")
+	_, _ = fmt.Fprintf(d.w, "%-12s", "LOAD_CONST")
 
 	constIdx := d.readUint32()
 
@@ -100,7 +103,7 @@ func (d *Disassembler) callInstruction() {
 
 func (d *Disassembler) funDeclInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-12s", "FNDECL")
+	_, _ = fmt.Fprintf(d.w, "%-12s", "FN_DECL")
 
 	fnNameIdx := d.readUint32()
 	entryPoint := d.readUint32()
@@ -110,7 +113,7 @@ func (d *Disassembler) funDeclInstruction() {
 
 func (d *Disassembler) defineSymbolInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-12s", "DEFSYMBOL")
+	_, _ = fmt.Fprintf(d.w, "%-12s", "DEF_SYMBOL")
 
 	nameIdx := d.readUint32()
 
@@ -119,16 +122,25 @@ func (d *Disassembler) defineSymbolInstruction() {
 
 func (d *Disassembler) getSymbolInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-12s", "GETSYMBOL")
+	_, _ = fmt.Fprintf(d.w, "%-12s", "GET_SYMBOL")
 
 	nameIdx := d.readUint32()
 
 	_, _ = fmt.Fprintf(d.w, " name=#%d\n", nameIdx)
 }
 
+func (d *Disassembler) jumpToInstruction() {
+	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
+	_, _ = fmt.Fprintf(d.w, "%-12s", "JUMP_TO")
+
+	jumpTo := d.readUint32()
+
+	_, _ = fmt.Fprintf(d.w, " to=%d\n", jumpTo)
+}
+
 func (d *Disassembler) jumpIfFalseInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-12s", "JUMPIFFALSE")
+	_, _ = fmt.Fprintf(d.w, "%-12s", "JUMP_IF_FALSE")
 
 	jumpTo := d.readUint32()
 
@@ -147,3 +159,16 @@ func (d *Disassembler) readUint32() uint32 {
 	d.move(4)
 	return b
 }
+
+// TODO: I want to format the disassembled output in a more human-readable way, maybe something like this:
+/*
+
+ADDR  OPCODE      OPERANDS            HUMAN READABLE
+------------------------------------------------------------
+000   FN_DECL     name=#0, entry=9    ; function main()
+009   BEGIN_SCOPE
+010     LOAD_CONST  #1                ; push 10
+015     DEF_SYMBOL  #2                ; var x = stack.pop()
+...
+
+*/

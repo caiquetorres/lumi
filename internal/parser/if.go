@@ -4,7 +4,8 @@ import "github.com/caiquetorres/lumi/internal/token"
 
 type If struct {
 	Condition Expr
-	Then      *BlockExpr
+	Then      *Block
+	Else      *Block
 }
 
 func (p *Parser) parseIf() (*If, error) {
@@ -23,8 +24,19 @@ func (p *Parser) parseIf() (*If, error) {
 		return nil, err
 	}
 
+	var elseBlock *Block
+	if p.lookahead().peek().is(token.Else) {
+		p.lookahead().next() // consume 'else'
+
+		elseBlock, err = p.parseBlock()
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return &If{
 		Condition: condition,
 		Then:      thenBlock,
+		Else:      elseBlock,
 	}, nil
 }

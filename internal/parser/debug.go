@@ -19,7 +19,7 @@ type debugVisitor struct {
 	currentIndent int
 }
 
-func (d *debugVisitor) AfterBlockExpr(*BlockExpr) error {
+func (d *debugVisitor) AfterBlockExpr(*Block) error {
 	return nil
 }
 
@@ -27,7 +27,7 @@ func (d *debugVisitor) AfterBreakStmt(*Break) error {
 	return nil
 }
 
-func (d *debugVisitor) BeforeBlockExpr(*BlockExpr) error {
+func (d *debugVisitor) BeforeBlockExpr(*Block) error {
 	return nil
 }
 
@@ -133,6 +133,12 @@ func (d *debugVisitor) AfterIfCondition(ifStmt *If) error {
 }
 
 func (d *debugVisitor) AfterIfThenBlock(ifStmt *If) error {
+	d.indentOut()
+
+	return nil
+}
+
+func (d *debugVisitor) AfterElseBlock(ifStmt *If) error {
 	d.indentOut()
 
 	return nil

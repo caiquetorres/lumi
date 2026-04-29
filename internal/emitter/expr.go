@@ -41,14 +41,14 @@ func (e *emitter) BeforeIdentifierExpr(id *parser.IdentifierExpr) error {
 	return nil
 }
 
-func (e *emitter) BeforeBlockExpr(block *parser.BlockExpr) error {
+func (e *emitter) BeforeBlockExpr(block *parser.Block) error {
 	e.blockStack = append(e.blockStack, blockContext{})
 	e.ch.emit(BeginScope)
 
 	return nil
 }
 
-func (e *emitter) AfterBlockExpr(block *parser.BlockExpr) error {
+func (e *emitter) AfterBlockExpr(block *parser.Block) error {
 	e.ch.emit(EndScope)
 
 	endOffset := e.ch.ip

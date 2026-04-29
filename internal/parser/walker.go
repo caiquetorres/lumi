@@ -76,6 +76,8 @@ func (w *walker) walkStmt(v Visitor, stmt Stmt) error {
 		err = w.walkIf(v, s)
 	case *Break:
 		err = w.walkBreak(v, s)
+	case *Block:
+		err = w.walkBlockStmt(v, s)
 	default:
 		err = w.walkExpr(v, stmt.(Expr))
 	}
@@ -96,11 +98,25 @@ func (w *walker) walkIf(v Visitor, ifStmt *If) error {
 		return err
 	}
 
-	if err := w.walkBlockExpr(v, ifStmt.Then); err != nil {
+	if err := w.walkBlockStmt(v, ifStmt.Then); err != nil {
 		return err
 	}
 
-	return v.AfterIfThenBlock(ifStmt)
+	if err := v.AfterIfThenBlock(ifStmt); err != nil {
+		return err
+	}
+
+	if ifStmt.Else != nil {
+		if err := w.walkBlockStmt(v, ifStmt.Else); err != nil {
+			return err
+		}
+
+		if err := v.AfterElseBlock(ifStmt); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (w *walker) walkReturn(v Visitor, r *Return) error {
@@ -135,8 +151,6 @@ func (w *walker) walkExpr(v Visitor, expr Expr) error {
 		err = w.walkLiteralExpr(v, e)
 	case *CallExpr:
 		err = w.walkCallExpr(v, e)
-	case *BlockExpr:
-		err = w.walkBlockExpr(v, e)
 	}
 
 	return err
@@ -168,7 +182,7 @@ func (w *walker) walkCallExpr(v Visitor, ce *CallExpr) error {
 	return v.AfterCallExpr(ce)
 }
 
-func (w *walker) walkBlockExpr(v Visitor, be *BlockExpr) error {
+func (w *walker) walkBlockStmt(v Visitor, be *Block) error {
 	if err := v.BeforeBlockExpr(be); err != nil {
 		return err
 	}

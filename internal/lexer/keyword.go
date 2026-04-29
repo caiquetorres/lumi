@@ -14,6 +14,7 @@ var keywords = map[string]token.Kind{
 	"true":   token.True,
 	"false":  token.False,
 	"if":     token.If,
+	"else":   token.Else,
 }
 
 func (l *Lexer) isKeywordOrIdentifier() bool {

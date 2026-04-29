@@ -2,15 +2,13 @@ package parser
 
 import "github.com/caiquetorres/lumi/internal/token"
 
-type BlockExpr struct {
+type Block struct {
 	Stmts []Stmt
 }
 
-func (b *BlockExpr) expr() {}
+var _ Stmt = (*Block)(nil)
 
-var _ Expr = (*BlockExpr)(nil)
-
-func (p *Parser) parseBlock() (*BlockExpr, error) {
+func (p *Parser) parseBlock() (*Block, error) {
 	_, err := p.lookahead().next().expect(token.OpenBrace)
 	if err != nil {
 		return nil, err
@@ -39,5 +37,5 @@ func (p *Parser) parseBlock() (*BlockExpr, error) {
 
 	p.bump() // consume the '}'
 
-	return &BlockExpr{Stmts: stms}, nil
+	return &Block{Stmts: stms}, nil
 }
