@@ -28,9 +28,20 @@ func (p *Parser) parseIf() (*If, error) {
 	if p.lookahead().peek().is(token.Else) {
 		p.lookahead().next() // consume 'else'
 
-		elseBlock, err = p.parseBlock()
-		if err != nil {
-			return nil, err
+		if p.lookahead().peek().is(token.If) {
+			elseIf, err := p.parseIf()
+			if err != nil {
+				return nil, err
+			}
+
+			elseBlock = &Block{
+				Stmts: []Stmt{elseIf},
+			}
+		} else {
+			elseBlock, err = p.parseBlock()
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
