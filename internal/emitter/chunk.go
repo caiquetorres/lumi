@@ -2,7 +2,6 @@ package emitter
 
 import (
 	"encoding/binary"
-	"fmt"
 
 	"github.com/caiquetorres/lumi/internal/constpool"
 )
@@ -88,89 +87,4 @@ func (c *Chunk) emitUint32(value uint32) (offset uint32) {
 	c.code = append(c.code, buf[:]...)
 	c.ip += 4
 	return
-}
-
-func (c *Chunk) Disassemble() {
-	for offset := 0; offset < len(c.code); {
-		offset = c.disassembleInstruction(offset)
-	}
-}
-
-func (c *Chunk) disassembleInstruction(offset int) int {
-	opcode := c.code[offset]
-
-	switch opcode {
-	case FnDecl:
-		return c.funDeclInstruction("FN_DECL", offset)
-	case DefineSymbol:
-		return c.varDeclInstruction("VAR_DECL", offset)
-	case LoadConst:
-		return c.constantInstruction("CONSTANT", offset)
-	case Return:
-		return c.simpleInstruction("RETURN", offset)
-	default:
-		return offset + 1
-	}
-}
-
-func (c *Chunk) varDeclInstruction(name string, offset int) int {
-	if offset+5 > len(c.code) {
-		fmt.Printf("% 4d %s <truncated>\n", offset, name)
-		return len(c.code)
-	}
-
-	nameIdx := binary.BigEndian.Uint32(c.code[offset+1 : offset+5])
-	fmt.Printf("% 4d %s name=%d\n", offset, name, nameIdx)
-
-	return offset + 5
-}
-
-func (c *Chunk) funDeclInstruction(name string, offset int) int {
-	if offset+10 > len(c.code) {
-		fmt.Printf("% 4d %s <truncated>\n", offset, name)
-		return len(c.code)
-	}
-
-	fnNameIdx := binary.BigEndian.Uint32(c.code[offset+1 : offset+5])
-	paramCount := c.code[offset+5]
-
-	paramsOffset := offset + 6
-	entryPointOffset := paramsOffset + int(paramCount)*4
-
-	if entryPointOffset+4 > len(c.code) {
-		fmt.Printf("% 4d %s <truncated>\n", offset, name)
-		return len(c.code)
-	}
-
-	params := make([]uint32, 0, paramCount)
-	for i := 0; i < int(paramCount); i++ {
-		start := paramsOffset + i*4
-		paramIdx := binary.BigEndian.Uint32(c.code[start : start+4])
-		params = append(params, paramIdx)
-	}
-
-	entryPoint := binary.BigEndian.Uint32(c.code[entryPointOffset : entryPointOffset+4])
-
-	fmt.Printf(
-		"% 4d %s name=%d arity=%d params=%v entry=%d\n",
-		offset,
-		name,
-		fnNameIdx,
-		paramCount,
-		params,
-		entryPoint,
-	)
-
-	return entryPointOffset + 4
-}
-
-func (c *Chunk) simpleInstruction(name string, offset int) int {
-	fmt.Printf("% 4d %s\n", offset, name)
-	return offset + 1
-}
-
-func (c *Chunk) constantInstruction(name string, offset int) int {
-	constant := c.code[offset+1]
-	fmt.Printf("% 4d %s value=%d\n", offset, name, constant)
-	return offset + 2
 }
