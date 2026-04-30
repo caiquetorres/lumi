@@ -4,10 +4,11 @@ import "github.com/caiquetorres/lumi/internal/parser"
 
 func (e *emitter) BeforeBreakStmt(*parser.Break) error {
 	e.ch.emit(JumpTo)
-	placeholder := e.ch.emitUint32(0)
+	placeholder := e.ch.reserveUint32()
 
-	top := len(e.loopStack) - 1
-	e.loopStack[top].end = append(e.loopStack[top].end, placeholder)
+	if top, ok := e.loopStack.top(); ok {
+		top.end = append(top.end, placeholder)
+	}
 
 	return nil
 }

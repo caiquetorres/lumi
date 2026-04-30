@@ -4,21 +4,19 @@ import "github.com/caiquetorres/lumi/internal/parser"
 
 func (e *emitter) AfterIfCondition(ifStmt *parser.If) error {
 	e.ch.emit(JumpIfFalse)
-	jumpTo := e.ch.emitUint32(0)
-	e.jumpStack = append(e.jumpStack, jumpTo)
+	jumpTo := e.ch.reserveUint32()
+	e.jumpStack.push(jumpTo)
 
 	return nil
 }
 
 func (e *emitter) AfterIfThenBlock(ifStmt *parser.If) error {
-	n := len(e.jumpStack) - 1
-	jumpTo := e.jumpStack[n]
-	e.jumpStack = e.jumpStack[:n]
+	jumpTo, _ := e.jumpStack.pop()
 
 	if ifStmt.Else != nil {
 		e.ch.emit(JumpTo)
-		elseJump := e.ch.emitUint32(0)
-		e.jumpStack = append(e.jumpStack, elseJump)
+		elseJump := e.ch.reserveUint32()
+		e.jumpStack.push(elseJump)
 	}
 
 	e.ch.patchUint32(jumpTo, e.ch.ip)
@@ -27,10 +25,7 @@ func (e *emitter) AfterIfThenBlock(ifStmt *parser.If) error {
 }
 
 func (e *emitter) AfterElseBlock(ifStmt *parser.If) error {
-	n := len(e.jumpStack) - 1
-	elseJump := e.jumpStack[n]
-	e.jumpStack = e.jumpStack[:n]
-
+	elseJump, _ := e.jumpStack.pop()
 	e.ch.patchUint32(elseJump, e.ch.ip)
 
 	return nil

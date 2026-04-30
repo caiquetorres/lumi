@@ -2,6 +2,7 @@ package emitter
 
 import (
 	"encoding/binary"
+	"math"
 
 	"github.com/caiquetorres/lumi/internal/constpool"
 )
@@ -86,5 +87,20 @@ func (c *Chunk) emitUint32(value uint32) (offset uint32) {
 
 	c.code = append(c.code, buf[:]...)
 	c.ip += 4
+	return
+}
+
+func (c *Chunk) reserveUint32() (offset uint32) {
+	offset = c.emitUint32(math.MaxUint32)
+	return
+}
+
+func (c *Chunk) emitUint64(value uint64) (offset uint32) {
+	offset = c.ip
+	var buf [8]byte
+	binary.BigEndian.PutUint64(buf[:], value)
+
+	c.code = append(c.code, buf[:]...)
+	c.ip += 8
 	return
 }
