@@ -7,14 +7,16 @@ import (
 )
 
 var keywords = map[string]token.Kind{
-	"fun":    token.Fun,
-	"let":    token.Let,
-	"return": token.Return,
-	"break":  token.Break,
-	"true":   token.True,
-	"false":  token.False,
-	"if":     token.If,
-	"else":   token.Else,
+	"fun":      token.Fun,
+	"let":      token.Let,
+	"return":   token.Return,
+	"true":     token.True,
+	"false":    token.False,
+	"if":       token.If,
+	"else":     token.Else,
+	"while":    token.While,
+	"break":    token.Break,
+	"continue": token.Continue,
 }
 
 func (l *Lexer) isKeywordOrIdentifier() bool {

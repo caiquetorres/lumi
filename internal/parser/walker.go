@@ -74,8 +74,12 @@ func (w *walker) walkStmt(v Visitor, stmt Stmt) error {
 		err = w.walkReturn(v, s)
 	case *If:
 		err = w.walkIf(v, s)
+	case *While:
+		err = w.walkWhile(v, s)
 	case *Break:
 		err = w.walkBreak(v, s)
+	case *Continue:
+		err = w.walkContinue(v, s)
 	case *Block:
 		err = w.walkBlockStmt(v, s)
 	default:
@@ -87,6 +91,26 @@ func (w *walker) walkStmt(v Visitor, stmt Stmt) error {
 	}
 
 	return v.AfterStmt(stmt)
+}
+
+func (w *walker) walkWhile(v Visitor, whileStmt *While) error {
+	if err := v.BeforeWhileCondition(whileStmt); err != nil {
+		return err
+	}
+
+	if err := w.walkExpr(v, whileStmt.Condition); err != nil {
+		return err
+	}
+
+	if err := v.AfterWhileCondition(whileStmt); err != nil {
+		return err
+	}
+
+	if err := w.walkBlockStmt(v, whileStmt.Body); err != nil {
+		return err
+	}
+
+	return v.AfterWhileBody(whileStmt)
 }
 
 func (w *walker) walkIf(v Visitor, ifStmt *If) error {
@@ -139,6 +163,14 @@ func (w *walker) walkBreak(v Visitor, b *Break) error {
 	}
 
 	return v.AfterBreakStmt(b)
+}
+
+func (w *walker) walkContinue(v Visitor, c *Continue) error {
+	if err := v.BeforeContinueStmt(c); err != nil {
+		return err
+	}
+
+	return v.AfterContinueStmt(c)
 }
 
 func (w *walker) walkExpr(v Visitor, expr Expr) error {

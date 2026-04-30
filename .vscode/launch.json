@@ -10,7 +10,14 @@
       "request": "launch",
       "mode": "auto",
       "program": "main.go",
-      "args": ["build", "--file", "main.lumi", "--out", "out.lbc"],
+      "args": [
+        "build",
+        "--file",
+        "main.lumi",
+        "--out",
+        "out.lbc",
+        "-disassemble"
+      ],
       "cwd": "."
     },
     {

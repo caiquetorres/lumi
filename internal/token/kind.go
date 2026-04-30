@@ -27,8 +27,10 @@ const (
 	Let
 	Return
 	Break
+	Continue
 	If
 	Else
+	While
 )
 
 func (k Kind) String() string {
@@ -63,6 +65,18 @@ func (k Kind) String() string {
 		return "fun"
 	case Let:
 		return "let"
+	case Return:
+		return "return"
+	case Break:
+		return "break"
+	case Continue:
+		return "continue"
+	case If:
+		return "if"
+	case Else:
+		return "else"
+	case While:
+		return "while"
 	default:
 		return "unknown"
 	}

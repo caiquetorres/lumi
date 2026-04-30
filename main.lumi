@@ -11,7 +11,7 @@ fun main() {
 fun getPreferredName(first string, last string) string {
     if isEmpty(last) {
         return first
-    } else {
+    } else  {
         return sprintf("Mr. %s", last)
     }
 }

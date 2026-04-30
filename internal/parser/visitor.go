@@ -20,9 +20,16 @@ type Visitor interface {
 	BeforeBreakStmt(*Break) error
 	AfterBreakStmt(*Break) error
 
+	BeforeContinueStmt(*Continue) error
+	AfterContinueStmt(*Continue) error
+
 	AfterIfCondition(*If) error
 	AfterIfThenBlock(*If) error
 	AfterElseBlock(*If) error
+
+	BeforeWhileCondition(*While) error
+	AfterWhileCondition(*While) error
+	AfterWhileBody(*While) error
 
 	BeforeReturnStmt(*Return) error
 	AfterReturnStmt(*Return) error

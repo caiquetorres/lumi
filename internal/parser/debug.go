@@ -31,6 +31,18 @@ func (d *debugVisitor) BeforeBlockExpr(*Block) error {
 	return nil
 }
 
+func (d *debugVisitor) BeforeContinueStmt(*Continue) error {
+	d.writeIndent()
+
+	mustWrite(d.w.WriteString("continue\n"))
+
+	return d.flush()
+}
+
+func (d *debugVisitor) AfterContinueStmt(*Continue) error {
+	return nil
+}
+
 func (d *debugVisitor) BeforeBreakStmt(*Break) error {
 	return nil
 }
@@ -139,6 +151,26 @@ func (d *debugVisitor) AfterIfThenBlock(ifStmt *If) error {
 }
 
 func (d *debugVisitor) AfterElseBlock(ifStmt *If) error {
+	d.indentOut()
+
+	return nil
+}
+
+func (d *debugVisitor) BeforeWhileCondition(*While) error {
+	d.writeIndent()
+
+	mustWrite(d.w.WriteString("while\n"))
+
+	d.indentIn()
+
+	return d.flush()
+}
+
+func (d *debugVisitor) AfterWhileCondition(whileStmt *While) error {
+	return nil
+}
+
+func (d *debugVisitor) AfterWhileBody(whileStmt *While) error {
 	d.indentOut()
 
 	return nil
