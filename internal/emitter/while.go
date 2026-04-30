@@ -2,26 +2,22 @@ package emitter
 
 import "github.com/caiquetorres/lumi/internal/parser"
 
-func (e *emitter) BeforeWhileCondition(*parser.While) error {
+func (e *emitter) BeforeWhileCondition(*parser.While) {
 	e.loopStack.push(loop{
 		start: e.ch.ip,
 	})
-
-	return nil
 }
 
-func (e *emitter) AfterWhileCondition(*parser.While) error {
+func (e *emitter) AfterWhileCondition(*parser.While) {
 	e.ch.emit(JumpIfFalse)
 	jumpTo := e.ch.reserveUint32()
 
 	if top, ok := e.loopStack.top(); ok {
 		top.end = append(top.end, jumpTo)
 	}
-
-	return nil
 }
 
-func (e *emitter) AfterWhileBody(*parser.While) error {
+func (e *emitter) AfterWhileBody(*parser.While) {
 	if top, ok := e.loopStack.pop(); ok {
 		e.ch.emit(JumpTo)
 		e.ch.emitUint32(top.start)
@@ -30,6 +26,4 @@ func (e *emitter) AfterWhileBody(*parser.While) error {
 			e.ch.patchUint32(patch, e.ch.ip)
 		}
 	}
-
-	return nil
 }

@@ -6,14 +6,12 @@ import (
 	"github.com/caiquetorres/lumi/internal/parser"
 )
 
-func (e *emitter) AfterFunDecl(*parser.FunDecl) error {
+func (e *emitter) AfterFunDecl(*parser.FunDecl) {
 	e.ch.emit(Return)
 	e.ch.emit(EndScope)
-
-	return nil
 }
 
-func (e *emitter) BeforeFunDecl(fn *parser.FunDecl) error {
+func (e *emitter) BeforeFunDecl(fn *parser.FunDecl) {
 	e.ch.emit(FnDecl)
 
 	fnName := e.lex.Lexeme(fn.Identifier)
@@ -22,7 +20,8 @@ func (e *emitter) BeforeFunDecl(fn *parser.FunDecl) error {
 
 	paramCount := len(fn.Params)
 	if paramCount > 255 {
-		return fmt.Errorf("function '%s' has too many parameters: %d (max 255)", fnName, paramCount)
+		e.setErr(fmt.Errorf("function '%s' has too many parameters: %d (max 255)", fnName, paramCount))
+		return
 	}
 
 	offset := e.ch.reserveUint32()
@@ -40,14 +39,8 @@ func (e *emitter) BeforeFunDecl(fn *parser.FunDecl) error {
 		idx := e.ch.pool.InternConstant(paramName)
 		e.ch.emitUint32(idx)
 	}
-
-	return nil
 }
 
-func (e *emitter) AfterParam(*parser.Param) error {
-	return nil
-}
+func (e *emitter) AfterParam(*parser.Param) {}
 
-func (e *emitter) BeforeParam(*parser.Param) error {
-	return nil
-}
+func (e *emitter) BeforeParam(*parser.Param) {}

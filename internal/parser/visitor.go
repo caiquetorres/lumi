@@ -1,38 +1,38 @@
 package parser
 
 type Visitor interface {
-	BeforeAst(*Ast) error
-	BeforeFunDecl(*FunDecl) error
-	AfterFunDecl(*FunDecl) error
-	BeforeVarDecl(*VarDecl) error
-	AfterVarDecl(*VarDecl) error
-	BeforeParam(*Param) error
-	AfterParam(*Param) error
-	BeforeLiteralExpr(*LiteralExpr) error
-	BeforeIdentifierExpr(*IdentifierExpr) error
+	BeforeAst(*Ast)
+	BeforeFunDecl(*FunDecl)
+	AfterFunDecl(*FunDecl)
+	BeforeVarDecl(*VarDecl)
+	AfterVarDecl(*VarDecl)
+	BeforeParam(*Param)
+	AfterParam(*Param)
+	BeforeLiteralExpr(*LiteralExpr)
+	BeforeIdentifierExpr(*IdentifierExpr)
 
-	BeforeCallExpr(*CallExpr) error
-	AfterCallExpr(*CallExpr) error
+	BeforeCallExpr(*CallExpr)
+	AfterCallExpr(*CallExpr)
 
-	BeforeBlockExpr(*Block) error
-	AfterBlockExpr(*Block) error
+	BeforeBlockExpr(*Block)
+	AfterBlockExpr(*Block)
 
-	BeforeBreakStmt(*Break) error
-	AfterBreakStmt(*Break) error
+	BeforeBreakStmt(*Break)
+	AfterBreakStmt(*Break)
 
-	BeforeContinueStmt(*Continue) error
-	AfterContinueStmt(*Continue) error
+	BeforeContinueStmt(*Continue)
+	AfterContinueStmt(*Continue)
 
-	AfterIfCondition(*If) error
-	AfterIfThenBlock(*If) error
-	AfterElseBlock(*If) error
+	AfterIfCondition(*If)
+	AfterIfThenBlock(*If)
+	AfterElseBlock(*If)
 
-	BeforeWhileCondition(*While) error
-	AfterWhileCondition(*While) error
-	AfterWhileBody(*While) error
+	BeforeWhileCondition(*While)
+	AfterWhileCondition(*While)
+	AfterWhileBody(*While)
 
-	BeforeReturnStmt(*Return) error
-	AfterReturnStmt(*Return) error
+	BeforeReturnStmt(*Return)
+	AfterReturnStmt(*Return)
 
-	AfterStmt(Stmt) error
+	AfterStmt(Stmt)
 }

@@ -6,14 +6,15 @@ import (
 	"github.com/caiquetorres/lumi/internal/parser"
 )
 
-func (e *emitter) BeforeLiteralExpr(lit *parser.LiteralExpr) error {
+func (e *emitter) BeforeLiteralExpr(lit *parser.LiteralExpr) {
 	litValue := e.lex.Lexeme(lit.Value)
 
 	switch lit.Kind {
 	case parser.LiteralString:
 		value, err := strconv.Unquote(litValue)
 		if err != nil {
-			return err
+			e.setErr(err)
+			return
 		}
 
 		e.ch.emit(LoadConst)
@@ -26,40 +27,28 @@ func (e *emitter) BeforeLiteralExpr(lit *parser.LiteralExpr) error {
 		idx := e.ch.pool.InternConstant(value)
 		e.ch.emitUint32(idx)
 	}
-
-	return nil
 }
 
-func (e *emitter) BeforeIdentifierExpr(id *parser.IdentifierExpr) error {
+func (e *emitter) BeforeIdentifierExpr(id *parser.IdentifierExpr) {
 	e.ch.emit(GetSymbol)
 
 	name := e.lex.Lexeme(id.Name)
 
 	constIdx := e.ch.pool.InternConstant(name)
 	e.ch.emitUint32(constIdx)
-
-	return nil
 }
 
-func (e *emitter) BeforeBlockExpr(block *parser.Block) error {
+func (e *emitter) BeforeBlockExpr(block *parser.Block) {
 	e.ch.emit(BeginScope)
-
-	return nil
 }
 
-func (e *emitter) AfterBlockExpr(block *parser.Block) error {
+func (e *emitter) AfterBlockExpr(block *parser.Block) {
 	e.ch.emit(EndScope)
-
-	return nil
 }
 
-func (e *emitter) BeforeCallExpr(expr *parser.CallExpr) error {
-	return nil
-}
+func (e *emitter) BeforeCallExpr(expr *parser.CallExpr) {}
 
-func (e *emitter) AfterCallExpr(call *parser.CallExpr) error {
+func (e *emitter) AfterCallExpr(call *parser.CallExpr) {
 	e.ch.emit(Call)
 	e.ch.emitUint8(uint8(len(call.Args)))
-
-	return nil
 }

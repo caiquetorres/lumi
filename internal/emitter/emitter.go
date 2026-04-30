@@ -9,9 +9,10 @@ import (
 
 func Emit(ast *parser.Ast, l *lexer.Lexer, w io.Writer) (*Chunk, error) {
 	e := newEmitter(l)
+	parser.Walk(e, ast)
 
-	if err := parser.Walk(e, ast); err != nil {
-		return nil, err
+	if e.err != nil {
+		return nil, e.err
 	}
 
 	builder := newBuilder(w)
@@ -25,6 +26,8 @@ type emitter struct {
 
 	jumpStack *jumpStack
 	loopStack *loopStack
+
+	err error
 }
 
 func newEmitter(lex *lexer.Lexer) *emitter {
@@ -36,9 +39,13 @@ func newEmitter(lex *lexer.Lexer) *emitter {
 	}
 }
 
-func (e *emitter) BeforeAst(*parser.Ast) error {
-	return nil
+func (e *emitter) setErr(err error) {
+	if e.err == nil {
+		e.err = err
+	}
 }
+
+func (e *emitter) BeforeAst(*parser.Ast) {}
 
 var _ parser.Visitor = (*emitter)(nil)
 

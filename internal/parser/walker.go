@@ -1,229 +1,159 @@
 package parser
 
-func Walk(v Visitor, ast *Ast) error {
+func Walk(v Visitor, ast *Ast) {
 	w := &walker{}
-	return w.walkAst(v, ast)
+	w.walkAst(v, ast)
 }
 
 type walker struct{}
 
-func (w *walker) walkAst(v Visitor, ast *Ast) error {
-	if err := v.BeforeAst(ast); err != nil {
-		return err
-	}
+func (w *walker) walkAst(v Visitor, ast *Ast) {
+	v.BeforeAst(ast)
 
 	for _, stmt := range ast.Statements {
-		var err error
-
 		switch s := stmt.(type) {
 		case *FunDecl:
-			err = w.walkFunDecl(v, s)
-		}
-
-		if err != nil {
-			return err
+			w.walkFunDecl(v, s)
 		}
 	}
-
-	return nil
 }
 
-func (w *walker) walkVarDecl(v Visitor, vd *VarDecl) error {
-	if err := v.BeforeVarDecl(vd); err != nil {
-		return err
-	}
+func (w *walker) walkVarDecl(v Visitor, vd *VarDecl) {
+	v.BeforeVarDecl(vd)
 
-	if err := w.walkExpr(v, vd.Expr); err != nil {
-		return err
-	}
+	w.walkExpr(v, vd.Expr)
 
-	return v.AfterVarDecl(vd)
+	v.AfterVarDecl(vd)
 }
 
-func (w *walker) walkFunDecl(v Visitor, fd *FunDecl) error {
-	if err := v.BeforeFunDecl(fd); err != nil {
-		return err
-	}
+func (w *walker) walkFunDecl(v Visitor, fd *FunDecl) {
+	v.BeforeFunDecl(fd)
 
 	for _, param := range fd.Params {
-		if err := v.BeforeParam(&param); err != nil {
-			return err
-		}
-
-		if err := v.AfterParam(&param); err != nil {
-			return err
-		}
+		// REVIEW: We definitely don't need two separate methods (before and after) here
+		v.BeforeParam(&param)
+		v.AfterParam(&param)
 	}
 
 	for _, expr := range fd.Body {
-		if err := w.walkStmt(v, expr); err != nil {
-			return err
-		}
+		w.walkStmt(v, expr)
 	}
 
-	return v.AfterFunDecl(fd)
+	v.AfterFunDecl(fd)
 }
 
-func (w *walker) walkStmt(v Visitor, stmt Stmt) error {
-	var err error
-
+func (w *walker) walkStmt(v Visitor, stmt Stmt) {
 	switch s := stmt.(type) {
 	case *VarDecl:
-		err = w.walkVarDecl(v, s)
+		w.walkVarDecl(v, s)
 	case *Return:
-		err = w.walkReturn(v, s)
+		w.walkReturn(v, s)
 	case *If:
-		err = w.walkIf(v, s)
+		w.walkIf(v, s)
 	case *While:
-		err = w.walkWhile(v, s)
+		w.walkWhile(v, s)
 	case *Break:
-		err = w.walkBreak(v, s)
+		w.walkBreak(v, s)
 	case *Continue:
-		err = w.walkContinue(v, s)
+		w.walkContinue(v, s)
 	case *Block:
-		err = w.walkBlockStmt(v, s)
+		w.walkBlockStmt(v, s)
 	default:
-		err = w.walkExpr(v, stmt.(Expr))
+		w.walkExpr(v, stmt.(Expr))
 	}
 
-	if err != nil {
-		return err
-	}
-
-	return v.AfterStmt(stmt)
+	v.AfterStmt(stmt)
 }
 
-func (w *walker) walkWhile(v Visitor, whileStmt *While) error {
-	if err := v.BeforeWhileCondition(whileStmt); err != nil {
-		return err
-	}
+func (w *walker) walkWhile(v Visitor, whileStmt *While) {
+	v.BeforeWhileCondition(whileStmt)
 
-	if err := w.walkExpr(v, whileStmt.Condition); err != nil {
-		return err
-	}
+	w.walkExpr(v, whileStmt.Condition)
 
-	if err := v.AfterWhileCondition(whileStmt); err != nil {
-		return err
-	}
+	v.AfterWhileCondition(whileStmt)
 
-	if err := w.walkBlockStmt(v, whileStmt.Body); err != nil {
-		return err
-	}
+	w.walkBlockStmt(v, whileStmt.Body)
 
-	return v.AfterWhileBody(whileStmt)
+	v.AfterWhileBody(whileStmt)
 }
 
 func (w *walker) walkIf(v Visitor, ifStmt *If) error {
-	if err := w.walkExpr(v, ifStmt.Condition); err != nil {
-		return err
-	}
+	w.walkExpr(v, ifStmt.Condition)
 
-	if err := v.AfterIfCondition(ifStmt); err != nil {
-		return err
-	}
+	v.AfterIfCondition(ifStmt)
 
-	if err := w.walkBlockStmt(v, ifStmt.Then); err != nil {
-		return err
-	}
+	w.walkBlockStmt(v, ifStmt.Then)
 
-	if err := v.AfterIfThenBlock(ifStmt); err != nil {
-		return err
-	}
+	v.AfterIfThenBlock(ifStmt)
 
 	if ifStmt.Else != nil {
-		if err := w.walkBlockStmt(v, ifStmt.Else); err != nil {
-			return err
-		}
+		w.walkBlockStmt(v, ifStmt.Else)
 
-		if err := v.AfterElseBlock(ifStmt); err != nil {
-			return err
-		}
+		v.AfterElseBlock(ifStmt)
 	}
 
 	return nil
 }
 
-func (w *walker) walkReturn(v Visitor, r *Return) error {
-	if err := v.BeforeReturnStmt(r); err != nil {
-		return err
-	}
+func (w *walker) walkReturn(v Visitor, r *Return) {
+	v.BeforeReturnStmt(r)
 
 	if r.Expr != nil {
-		if err := w.walkExpr(v, r.Expr); err != nil {
-			return err
-		}
+		w.walkExpr(v, r.Expr)
 	}
 
-	return v.AfterReturnStmt(r)
+	v.AfterReturnStmt(r)
 }
 
-func (w *walker) walkBreak(v Visitor, b *Break) error {
-	if err := v.BeforeBreakStmt(b); err != nil {
-		return err
-	}
-
-	return v.AfterBreakStmt(b)
+func (w *walker) walkBreak(v Visitor, b *Break) {
+	// REVIEW: We definitely don't need two separate methods (before and after) here
+	v.BeforeBreakStmt(b)
+	v.AfterBreakStmt(b)
 }
 
-func (w *walker) walkContinue(v Visitor, c *Continue) error {
-	if err := v.BeforeContinueStmt(c); err != nil {
-		return err
-	}
-
-	return v.AfterContinueStmt(c)
+func (w *walker) walkContinue(v Visitor, c *Continue) {
+	// REVIEW: We definitely don't need two separate methods (before and after) here
+	v.BeforeContinueStmt(c)
+	v.AfterContinueStmt(c)
 }
 
-func (w *walker) walkExpr(v Visitor, expr Expr) error {
-	var err error
-
+func (w *walker) walkExpr(v Visitor, expr Expr) {
 	switch e := expr.(type) {
 	case *IdentifierExpr:
-		err = w.walkIdentifierExpr(v, e)
+		w.walkIdentifierExpr(v, e)
 	case *LiteralExpr:
-		err = w.walkLiteralExpr(v, e)
+		w.walkLiteralExpr(v, e)
 	case *CallExpr:
-		err = w.walkCallExpr(v, e)
+		w.walkCallExpr(v, e)
 	}
-
-	return err
 }
 
-func (w *walker) walkIdentifierExpr(v Visitor, ie *IdentifierExpr) error {
-	return v.BeforeIdentifierExpr(ie)
+func (w *walker) walkIdentifierExpr(v Visitor, ie *IdentifierExpr) {
+	v.BeforeIdentifierExpr(ie)
 }
 
-func (w *walker) walkLiteralExpr(v Visitor, le *LiteralExpr) error {
-	return v.BeforeLiteralExpr(le)
+func (w *walker) walkLiteralExpr(v Visitor, le *LiteralExpr) {
+	v.BeforeLiteralExpr(le)
 }
 
-func (w *walker) walkCallExpr(v Visitor, ce *CallExpr) error {
-	if err := v.BeforeCallExpr(ce); err != nil {
-		return err
-	}
+func (w *walker) walkCallExpr(v Visitor, ce *CallExpr) {
+	v.BeforeCallExpr(ce)
 
 	for _, arg := range ce.Args {
-		if err := w.walkExpr(v, arg); err != nil {
-			return err
-		}
+		w.walkExpr(v, arg)
 	}
 
-	if err := w.walkExpr(v, ce.Callee); err != nil {
-		return err
-	}
+	w.walkExpr(v, ce.Callee)
 
-	return v.AfterCallExpr(ce)
+	v.AfterCallExpr(ce)
 }
 
-func (w *walker) walkBlockStmt(v Visitor, be *Block) error {
-	if err := v.BeforeBlockExpr(be); err != nil {
-		return err
-	}
+func (w *walker) walkBlockStmt(v Visitor, be *Block) {
+	v.BeforeBlockExpr(be)
 
 	for _, stmt := range be.Stmts {
-		if err := w.walkStmt(v, stmt); err != nil {
-			return err
-		}
+		w.walkStmt(v, stmt)
 	}
 
-	return v.AfterBlockExpr(be)
+	v.AfterBlockExpr(be)
 }

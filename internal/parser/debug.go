@@ -19,90 +19,75 @@ type debugVisitor struct {
 	currentIndent int
 }
 
-func (d *debugVisitor) AfterBlockExpr(*Block) error {
-	return nil
-}
+func (d *debugVisitor) AfterBlockExpr(*Block) {}
 
-func (d *debugVisitor) AfterBreakStmt(*Break) error {
-	return nil
-}
+func (d *debugVisitor) AfterBreakStmt(*Break) {}
 
-func (d *debugVisitor) BeforeBlockExpr(*Block) error {
-	return nil
-}
+func (d *debugVisitor) BeforeBlockExpr(*Block) {}
 
-func (d *debugVisitor) BeforeContinueStmt(*Continue) error {
+func (d *debugVisitor) BeforeContinueStmt(*Continue) {
 	d.writeIndent()
 
 	mustWrite(d.w.WriteString("continue\n"))
 
-	return d.flush()
+	_ = d.flush()
 }
 
-func (d *debugVisitor) AfterContinueStmt(*Continue) error {
-	return nil
-}
+func (d *debugVisitor) AfterContinueStmt(*Continue) {}
 
-func (d *debugVisitor) BeforeBreakStmt(*Break) error {
-	return nil
-}
+func (d *debugVisitor) BeforeBreakStmt(*Break) {}
 
-func DebugAst(ast *Ast, l *lexer.Lexer, w io.Writer) error {
+func DebugAst(ast *Ast, l *lexer.Lexer, w io.Writer) {
 	d := &debugVisitor{
 		l: l,
 		w: bufio.NewWriter(w),
 	}
-	return Walk(d, ast)
+
+	Walk(d, ast)
 }
 
-func (d *debugVisitor) BeforeAst(ast *Ast) error {
-	return nil
-}
+func (d *debugVisitor) BeforeAst(ast *Ast) {}
 
-func (d *debugVisitor) BeforeVarDecl(vd *VarDecl) error {
+func (d *debugVisitor) BeforeVarDecl(vd *VarDecl) {
 	d.writeIndent()
 
 	name := d.l.Lexeme(vd.Identifier)
 	str := fmt.Sprintf("var %s\n", name)
 	mustWrite(d.w.WriteString(str))
 
-	return d.flush()
+	_ = d.flush()
 }
 
-func (d *debugVisitor) AfterVarDecl(vd *VarDecl) error {
-	return nil
-}
+func (d *debugVisitor) AfterVarDecl(vd *VarDecl) {}
 
-func (d *debugVisitor) BeforeFunDecl(fd *FunDecl) error {
+func (d *debugVisitor) BeforeFunDecl(fd *FunDecl) {
 	str := fmt.Sprintf("fun %s\n", d.l.Lexeme(fd.Identifier))
 	mustWrite(d.w.WriteString(str))
 
 	d.indentIn()
 
-	return d.flush()
+	_ = d.flush()
 }
 
-func (d *debugVisitor) AfterFunDecl(fd *FunDecl) error {
+func (d *debugVisitor) AfterFunDecl(fd *FunDecl) {
 	d.indentOut()
-
-	return nil
 }
 
-func (d *debugVisitor) AfterParam(param *Param) error {
+func (d *debugVisitor) AfterParam(param *Param) {
 	d.writeIndent()
 
 	name := d.l.Lexeme(param.Name)
 	str := fmt.Sprintf("param %s\n", name)
 	mustWrite(d.w.WriteString(str))
 
-	return d.flush()
+	_ = d.flush()
 }
 
-func (d *debugVisitor) BeforeParam(param *Param) error {
-	return d.flush()
+func (d *debugVisitor) BeforeParam(param *Param) {
+	_ = d.flush()
 }
 
-func (d *debugVisitor) BeforeLiteralExpr(expr *LiteralExpr) error {
+func (d *debugVisitor) BeforeLiteralExpr(expr *LiteralExpr) {
 	d.writeIndent()
 
 	id := d.l.Lexeme(expr.Value)
@@ -110,10 +95,10 @@ func (d *debugVisitor) BeforeLiteralExpr(expr *LiteralExpr) error {
 	mustWrite(d.w.WriteString(id))
 	mustWrite(d.w.WriteRune('\n'))
 
-	return d.flush()
+	_ = d.flush()
 }
 
-func (d *debugVisitor) BeforeIdentifierExpr(expr *IdentifierExpr) error {
+func (d *debugVisitor) BeforeIdentifierExpr(expr *IdentifierExpr) {
 	d.writeIndent()
 
 	id := d.l.Lexeme(expr.Name)
@@ -121,76 +106,62 @@ func (d *debugVisitor) BeforeIdentifierExpr(expr *IdentifierExpr) error {
 	mustWrite(d.w.WriteString(id))
 	mustWrite(d.w.WriteRune('\n'))
 
-	return d.flush()
+	_ = d.flush()
 }
 
-func (d *debugVisitor) BeforeCallExpr(expr *CallExpr) error {
+func (d *debugVisitor) BeforeCallExpr(expr *CallExpr) {
 	d.writeIndent()
 
 	mustWrite(d.w.WriteString("call\n"))
 
 	d.indentIn()
 
-	return d.flush()
+	_ = d.flush()
 }
 
-func (d *debugVisitor) AfterCallExpr(expr *CallExpr) error {
+func (d *debugVisitor) AfterCallExpr(expr *CallExpr) {
 	d.indentOut()
 
-	return d.flush()
+	_ = d.flush()
 }
 
-func (d *debugVisitor) AfterIfCondition(ifStmt *If) error {
-	return nil
-}
+func (d *debugVisitor) AfterIfCondition(ifStmt *If) {}
 
-func (d *debugVisitor) AfterIfThenBlock(ifStmt *If) error {
+func (d *debugVisitor) AfterIfThenBlock(ifStmt *If) {
 	d.indentOut()
-
-	return nil
 }
 
-func (d *debugVisitor) AfterElseBlock(ifStmt *If) error {
+func (d *debugVisitor) AfterElseBlock(ifStmt *If) {
 	d.indentOut()
-
-	return nil
 }
 
-func (d *debugVisitor) BeforeWhileCondition(*While) error {
+func (d *debugVisitor) BeforeWhileCondition(*While) {
 	d.writeIndent()
 
 	mustWrite(d.w.WriteString("while\n"))
 
 	d.indentIn()
 
-	return d.flush()
+	_ = d.flush()
 }
 
-func (d *debugVisitor) AfterWhileCondition(whileStmt *While) error {
-	return nil
-}
+func (d *debugVisitor) AfterWhileCondition(whileStmt *While) {}
 
-func (d *debugVisitor) AfterWhileBody(whileStmt *While) error {
+func (d *debugVisitor) AfterWhileBody(whileStmt *While) {
 	d.indentOut()
-
-	return nil
 }
 
-func (d *debugVisitor) BeforeReturnStmt(*Return) error {
+func (d *debugVisitor) BeforeReturnStmt(*Return) {
 	d.writeIndent()
 
 	mustWrite(d.w.WriteString("return\n"))
 
-	return d.flush()
+	_ = d.flush()
 }
 
-func (d *debugVisitor) AfterReturnStmt(*Return) error {
-	return nil
-}
+func (d *debugVisitor) AfterReturnStmt(*Return) {}
 
-func (d *debugVisitor) AfterStmt(Stmt) error {
-	return nil
-}
+func (d *debugVisitor) AfterStmt(Stmt) {}
 
 var _ Visitor = (*debugVisitor)(nil)
 
