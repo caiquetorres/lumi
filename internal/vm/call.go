@@ -24,7 +24,7 @@ func (m *vm) execCall() error {
 }
 
 func (m *vm) callFn(fnObj *fn, _ uint8) error {
-	m.frames.push(fnObj.entry, m.src)
+	m.frames.push(fnObj.entry, m.src, m.symbolTable)
 
 	return nil
 }

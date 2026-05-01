@@ -4,11 +4,16 @@ import "log"
 
 const MAX_STACK_SIZE = 1024
 
-type frames struct {
-	data []cursor
+type frame struct {
+	cursor
+	prevSymbolTable *symbolTable
 }
 
-func (f *frames) current() *cursor {
+type frames struct {
+	data []frame
+}
+
+func (f *frames) current() *frame {
 	if len(f.data) == 0 {
 		log.Panic("no frames available: cannot get current frame")
 	}
@@ -28,13 +33,16 @@ func (f *frames) pop() {
 	f.data = f.data[:len(f.data)-1]
 }
 
-func (f *frames) push(ptr uint32, data []byte) {
+func (f *frames) push(ptr uint32, data []byte, savedTable *symbolTable) {
 	if len(f.data) >= MAX_STACK_SIZE {
 		log.Panic("stack overflow: too many frames")
 	}
 
-	f.data = append(f.data, cursor{
-		pc:   ptr,
-		data: data,
+	f.data = append(f.data, frame{
+		cursor: cursor{
+			pc:   ptr,
+			data: data,
+		},
+		prevSymbolTable: savedTable,
 	})
 }

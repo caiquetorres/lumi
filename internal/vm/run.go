@@ -6,8 +6,6 @@ import (
 	"github.com/caiquetorres/lumi/internal/emitter"
 )
 
-// *(*interface {})(0x14000128138)
-
 func (m *vm) run() error {
 	mainFnObj, hasMain := m.globals.lookup("main")
 	if !hasMain {
@@ -124,11 +122,14 @@ func (m *vm) run() error {
 			}
 
 		case emitter.Return:
+			savedTable := m.frames.current().prevSymbolTable
 			m.frames.pop()
 
 			if m.frames.isEmpty() {
 				return nil
 			}
+
+			m.symbolTable = savedTable
 
 		case emitter.Add:
 			right, err := m.popObject()
