@@ -9,20 +9,25 @@ type Expr interface {
 }
 
 func (p *Parser) parseExpr() (Expr, error) {
-	unit, err := p.parseUnit()
-	if err != nil {
-		return nil, err
-	}
-
-	if p.lookahead().peek().is(token.OpenParen) {
-		return p.parseCallExpr(unit)
-	}
-
-	return unit, nil
+	return p.parseBinaryExpr(-1)
 }
 
 func (p *Parser) parseUnit() (Expr, error) {
 	switch {
+	case p.lookahead().peek().is(token.OpenParen):
+		p.bump() // consume '('
+
+		expr, err := p.parseExpr()
+		if err != nil {
+			return nil, err
+		}
+
+		_, err = p.lookahead().next().expect(token.CloseParen)
+		if err != nil {
+			return nil, err
+		}
+
+		return expr, nil
 	case p.isLiteral():
 		return p.parseLiteral()
 	case p.lookahead().peek().is(token.Identifier):

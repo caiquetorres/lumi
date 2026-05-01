@@ -14,8 +14,11 @@ type Visitor interface {
 	BeforeCallExpr(*CallExpr)
 	AfterCallExpr(*CallExpr)
 
-	BeforeBlockExpr(*Block)
-	AfterBlockExpr(*Block)
+	BeforeBinaryExpr(*BinaryExpr)
+	AfterBinaryExpr(*BinaryExpr)
+
+	BeforeBlockStmt(*Block)
+	AfterBlockStmt(*Block)
 
 	BeforeBreakStmt(*BreakStmt)
 	AfterBreakStmt(*BreakStmt)

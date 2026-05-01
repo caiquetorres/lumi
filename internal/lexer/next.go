@@ -11,11 +11,16 @@ func (l *Lexer) next() (token.Token, error) {
 		return token.Token{}, err
 	}
 
+	r, _ := l.peekRune()
+	_ = r
+
 	switch {
 	case l.isAtEOF():
 		return l.newToken(token.EOF), nil
 	case l.isPunctuation():
 		return l.readPunctuation()
+	case l.isOperator():
+		return l.readOperator()
 	case l.isNumber():
 		return l.readNumber()
 	case l.isString():

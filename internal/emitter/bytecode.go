@@ -7,6 +7,11 @@ const (
 
 	FnDecl
 
+	Add
+	Sub
+	Mul
+	Div
+
 	GetSymbol
 	DefineSymbol
 

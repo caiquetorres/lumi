@@ -14,8 +14,20 @@ const (
 	CloseBrace
 	Semicolon
 	Comma
-	Equals
 	NewLine
+
+	Plus
+	Minus
+	Star
+	Slash
+	Equal
+	EqualEqual
+	Bang
+	BangEqual
+	Less
+	LessEqual
+	Greater
+	GreaterEqual
 
 	String
 	Int
@@ -54,8 +66,34 @@ func (k Kind) String() string {
 		return ";"
 	case Comma:
 		return ","
-	case Equals:
+	case False:
+		return "false"
+	case True:
+		return "true"
+	case Plus:
+		return "+"
+	case Minus:
+		return "-"
+	case Star:
+		return "*"
+	case Slash:
+		return "/"
+	case Equal:
 		return "="
+	case EqualEqual:
+		return "=="
+	case Bang:
+		return "!"
+	case BangEqual:
+		return "!="
+	case Less:
+		return "<"
+	case LessEqual:
+		return "<="
+	case Greater:
+		return ">"
+	case GreaterEqual:
+		return ">="
 	case NewLine:
 		return "new line"
 	case String:

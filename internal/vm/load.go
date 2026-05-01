@@ -48,7 +48,7 @@ func (m *vm) load() error {
 			}
 
 		case emitter.BeginScope, emitter.EndScope, emitter.Pop,
-			emitter.Return:
+			emitter.Return, emitter.Add, emitter.Sub, emitter.Mul, emitter.Div:
 			// No operands to consume.
 
 		case emitter.JumpTo:

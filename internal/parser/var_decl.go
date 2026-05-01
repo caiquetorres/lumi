@@ -17,7 +17,7 @@ func varDeclStmt(identifier token.Token, expr Expr) *VarDecl {
 func (p *Parser) parseVarDecl() (*VarDecl, error) {
 	// let <identifier> = <expr>
 
-	toks, err := p.expectSequence(token.Let, token.Identifier, token.Equals)
+	toks, err := p.expectSequence(token.Let, token.Identifier, token.Equal)
 	if err != nil {
 		return nil, err
 	}

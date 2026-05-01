@@ -75,6 +75,18 @@ func (d *Disassembler) disassembleInstruction() {
 	case Return:
 		d.simpleInstruction("RETURN")
 
+	case Add:
+		d.simpleInstruction("ADD")
+
+	case Sub:
+		d.simpleInstruction("SUB")
+
+	case Mul:
+		d.simpleInstruction("MUL")
+
+	case Div:
+		d.simpleInstruction("DIV")
+
 	}
 }
 

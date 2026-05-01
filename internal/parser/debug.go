@@ -19,11 +19,15 @@ type debugVisitor struct {
 	currentIndent int
 }
 
-func (d *debugVisitor) AfterBlockExpr(*Block) {}
+func (d *debugVisitor) AfterBinaryExpr(*BinaryExpr) {}
+
+func (d *debugVisitor) BeforeBinaryExpr(*BinaryExpr) {}
+
+func (d *debugVisitor) AfterBlockStmt(*Block) {}
 
 func (d *debugVisitor) AfterBreakStmt(*BreakStmt) {}
 
-func (d *debugVisitor) BeforeBlockExpr(*Block) {}
+func (d *debugVisitor) BeforeBlockStmt(*Block) {}
 
 func (d *debugVisitor) BeforeContinueStmt(*ContinueStmt) {
 	d.writeIndent()

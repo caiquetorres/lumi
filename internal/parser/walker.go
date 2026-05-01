@@ -125,6 +125,8 @@ func (w *walker) walkExpr(v Visitor, expr Expr) {
 		w.walkLiteralExpr(v, e)
 	case *CallExpr:
 		w.walkCallExpr(v, e)
+	case *BinaryExpr:
+		w.walkBinaryExpr(v, e)
 	}
 }
 
@@ -148,12 +150,21 @@ func (w *walker) walkCallExpr(v Visitor, ce *CallExpr) {
 	v.AfterCallExpr(ce)
 }
 
+func (w *walker) walkBinaryExpr(v Visitor, be *BinaryExpr) {
+	v.BeforeBinaryExpr(be)
+
+	w.walkExpr(v, be.Left)
+	w.walkExpr(v, be.Right)
+
+	v.AfterBinaryExpr(be)
+}
+
 func (w *walker) walkBlockStmt(v Visitor, be *Block) {
-	v.BeforeBlockExpr(be)
+	v.BeforeBlockStmt(be)
 
 	for _, stmt := range be.Stmts {
 		w.walkStmt(v, stmt)
 	}
 
-	v.AfterBlockExpr(be)
+	v.AfterBlockStmt(be)
 }

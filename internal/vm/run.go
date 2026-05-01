@@ -118,6 +118,64 @@ func (m *vm) run() error {
 				return nil
 			}
 
+		case emitter.Add:
+			right, err := m.popObject()
+			if err != nil {
+				return err
+			}
+
+			left, err := m.popObject()
+			if err != nil {
+				return err
+			}
+
+			// REVIEW: This is a very naive implementation. It only supports adding integers. We will need to add type checking and support for other types (e.g., strings) in the future.
+
+			leftInt, rightInt := left.(int), right.(int)
+			m.pushObject(leftInt + rightInt)
+
+		case emitter.Sub:
+			right, err := m.popObject()
+			if err != nil {
+				return err
+			}
+
+			left, err := m.popObject()
+			if err != nil {
+				return err
+			}
+
+			leftInt, rightInt := left.(int), right.(int)
+			m.pushObject(leftInt - rightInt)
+
+		case emitter.Mul:
+			right, err := m.popObject()
+			if err != nil {
+				return err
+			}
+
+			left, err := m.popObject()
+			if err != nil {
+				return err
+			}
+
+			leftInt, rightInt := left.(int), right.(int)
+			m.pushObject(leftInt * rightInt)
+
+		case emitter.Div:
+			right, err := m.popObject()
+			if err != nil {
+				return err
+			}
+
+			left, err := m.popObject()
+			if err != nil {
+				return err
+			}
+
+			leftInt, rightInt := left.(int), right.(int)
+			m.pushObject(leftInt / rightInt)
+
 		case emitter.BeginScope:
 			m.symbolTable = newSymbolTable(m.symbolTable)
 
