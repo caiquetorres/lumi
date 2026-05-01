@@ -87,6 +87,17 @@ func (d *Disassembler) disassembleInstruction() {
 	case Div:
 		d.simpleInstruction("DIV")
 
+	case Eq:
+		d.simpleInstruction("EQ")
+
+	case Less:
+		d.simpleInstruction("LESS")
+
+	case LessEq:
+		d.simpleInstruction("LESS_EQ")
+
+	case Not:
+		d.simpleInstruction("NOT")
 	}
 }
 

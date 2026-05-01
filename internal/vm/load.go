@@ -48,7 +48,7 @@ func (m *vm) load() error {
 			}
 
 		case emitter.BeginScope, emitter.EndScope, emitter.Pop,
-			emitter.Return, emitter.Add, emitter.Sub, emitter.Mul, emitter.Div:
+			emitter.Return, emitter.Add, emitter.Sub, emitter.Mul, emitter.Div, emitter.Eq, emitter.Not, emitter.Less, emitter.LessEq:
 			// No operands to consume.
 
 		case emitter.JumpTo:
@@ -92,14 +92,14 @@ func (m *vm) registerNativeFunctions() {
 		},
 	})
 
-	m.globals.define("isEmpty", nativeFn{
+	m.globals.define("len", nativeFn{
 		fn: func(args ...any) (any, error) {
 			str, ok := args[0].(string)
 			if !ok {
-				return nil, fmt.Errorf("isEmpty expects a string argument")
+				return nil, fmt.Errorf("len expects a string argument")
 			}
 
-			return str == "", nil
+			return len(str), nil
 		},
 	})
 }

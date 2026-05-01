@@ -17,5 +17,22 @@ func (e *emitter) AfterBinaryExpr(be *parser.BinaryExpr) {
 		e.ch.emit(Mul)
 	case token.Slash:
 		e.ch.emit(Div)
+
+	case token.EqualEqual:
+		e.ch.emit(Eq)
+	case token.BangEqual:
+		e.ch.emit(Eq)
+		e.ch.emit(Not)
+
+	case token.Less:
+		e.ch.emit(Less)
+	case token.LessEqual:
+		e.ch.emit(LessEq)
+	case token.Greater:
+		e.ch.emit(LessEq)
+		e.ch.emit(Not)
+	case token.GreaterEqual:
+		e.ch.emit(Less)
+		e.ch.emit(Not)
 	}
 }

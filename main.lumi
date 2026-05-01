@@ -9,9 +9,9 @@ fun main() {
 }
 
 fun getPreferredName(first string, last string) string {
-    if isEmpty(last) {
+    if len(first) > 0 {
         return first
-    } else  {
+    } else {
         return sprintf("Mr. %s", last)
     }
 }

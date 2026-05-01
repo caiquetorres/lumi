@@ -60,6 +60,7 @@ func (l *Lexer) readEqualOrEqualEqual() (token.Token, error) {
 	}
 
 	if r == '=' {
+		l.bump() // consume the '='
 		return l.newToken(token.EqualEqual), nil
 	}
 
@@ -73,6 +74,7 @@ func (l *Lexer) readBangOrBangEqual() (token.Token, error) {
 	}
 
 	if r == '=' {
+		l.bump() // consume the '='
 		return l.newToken(token.BangEqual), nil
 	}
 
@@ -86,6 +88,7 @@ func (l *Lexer) readGreaterOrGreaterEqual() (token.Token, error) {
 	}
 
 	if r == '=' {
+		l.bump() // consume the '='
 		return l.newToken(token.GreaterEqual), nil
 	}
 
@@ -99,6 +102,7 @@ func (l *Lexer) readLessOrLessEqual() (token.Token, error) {
 	}
 
 	if r == '=' {
+		l.bump() // consume the '='
 		return l.newToken(token.LessEqual), nil
 	}
 

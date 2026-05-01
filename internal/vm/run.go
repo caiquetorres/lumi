@@ -176,6 +176,60 @@ func (m *vm) run() error {
 			leftInt, rightInt := left.(int), right.(int)
 			m.pushObject(leftInt / rightInt)
 
+		case emitter.Eq:
+			right, err := m.popObject()
+			if err != nil {
+				return err
+			}
+
+			left, err := m.popObject()
+			if err != nil {
+				return err
+			}
+
+			m.pushObject(left == right)
+
+		case emitter.Not:
+			value, err := m.popObject()
+			if err != nil {
+				return err
+			}
+
+			boolValue, ok := value.(bool)
+			if !ok {
+				return fmt.Errorf("expected boolean value for Not operation, got %T", value)
+			}
+
+			m.pushObject(!boolValue)
+
+		case emitter.Less:
+			right, err := m.popObject()
+			if err != nil {
+				return err
+			}
+
+			left, err := m.popObject()
+			if err != nil {
+				return err
+			}
+
+			leftInt, rightInt := left.(int), right.(int)
+			m.pushObject(leftInt < rightInt)
+
+		case emitter.LessEq:
+			right, err := m.popObject()
+			if err != nil {
+				return err
+			}
+
+			left, err := m.popObject()
+			if err != nil {
+				return err
+			}
+
+			leftInt, rightInt := left.(int), right.(int)
+			m.pushObject(leftInt <= rightInt)
+
 		case emitter.BeginScope:
 			m.symbolTable = newSymbolTable(m.symbolTable)
 

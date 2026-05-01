@@ -22,15 +22,15 @@ fun main() {
     let displayName = getPreferredName(firstName, lastName)
     let greeting = buildGreeting(displayName)
 
-    printf("%s\n", greeting)
+    println(greeting)
 }
 
 fun getPreferredName(first string, last string) string {
-    if isEmpty(last) {
+    if len(first) > 0 {
         return first
+    } else {
+        return sprintf("Mr. %s", last)
     }
-
-    return sprintf("Mr. %s", last)
 }
 
 fun buildGreeting(name string) string {

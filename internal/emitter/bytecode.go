@@ -7,10 +7,15 @@ const (
 
 	FnDecl
 
+	Not
+
 	Add
 	Sub
 	Mul
 	Div
+	Eq
+	Less
+	LessEq
 
 	GetSymbol
 	DefineSymbol

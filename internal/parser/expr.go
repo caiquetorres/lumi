@@ -33,7 +33,14 @@ func (p *Parser) parseUnit() (Expr, error) {
 	case p.lookahead().peek().is(token.Identifier):
 		return p.parseIdentifier()
 	default:
-		_, err := p.lookahead().peek().expectOneOf(token.String)
+		_, err := p.
+			lookahead().
+			peek().
+			expectOneOf(
+				token.String, token.Int, token.True, token.False,
+				token.OpenParen,
+			)
+
 		return nil, err
 	}
 }
