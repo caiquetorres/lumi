@@ -16,24 +16,23 @@ go run . run <file>.lbc
 
 ```lumi
 fun main() {
-    let firstName = "John"
-    let lastName = "Doe"
-
-    let displayName = getPreferredName(firstName, lastName)
-    let greeting = buildGreeting(displayName)
-
-    println(greeting)
+    let n = 10
+    println(fibonacci(n))
 }
 
-fun getPreferredName(first string, last string) string {
-    if len(first) > 0 {
-        return first
-    } else {
-        return sprintf("Mr. %s", last)
+fun fibonacci(n int) {
+    let a = 0
+    let b = 1
+
+    let i = 0
+    while i < n {
+        let tmp = a + b
+        b = a
+        a = tmp
+
+        i = i + 1
     }
-}
 
-fun buildGreeting(name string) string {
-    return sprintf("Hello, %s", name)
+    return a
 }
 ```

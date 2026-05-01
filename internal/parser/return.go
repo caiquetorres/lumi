@@ -18,6 +18,10 @@ func (p *Parser) parseReturn() (*ReturnStmt, error) {
 		return nil, err
 	}
 
+	if p.lookahead().peek().is(token.NewLine) {
+		return returnStmt(nil), nil
+	}
+
 	expr, err := p.parseExpr()
 	if err != nil {
 		return nil, err
