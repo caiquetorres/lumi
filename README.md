@@ -12,7 +12,9 @@ go run . build -file <file>.lumi -out <file>.lbc
 go run . run <file>.lbc
 ```
 
-## Example
+## Examples
+
+More examples can be found in the [`examples/`](examples/) folder.
 
 ```lumi
 fun main() {
