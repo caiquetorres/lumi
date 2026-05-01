@@ -9,6 +9,7 @@ import (
 const (
 	typeBool byte = iota + 1
 	typeString
+	typeInt
 )
 
 func (c *ConstantPool) Serialize() []byte {
@@ -27,6 +28,9 @@ func (c *ConstantPool) serializeConstant(val any, buf *bytes.Buffer) uint32 {
 
 	case string:
 		c.serializeString(val, buf)
+
+	case int:
+		c.serializeInt(val, buf)
 
 	default:
 		log.Panic("unsupported constant type")
@@ -59,4 +63,13 @@ func (c *ConstantPool) serializeString(value string, buf *bytes.Buffer) {
 	}
 
 	_, _ = buf.WriteString(value)
+}
+
+func (c *ConstantPool) serializeInt(value int, buf *bytes.Buffer) {
+	_ = buf.WriteByte(typeInt)
+
+	var intBuf [8]byte
+	binary.BigEndian.PutUint64(intBuf[:], uint64(value))
+
+	_, _ = buf.Write(intBuf[:])
 }

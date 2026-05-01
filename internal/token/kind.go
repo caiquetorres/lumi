@@ -18,6 +18,7 @@ const (
 	NewLine
 
 	String
+	Int
 
 	False
 	True
@@ -59,6 +60,8 @@ func (k Kind) String() string {
 		return "new line"
 	case String:
 		return "string"
+	case Int:
+		return "number"
 	case Pub:
 		return "pub"
 	case Fun:
