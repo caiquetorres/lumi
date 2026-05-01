@@ -1,5 +1,7 @@
 package parser
 
+import "github.com/caiquetorres/lumi/internal/token"
+
 func Walk(v Visitor, ast *Ast) {
 	w := &walker{}
 	w.walkAst(v, ast)
@@ -153,7 +155,12 @@ func (w *walker) walkCallExpr(v Visitor, ce *CallExpr) {
 func (w *walker) walkBinaryExpr(v Visitor, be *BinaryExpr) {
 	v.BeforeBinaryExpr(be)
 
-	w.walkExpr(v, be.Left)
+	if be.Operator.Kind() != token.Equal {
+		// REVIEW: We don't want to push onto the stack the left hand side of an assignment, since it's not a value that we want to use. Instead, we want to push the value of the right hand side and then pop it into the variable on the left hand side.
+
+		w.walkExpr(v, be.Left)
+	}
+
 	w.walkExpr(v, be.Right)
 
 	v.AfterBinaryExpr(be)

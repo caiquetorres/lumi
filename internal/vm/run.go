@@ -6,6 +6,8 @@ import (
 	"github.com/caiquetorres/lumi/internal/emitter"
 )
 
+// *(*interface {})(0x14000128138)
+
 func (m *vm) run() error {
 	mainFnObj, hasMain := m.globals.lookup("main")
 	if !hasMain {
@@ -50,6 +52,10 @@ func (m *vm) run() error {
 				return err
 			}
 
+			if val, ok := value.(int); ok {
+				value = val
+			}
+
 			m.symbolTable.define(name, value)
 
 		case emitter.GetSymbol:
@@ -67,6 +73,12 @@ func (m *vm) run() error {
 			if !exists {
 				return fmt.Errorf("symbol %q not found", name)
 			}
+
+			if val, ok := value.(int); ok {
+				value = val
+			}
+
+			// copy the value to the stack so that it can be used by subsequent instructions without modifying the symbol table entry
 
 			m.pushObject(value)
 
@@ -230,6 +242,32 @@ func (m *vm) run() error {
 			leftInt, rightInt := left.(int), right.(int)
 			m.pushObject(leftInt <= rightInt)
 
+		case emitter.SetSymbol:
+			constant, err := m.readConstant()
+			if err != nil {
+				return err
+			}
+
+			name, ok := constant.(string)
+			if !ok {
+				return fmt.Errorf("expected string constant for symbol name, got %T", constant)
+			}
+
+			value, err := m.popObject()
+			if err != nil {
+				return err
+			}
+
+			if val, ok := value.(int); ok {
+				value = val
+			}
+
+			if !m.symbolTable.set(name, value) {
+				return fmt.Errorf("symbol %q not found for assignment", name)
+			}
+
+			m.pushObject(value)
+
 		case emitter.BeginScope:
 			m.symbolTable = newSymbolTable(m.symbolTable)
 
@@ -237,7 +275,6 @@ func (m *vm) run() error {
 			if m.symbolTable.parent != nil {
 				m.symbolTable = m.symbolTable.parent
 			}
-
 		}
 	}
 }

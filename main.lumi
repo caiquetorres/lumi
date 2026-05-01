@@ -1,21 +1,13 @@
 fun main() {
-    let firstName = "John"
-    let lastName = "Doe"
-
-    let displayName = getPreferredName(firstName, lastName)
-    let greeting = buildGreeting(displayName)
-
-    println(greeting)
+    println(fib(10))
 }
 
-fun getPreferredName(first string, last string) string {
-    if len(first) > 0 {
-        return first
-    } else {
-        return sprintf("Mr. %s", last)
+fun fib(idx int) {
+    if idx == 0 {
+        return 0
+    } else if idx == 1 {
+        return 1
     }
-}
 
-fun buildGreeting(name string) string {
-    return sprintf("Hello, %s", name)
+    return fib(idx - 2) + fib(idx - 1)
 }

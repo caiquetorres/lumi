@@ -35,7 +35,7 @@ func (m *vm) load() error {
 				return err
 			}
 
-		case emitter.LoadConst, emitter.GetSymbol, emitter.DefineSymbol:
+		case emitter.LoadConst, emitter.GetSymbol, emitter.DefineSymbol, emitter.SetSymbol:
 			if _, err := c.readUint32(); err != nil {
 				return fmt.Errorf("invalid uint32 operand for opcode %d at pc=%d: %w", opcode, c.pc, err)
 			}

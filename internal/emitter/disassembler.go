@@ -54,6 +54,9 @@ func (d *Disassembler) disassembleInstruction() {
 	case GetSymbol:
 		d.getSymbolInstruction()
 
+	case SetSymbol:
+		d.setSymbolInstruction()
+
 	case JumpTo:
 		d.jumpToInstruction()
 
@@ -146,6 +149,15 @@ func (d *Disassembler) defineSymbolInstruction() {
 func (d *Disassembler) getSymbolInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
 	_, _ = fmt.Fprintf(d.w, "%-12s", "GET_SYMBOL")
+
+	nameIdx := d.readUint32()
+
+	_, _ = fmt.Fprintf(d.w, " name=#%d\n", nameIdx)
+}
+
+func (d *Disassembler) setSymbolInstruction() {
+	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
+	_, _ = fmt.Fprintf(d.w, "%-12s", "SET_SYMBOL")
 
 	nameIdx := d.readUint32()
 

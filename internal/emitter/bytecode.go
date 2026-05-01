@@ -18,6 +18,7 @@ const (
 	LessEq
 
 	GetSymbol
+	SetSymbol
 	DefineSymbol
 
 	Call
