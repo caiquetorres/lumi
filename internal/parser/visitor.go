@@ -17,22 +17,22 @@ type Visitor interface {
 	BeforeBlockExpr(*Block)
 	AfterBlockExpr(*Block)
 
-	BeforeBreakStmt(*Break)
-	AfterBreakStmt(*Break)
+	BeforeBreakStmt(*BreakStmt)
+	AfterBreakStmt(*BreakStmt)
 
-	BeforeContinueStmt(*Continue)
-	AfterContinueStmt(*Continue)
+	BeforeContinueStmt(*ContinueStmt)
+	AfterContinueStmt(*ContinueStmt)
 
-	AfterIfCondition(*If)
-	AfterIfThenBlock(*If)
-	AfterElseBlock(*If)
+	AfterIfCondition(*IfStmt)
+	AfterIfThenBlock(*IfStmt)
+	AfterElseBlock(*IfStmt)
 
-	BeforeWhileCondition(*While)
-	AfterWhileCondition(*While)
-	AfterWhileBody(*While)
+	BeforeWhileCondition(*WhileStmt)
+	AfterWhileCondition(*WhileStmt)
+	AfterWhileBody(*WhileStmt)
 
-	BeforeReturnStmt(*Return)
-	AfterReturnStmt(*Return)
+	BeforeReturnStmt(*ReturnStmt)
+	AfterReturnStmt(*ReturnStmt)
 
 	AfterStmt(Stmt)
 }

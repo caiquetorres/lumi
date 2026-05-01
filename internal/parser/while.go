@@ -2,12 +2,19 @@ package parser
 
 import "github.com/caiquetorres/lumi/internal/token"
 
-type While struct {
+type WhileStmt struct {
 	Condition Expr
 	Body      *Block
 }
 
-func (p *Parser) parseWhile() (*While, error) {
+func whileStmt(condition Expr, body *Block) *WhileStmt {
+	return &WhileStmt{
+		Condition: condition,
+		Body:      body,
+	}
+}
+
+func (p *Parser) parseWhile() (*WhileStmt, error) {
 	_, err := p.lookahead().next().expect(token.While)
 	if err != nil {
 		return nil, err
@@ -23,8 +30,5 @@ func (p *Parser) parseWhile() (*While, error) {
 		return nil, err
 	}
 
-	return &While{
-		Condition: condition,
-		Body:      body,
-	}, nil
+	return whileStmt(condition, body), nil
 }

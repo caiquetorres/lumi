@@ -2,13 +2,13 @@ package emitter
 
 import "github.com/caiquetorres/lumi/internal/parser"
 
-func (e *emitter) BeforeWhileCondition(*parser.While) {
+func (e *emitter) BeforeWhileCondition(*parser.WhileStmt) {
 	e.loopStack.push(loop{
 		start: e.ch.ip,
 	})
 }
 
-func (e *emitter) AfterWhileCondition(*parser.While) {
+func (e *emitter) AfterWhileCondition(*parser.WhileStmt) {
 	e.ch.emit(JumpIfFalse)
 	jumpTo := e.ch.reserveUint32()
 
@@ -17,7 +17,7 @@ func (e *emitter) AfterWhileCondition(*parser.While) {
 	}
 }
 
-func (e *emitter) AfterWhileBody(*parser.While) {
+func (e *emitter) AfterWhileBody(*parser.WhileStmt) {
 	if top, ok := e.loopStack.pop(); ok {
 		e.ch.emit(JumpTo)
 		e.ch.emitUint32(top.start)

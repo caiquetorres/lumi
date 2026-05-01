@@ -2,13 +2,21 @@ package parser
 
 import "github.com/caiquetorres/lumi/internal/token"
 
-type If struct {
+type IfStmt struct {
 	Condition Expr
 	Then      *Block
 	Else      *Block
 }
 
-func (p *Parser) parseIf() (*If, error) {
+func ifStmt(condition Expr, thenBlock, elseBlock *Block) *IfStmt {
+	return &IfStmt{
+		Condition: condition,
+		Then:      thenBlock,
+		Else:      elseBlock,
+	}
+}
+
+func (p *Parser) parseIf() (*IfStmt, error) {
 	_, err := p.lookahead().next().expect(token.If)
 	if err != nil {
 		return nil, err
@@ -45,9 +53,5 @@ func (p *Parser) parseIf() (*If, error) {
 		}
 	}
 
-	return &If{
-		Condition: condition,
-		Then:      thenBlock,
-		Else:      elseBlock,
-	}, nil
+	return ifStmt(condition, thenBlock, elseBlock), nil
 }

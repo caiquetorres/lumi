@@ -2,7 +2,7 @@ package emitter
 
 import "github.com/caiquetorres/lumi/internal/parser"
 
-func (e *emitter) BeforeContinueStmt(*parser.Continue) {
+func (e *emitter) BeforeContinueStmt(*parser.ContinueStmt) {
 	e.ch.emit(JumpTo)
 
 	if top, ok := e.loopStack.top(); ok {
@@ -10,4 +10,4 @@ func (e *emitter) BeforeContinueStmt(*parser.Continue) {
 	}
 }
 
-func (e *emitter) AfterContinueStmt(*parser.Continue) {}
+func (e *emitter) AfterContinueStmt(*parser.ContinueStmt) {}

@@ -6,6 +6,12 @@ type Block struct {
 	Stmts []Stmt
 }
 
+func block(stmts []Stmt) *Block {
+	return &Block{
+		Stmts: stmts,
+	}
+}
+
 var _ Stmt = (*Block)(nil)
 
 func (p *Parser) parseBlock() (*Block, error) {
@@ -37,5 +43,5 @@ func (p *Parser) parseBlock() (*Block, error) {
 
 	p.bump() // consume the '}'
 
-	return &Block{Stmts: stms}, nil
+	return block(stms), nil
 }

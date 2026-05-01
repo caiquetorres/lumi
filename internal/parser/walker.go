@@ -46,15 +46,15 @@ func (w *walker) walkStmt(v Visitor, stmt Stmt) {
 	switch s := stmt.(type) {
 	case *VarDecl:
 		w.walkVarDecl(v, s)
-	case *Return:
+	case *ReturnStmt:
 		w.walkReturn(v, s)
-	case *If:
+	case *IfStmt:
 		w.walkIf(v, s)
-	case *While:
+	case *WhileStmt:
 		w.walkWhile(v, s)
-	case *Break:
+	case *BreakStmt:
 		w.walkBreak(v, s)
-	case *Continue:
+	case *ContinueStmt:
 		w.walkContinue(v, s)
 	case *Block:
 		w.walkBlockStmt(v, s)
@@ -65,7 +65,7 @@ func (w *walker) walkStmt(v Visitor, stmt Stmt) {
 	v.AfterStmt(stmt)
 }
 
-func (w *walker) walkWhile(v Visitor, whileStmt *While) {
+func (w *walker) walkWhile(v Visitor, whileStmt *WhileStmt) {
 	v.BeforeWhileCondition(whileStmt)
 
 	w.walkExpr(v, whileStmt.Condition)
@@ -77,7 +77,7 @@ func (w *walker) walkWhile(v Visitor, whileStmt *While) {
 	v.AfterWhileBody(whileStmt)
 }
 
-func (w *walker) walkIf(v Visitor, ifStmt *If) error {
+func (w *walker) walkIf(v Visitor, ifStmt *IfStmt) error {
 	w.walkExpr(v, ifStmt.Condition)
 
 	v.AfterIfCondition(ifStmt)
@@ -95,7 +95,7 @@ func (w *walker) walkIf(v Visitor, ifStmt *If) error {
 	return nil
 }
 
-func (w *walker) walkReturn(v Visitor, r *Return) {
+func (w *walker) walkReturn(v Visitor, r *ReturnStmt) {
 	v.BeforeReturnStmt(r)
 
 	if r.Expr != nil {
@@ -105,13 +105,13 @@ func (w *walker) walkReturn(v Visitor, r *Return) {
 	v.AfterReturnStmt(r)
 }
 
-func (w *walker) walkBreak(v Visitor, b *Break) {
+func (w *walker) walkBreak(v Visitor, b *BreakStmt) {
 	// REVIEW: We definitely don't need two separate methods (before and after) here
 	v.BeforeBreakStmt(b)
 	v.AfterBreakStmt(b)
 }
 
-func (w *walker) walkContinue(v Visitor, c *Continue) {
+func (w *walker) walkContinue(v Visitor, c *ContinueStmt) {
 	// REVIEW: We definitely don't need two separate methods (before and after) here
 	v.BeforeContinueStmt(c)
 	v.AfterContinueStmt(c)

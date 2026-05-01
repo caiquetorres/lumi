@@ -11,9 +11,13 @@ type FunDecl struct {
 	Return     *Type
 }
 
-type Param struct {
-	Name token.Token
-	Type Type
+func funDecl(identifier token.Token, params []Param, body []Stmt, returnType *Type) *FunDecl {
+	return &FunDecl{
+		Identifier: identifier,
+		Params:     params,
+		Body:       body,
+		Return:     returnType,
+	}
 }
 
 func (p *Parser) parseFunDecl() (*FunDecl, error) {
@@ -27,6 +31,8 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	identifier := toks[1]
 
 	var params []Param
 	for !p.lookahead().peek().isOneOf(token.CloseParen, token.EOF) {
@@ -72,12 +78,19 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 		}
 	}
 
-	return &FunDecl{
-		Identifier: toks[1],
-		Params:     params,
-		Body:       body,
-		Return:     ty,
-	}, nil
+	return funDecl(identifier, params, body, ty), nil
+}
+
+type Param struct {
+	Name token.Token
+	Type Type
+}
+
+func param(name token.Token, ty Type) *Param {
+	return &Param{
+		Name: name,
+		Type: ty,
+	}
 }
 
 func (p *Parser) parseParam() (*Param, error) {
@@ -97,10 +110,7 @@ func (p *Parser) parseParam() (*Param, error) {
 		}
 	}
 
-	return &Param{
-		Name: tok,
-		Type: *ty,
-	}, nil
+	return param(tok, *ty), nil
 }
 
 func (p *Parser) parseFunDeclBody() ([]Stmt, error) {

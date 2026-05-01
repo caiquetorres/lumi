@@ -21,11 +21,11 @@ type debugVisitor struct {
 
 func (d *debugVisitor) AfterBlockExpr(*Block) {}
 
-func (d *debugVisitor) AfterBreakStmt(*Break) {}
+func (d *debugVisitor) AfterBreakStmt(*BreakStmt) {}
 
 func (d *debugVisitor) BeforeBlockExpr(*Block) {}
 
-func (d *debugVisitor) BeforeContinueStmt(*Continue) {
+func (d *debugVisitor) BeforeContinueStmt(*ContinueStmt) {
 	d.writeIndent()
 
 	mustWrite(d.w.WriteString("continue\n"))
@@ -33,9 +33,9 @@ func (d *debugVisitor) BeforeContinueStmt(*Continue) {
 	_ = d.flush()
 }
 
-func (d *debugVisitor) AfterContinueStmt(*Continue) {}
+func (d *debugVisitor) AfterContinueStmt(*ContinueStmt) {}
 
-func (d *debugVisitor) BeforeBreakStmt(*Break) {}
+func (d *debugVisitor) BeforeBreakStmt(*BreakStmt) {}
 
 func DebugAst(ast *Ast, l *lexer.Lexer, w io.Writer) {
 	d := &debugVisitor{
@@ -125,17 +125,17 @@ func (d *debugVisitor) AfterCallExpr(expr *CallExpr) {
 	_ = d.flush()
 }
 
-func (d *debugVisitor) AfterIfCondition(ifStmt *If) {}
+func (d *debugVisitor) AfterIfCondition(ifStmt *IfStmt) {}
 
-func (d *debugVisitor) AfterIfThenBlock(ifStmt *If) {
+func (d *debugVisitor) AfterIfThenBlock(ifStmt *IfStmt) {
 	d.indentOut()
 }
 
-func (d *debugVisitor) AfterElseBlock(ifStmt *If) {
+func (d *debugVisitor) AfterElseBlock(ifStmt *IfStmt) {
 	d.indentOut()
 }
 
-func (d *debugVisitor) BeforeWhileCondition(*While) {
+func (d *debugVisitor) BeforeWhileCondition(*WhileStmt) {
 	d.writeIndent()
 
 	mustWrite(d.w.WriteString("while\n"))
@@ -145,13 +145,13 @@ func (d *debugVisitor) BeforeWhileCondition(*While) {
 	_ = d.flush()
 }
 
-func (d *debugVisitor) AfterWhileCondition(whileStmt *While) {}
+func (d *debugVisitor) AfterWhileCondition(whileStmt *WhileStmt) {}
 
-func (d *debugVisitor) AfterWhileBody(whileStmt *While) {
+func (d *debugVisitor) AfterWhileBody(whileStmt *WhileStmt) {
 	d.indentOut()
 }
 
-func (d *debugVisitor) BeforeReturnStmt(*Return) {
+func (d *debugVisitor) BeforeReturnStmt(*ReturnStmt) {
 	d.writeIndent()
 
 	mustWrite(d.w.WriteString("return\n"))
@@ -159,7 +159,7 @@ func (d *debugVisitor) BeforeReturnStmt(*Return) {
 	_ = d.flush()
 }
 
-func (d *debugVisitor) AfterReturnStmt(*Return) {}
+func (d *debugVisitor) AfterReturnStmt(*ReturnStmt) {}
 
 func (d *debugVisitor) AfterStmt(Stmt) {}
 

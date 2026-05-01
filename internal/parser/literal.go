@@ -18,7 +18,7 @@ type LiteralExpr struct {
 	Value token.Token
 }
 
-func literal(k LiteralKind, value token.Token) *LiteralExpr {
+func literalExpr(k LiteralKind, value token.Token) *LiteralExpr {
 	return &LiteralExpr{
 		Kind:  k,
 		Value: value,
@@ -46,12 +46,12 @@ func (p *Parser) parseLiteral() (*LiteralExpr, error) {
 
 	switch tok.Kind() {
 	case token.True:
-		return literal(LiteralTrue, tok), nil
+		return literalExpr(LiteralTrue, tok), nil
 	case token.False:
-		return literal(LiteralFalse, tok), nil
+		return literalExpr(LiteralFalse, tok), nil
 	case token.Int:
-		return literal(LiteralInt, tok), nil
+		return literalExpr(LiteralInt, tok), nil
 	default:
-		return literal(LiteralString, tok), nil
+		return literalExpr(LiteralString, tok), nil
 	}
 }

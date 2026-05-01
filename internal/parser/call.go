@@ -9,6 +9,13 @@ type CallExpr struct {
 	Args   []Expr
 }
 
+func callExpr(callee Expr, args []Expr) *CallExpr {
+	return &CallExpr{
+		Callee: callee,
+		Args:   args,
+	}
+}
+
 var _ Expr = (*CallExpr)(nil)
 
 func (c *CallExpr) expr() {}
@@ -44,8 +51,5 @@ func (p *Parser) parseCallExpr(callee Expr) (Expr, error) {
 
 	p.bump() // close brace
 
-	return &CallExpr{
-		Callee: callee,
-		Args:   args,
-	}, nil
+	return callExpr(callee, args), nil
 }

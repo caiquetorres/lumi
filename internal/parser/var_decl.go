@@ -7,6 +7,13 @@ type VarDecl struct {
 	Expr       Expr
 }
 
+func varDeclStmt(identifier token.Token, expr Expr) *VarDecl {
+	return &VarDecl{
+		Identifier: identifier,
+		Expr:       expr,
+	}
+}
+
 func (p *Parser) parseVarDecl() (*VarDecl, error) {
 	// let <identifier> = <expr>
 
@@ -20,8 +27,5 @@ func (p *Parser) parseVarDecl() (*VarDecl, error) {
 		return nil, err
 	}
 
-	return &VarDecl{
-		Identifier: toks[1],
-		Expr:       expr,
-	}, nil
+	return varDeclStmt(toks[1], expr), nil
 }

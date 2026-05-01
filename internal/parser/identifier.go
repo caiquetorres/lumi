@@ -8,6 +8,12 @@ type IdentifierExpr struct {
 	Name token.Token
 }
 
+func identifierExpr(name token.Token) *IdentifierExpr {
+	return &IdentifierExpr{
+		Name: name,
+	}
+}
+
 func (l *IdentifierExpr) expr() {}
 
 var _ Expr = (*IdentifierExpr)(nil)
@@ -18,7 +24,5 @@ func (p *Parser) parseIdentifier() (*IdentifierExpr, error) {
 		return nil, err
 	}
 
-	return &IdentifierExpr{
-		Name: tok,
-	}, nil
+	return identifierExpr(tok), nil
 }
