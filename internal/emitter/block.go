@@ -2,6 +2,6 @@ package emitter
 
 import "github.com/caiquetorres/lumi/internal/parser"
 
-func (e *emitter) BeforeBlockStmt(block *parser.Block) {}
+func (e *Emitter) BeforeBlockStmt(block *parser.Block) {}
 
-func (e *emitter) AfterBlockStmt(block *parser.Block) {}
+func (e *Emitter) AfterBlockStmt(block *parser.Block) {}

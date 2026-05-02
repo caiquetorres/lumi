@@ -4,11 +4,11 @@ import (
 	"github.com/caiquetorres/lumi/internal/parser"
 )
 
-func (e *emitter) AfterFunDecl(*parser.FunDecl) {
+func (e *Emitter) AfterFunDecl(*parser.FunDecl) {
 	e.ch.emit(Return)
 }
 
-func (e *emitter) BeforeFunDecl(fn *parser.FunDecl) {
+func (e *Emitter) BeforeFunDecl(fn *parser.FunDecl) {
 	fnName := e.lex.Lexeme(fn.Identifier)
 
 	fnID := e.fnIDs[fnName]
@@ -20,5 +20,5 @@ func (e *emitter) BeforeFunDecl(fn *parser.FunDecl) {
 	}
 }
 
-func (e *emitter) AfterParam(*parser.Param)  {}
-func (e *emitter) BeforeParam(*parser.Param) {}
+func (e *Emitter) AfterParam(*parser.Param)  {}
+func (e *Emitter) BeforeParam(*parser.Param) {}

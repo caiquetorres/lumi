@@ -7,7 +7,9 @@ import (
 	"github.com/caiquetorres/lumi/internal/constpool"
 )
 
-const defaultChunkSize = 512
+const (
+	defaultChunkSize = 512
+)
 
 type Chunk struct {
 	ip uint32

@@ -6,7 +6,7 @@ import (
 	"github.com/caiquetorres/lumi/internal/parser"
 )
 
-func (e *emitter) BeforeLiteralExpr(lit *parser.LiteralExpr) {
+func (e *Emitter) BeforeLiteralExpr(lit *parser.LiteralExpr) {
 	litValue := e.lex.Lexeme(lit.Value)
 
 	switch lit.Kind {

@@ -5,9 +5,9 @@ import (
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
-func (e *emitter) BeforeBinaryExpr(be *parser.BinaryExpr) {}
+func (e *Emitter) BeforeBinaryExpr(be *parser.BinaryExpr) {}
 
-func (e *emitter) AfterBinaryExpr(be *parser.BinaryExpr) {
+func (e *Emitter) AfterBinaryExpr(be *parser.BinaryExpr) {
 	switch be.Operator.Kind() {
 	case token.Plus:
 		e.ch.emit(Add)
@@ -40,7 +40,7 @@ func (e *emitter) AfterBinaryExpr(be *parser.BinaryExpr) {
 	}
 }
 
-func (e *emitter) handleAssignment(be *parser.BinaryExpr) {
+func (e *Emitter) handleAssignment(be *parser.BinaryExpr) {
 	switch left := be.Left.(type) {
 	case *parser.IdentifierExpr:
 		e.ch.emit(SetSymbol)

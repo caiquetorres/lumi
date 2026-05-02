@@ -2,7 +2,7 @@ package emitter
 
 import "github.com/caiquetorres/lumi/internal/parser"
 
-func (e *emitter) AfterVarDecl(vd *parser.VarDecl) {
+func (e *Emitter) AfterVarDecl(vd *parser.VarDecl) {
 	e.ch.emit(DefineSymbol)
 
 	name := e.lex.Lexeme(vd.Identifier)
@@ -10,4 +10,4 @@ func (e *emitter) AfterVarDecl(vd *parser.VarDecl) {
 	e.ch.emitUint32(idx)
 }
 
-func (e *emitter) BeforeVarDecl(*parser.VarDecl) {}
+func (e *Emitter) BeforeVarDecl(*parser.VarDecl) {}
