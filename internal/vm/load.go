@@ -35,7 +35,7 @@ func (m *vm) load() error {
 				return err
 			}
 
-		case emitter.LoadConst, emitter.GetSymbol, emitter.DefineSymbol, emitter.SetSymbol:
+		case emitter.LoadConst, emitter.DefineSymbol, emitter.SetSymbol:
 			if _, err := c.readUint32(); err != nil {
 				return fmt.Errorf("invalid uint32 operand for opcode %d at pc=%d: %w", opcode, c.pc, err)
 			}
@@ -47,7 +47,7 @@ func (m *vm) load() error {
 				return fmt.Errorf("invalid call arity operand at pc=%d: %w", c.pc, err)
 			}
 
-		case emitter.BeginScope, emitter.EndScope, emitter.Pop,
+		case emitter.Pop,
 			emitter.Return, emitter.Add, emitter.Sub, emitter.Mul, emitter.Div, emitter.Eq, emitter.Not, emitter.Less, emitter.LessEq:
 			// No operands to consume.
 

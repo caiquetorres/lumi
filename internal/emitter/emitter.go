@@ -8,7 +8,14 @@ import (
 )
 
 func Emit(ast *parser.Ast, l *lexer.Lexer, w io.Writer) (*Chunk, error) {
-	e := newEmitter(l)
+	fnVisitor := &fnVisitor{
+		fnIDs: make(map[string]uint32),
+		lex:   l,
+	}
+
+	parser.Walk(fnVisitor, ast)
+
+	e := newEmitter(l, fnVisitor.fnIDs)
 	parser.Walk(e, ast)
 
 	if e.err != nil {
@@ -27,15 +34,20 @@ type emitter struct {
 	jumpStack *jumpStack
 	loopStack *loopStack
 
+	symTable *symbolTable
+
+	fnIDs map[string]uint32
+
 	err error
 }
 
-func newEmitter(lex *lexer.Lexer) *emitter {
+func newEmitter(lex *lexer.Lexer, fnIDs map[string]uint32) *emitter {
 	return &emitter{
 		ch:        newChunk(),
 		lex:       lex,
 		loopStack: newLoopStack(),
 		jumpStack: newJumpStack(),
+		fnIDs:     fnIDs,
 	}
 }
 

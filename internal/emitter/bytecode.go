@@ -2,8 +2,11 @@ package emitter
 
 const (
 	LoadConst byte = iota + 1
-	BeginScope
-	EndScope
+
+	PushInt
+	PushTrue
+	PushFalse
+	PushFn
 
 	FnDecl
 
@@ -17,7 +20,7 @@ const (
 	Less
 	LessEq
 
-	GetSymbol
+	// GetSymbol
 	SetSymbol
 	DefineSymbol
 

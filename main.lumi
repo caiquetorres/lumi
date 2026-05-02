@@ -1,20 +1,7 @@
 fun main() {
-    let n = 10
-    println(fibonacci(n))
+    sum()
 }
 
-fun fibonacci(n int) {
-    let a = 0
-    let b = 1
-
-    let i = 0
-    while i < n {
-        let tmp = a + b
-        b = a
-        a = tmp
-
-        i = i + 1
-    }
-
-    return a
+fun sum() {
+    return 1 + 2
 }

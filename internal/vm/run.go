@@ -48,29 +48,29 @@ func (m *vm) run(entryPoint uint32) error {
 
 			m.symbolTable.define(name, value)
 
-		case emitter.GetSymbol:
-			constant, err := m.readConstant()
-			if err != nil {
-				return err
-			}
+		// case emitter.GetSymbol:
+		// 	constant, err := m.readConstant()
+		// 	if err != nil {
+		// 		return err
+		// 	}
 
-			name, ok := constant.(string)
-			if !ok {
-				return fmt.Errorf("expected string constant for symbol name, got %T", constant)
-			}
+		// 	name, ok := constant.(string)
+		// 	if !ok {
+		// 		return fmt.Errorf("expected string constant for symbol name, got %T", constant)
+		// 	}
 
-			value, exists := m.symbolTable.lookup(name)
-			if !exists {
-				return fmt.Errorf("symbol %q not found", name)
-			}
+		// 	value, exists := m.symbolTable.lookup(name)
+		// 	if !exists {
+		// 		return fmt.Errorf("symbol %q not found", name)
+		// 	}
 
-			if val, ok := value.(int); ok {
-				value = val
-			}
+		// 	if val, ok := value.(int); ok {
+		// 		value = val
+		// 	}
 
-			// copy the value to the stack so that it can be used by subsequent instructions without modifying the symbol table entry
+		// 	// copy the value to the stack so that it can be used by subsequent instructions without modifying the symbol table entry
 
-			m.pushObject(value)
+		// 	m.pushObject(value)
 
 		case emitter.Call:
 			if err := m.execCall(); err != nil {
@@ -261,13 +261,13 @@ func (m *vm) run(entryPoint uint32) error {
 
 			m.pushObject(value)
 
-		case emitter.BeginScope:
-			m.symbolTable = newSymbolTable(m.symbolTable)
+			// case emitter.BeginScope:
+			// 	m.symbolTable = newSymbolTable(m.symbolTable)
 
-		case emitter.EndScope:
-			if m.symbolTable.parent != nil {
-				m.symbolTable = m.symbolTable.parent
-			}
+			// case emitter.EndScope:
+			// 	if m.symbolTable.parent != nil {
+			// 		m.symbolTable = m.symbolTable.parent
+			// 	}
 		}
 	}
 }

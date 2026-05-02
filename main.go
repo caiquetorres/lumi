@@ -11,7 +11,7 @@ import (
 	"github.com/caiquetorres/lumi/internal/lexer"
 	"github.com/caiquetorres/lumi/internal/parser"
 	"github.com/caiquetorres/lumi/internal/semantic"
-	"github.com/caiquetorres/lumi/internal/vm"
+	"github.com/caiquetorres/lumi/internal/vm/v2"
 )
 
 func main() {
@@ -34,7 +34,7 @@ func main() {
 		}
 		defer f.Close()
 
-		if err := vm.Execute(f); err != nil {
+		if err := vm.Exec(f); err != nil {
 			log.Fatal(err)
 		}
 

@@ -45,14 +45,26 @@ func (d *Disassembler) disassembleInstruction() {
 	case LoadConst:
 		d.loadConstInstruction()
 
+	case PushInt:
+		d.pushIntInstruction()
+
+	case PushTrue:
+		d.simpleInstruction("PUSH_TRUE")
+
+	case PushFalse:
+		d.simpleInstruction("PUSH_FALSE")
+
+	case PushFn:
+		d.pushFunctionInstruction()
+
 	case FnDecl:
 		d.funDeclInstruction()
 
 	case DefineSymbol:
 		d.defineSymbolInstruction()
 
-	case GetSymbol:
-		d.getSymbolInstruction()
+	// case GetSymbol:
+	// 	d.getSymbolInstruction()
 
 	case SetSymbol:
 		d.setSymbolInstruction()
@@ -65,12 +77,6 @@ func (d *Disassembler) disassembleInstruction() {
 
 	case Call:
 		d.callInstruction()
-
-	case BeginScope:
-		d.simpleInstruction("BEGIN_SCOPE")
-
-	case EndScope:
-		d.simpleInstruction("END_SCOPE")
 
 	case Pop:
 		d.simpleInstruction("POP")
@@ -109,6 +115,15 @@ func (d *Disassembler) simpleInstruction(name string) {
 	_, _ = fmt.Fprintf(d.w, "%-12s\n", name)
 }
 
+func (d *Disassembler) pushIntInstruction() {
+	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
+	_, _ = fmt.Fprintf(d.w, "%-12s", "PUSH_INT")
+
+	value := d.readUint32()
+
+	_, _ = fmt.Fprintf(d.w, " %d\n", value)
+}
+
 func (d *Disassembler) loadConstInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
 	_, _ = fmt.Fprintf(d.w, "%-12s", "LOAD_CONST")
@@ -116,6 +131,17 @@ func (d *Disassembler) loadConstInstruction() {
 	constIdx := d.readUint32()
 
 	_, _ = fmt.Fprintf(d.w, " #%d\n", constIdx)
+}
+
+func (d *Disassembler) pushFunctionInstruction() {
+	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
+	_, _ = fmt.Fprintf(d.w, "%-12s", "PUSH_FN")
+
+	fnID := d.readUint32()
+	fnAddr := d.ch.fnTable[fnID]
+
+	_, _ = fmt.Fprintf(d.w, " addr=%d", fnAddr)
+	_, _ = fmt.Fprintf(d.w, "    #%d\n", fnID)
 }
 
 func (d *Disassembler) callInstruction() {

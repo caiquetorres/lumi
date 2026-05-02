@@ -15,14 +15,16 @@ type Chunk struct {
 	hasEntryPoint bool
 	entryPoint    uint32
 
-	code []byte
-	pool *constpool.ConstantPool
+	code    []byte
+	pool    *constpool.ConstantPool
+	fnTable map[uint32]uint32
 }
 
 func newChunk() *Chunk {
 	return &Chunk{
-		code: make([]byte, 0, defaultChunkSize),
-		pool: constpool.New(),
+		code:    make([]byte, 0, defaultChunkSize),
+		pool:    constpool.New(),
+		fnTable: make(map[uint32]uint32),
 	}
 }
 

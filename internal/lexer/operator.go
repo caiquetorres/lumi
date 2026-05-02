@@ -4,15 +4,15 @@ import (
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
-var operators = map[rune]token.Kind{
-	'+': token.Plus,
-	'-': token.Minus,
-	'*': token.Star,
-	'/': token.Slash,
-	'=': token.Equal,
-	'!': token.Bang,
-	'<': token.Less,
-	'>': token.Greater,
+var operators = map[rune]struct{}{
+	'+': {},
+	'-': {},
+	'*': {},
+	'/': {},
+	'=': {},
+	'!': {},
+	'<': {},
+	'>': {},
 }
 
 func (l *Lexer) isOperator() bool {

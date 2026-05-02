@@ -17,12 +17,15 @@ func (e *emitter) BeforeLiteralExpr(lit *parser.LiteralExpr) {
 			return
 		}
 
-		e.emitConst(value)
+		e.ch.emit(LoadConst)
+		idx := e.ch.pool.InternConstant(value)
+		e.ch.emitUint32(idx)
 
-	case parser.LiteralTrue, parser.LiteralFalse:
-		value := lit.Kind == parser.LiteralTrue
+	case parser.LiteralTrue:
+		e.ch.emit(PushTrue)
 
-		e.emitConst(value)
+	case parser.LiteralFalse:
+		e.ch.emit(PushFalse)
 
 	case parser.LiteralInt:
 		value, err := strconv.Atoi(litValue)
@@ -31,12 +34,7 @@ func (e *emitter) BeforeLiteralExpr(lit *parser.LiteralExpr) {
 			return
 		}
 
-		e.emitConst(value)
+		e.ch.emit(PushInt)
+		e.ch.emitUint32(uint32(value))
 	}
-}
-
-func (e *emitter) emitConst(value any) {
-	e.ch.emit(LoadConst)
-	idx := e.ch.pool.InternConstant(value)
-	e.ch.emitUint32(idx)
 }
