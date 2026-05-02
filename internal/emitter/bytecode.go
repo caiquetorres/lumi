@@ -6,6 +6,7 @@ const (
 	PushInt
 	PushTrue
 	PushFalse
+	PushNativeFn
 	PushFn
 
 	FnDecl

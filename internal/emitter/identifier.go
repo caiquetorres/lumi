@@ -8,6 +8,16 @@ func (e *emitter) BeforeIdentifierExpr(id *parser.IdentifierExpr) {
 	if fnID, exists := e.fnIDs[name]; exists {
 		e.ch.emit(PushFn)
 		e.ch.emitUint32(fnID)
+
+		return
+	}
+
+	if _, exists := e.nativeFns[name]; exists {
+		e.ch.emit(PushNativeFn)
+
+		idx := e.ch.pool.InternConstant(name) // idempotent
+		e.ch.emitUint32(idx)
+
 		return
 	}
 }

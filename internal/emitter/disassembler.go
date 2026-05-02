@@ -57,6 +57,9 @@ func (d *Disassembler) disassembleInstruction() {
 	case PushFn:
 		d.pushFunctionInstruction()
 
+	case PushNativeFn:
+		d.pushNativeFunctionInstruction()
+
 	case FnDecl:
 		d.funDeclInstruction()
 
@@ -112,12 +115,12 @@ func (d *Disassembler) disassembleInstruction() {
 
 func (d *Disassembler) simpleInstruction(name string) {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-12s\n", name)
+	_, _ = fmt.Fprintf(d.w, "%-16s\n", name)
 }
 
 func (d *Disassembler) pushIntInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-12s", "PUSH_INT")
+	_, _ = fmt.Fprintf(d.w, "%-16s", "PUSH_INT")
 
 	value := d.readUint32()
 
@@ -126,7 +129,7 @@ func (d *Disassembler) pushIntInstruction() {
 
 func (d *Disassembler) loadConstInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-12s", "LOAD_CONST")
+	_, _ = fmt.Fprintf(d.w, "%-16s", "LOAD_CONST")
 
 	constIdx := d.readUint32()
 
@@ -135,18 +138,27 @@ func (d *Disassembler) loadConstInstruction() {
 
 func (d *Disassembler) pushFunctionInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-12s", "PUSH_FN")
+	_, _ = fmt.Fprintf(d.w, "%-16s", "PUSH_FN")
 
 	fnID := d.readUint32()
 	fnAddr := d.ch.fnTable[fnID]
 
 	_, _ = fmt.Fprintf(d.w, " addr=%d", fnAddr)
-	_, _ = fmt.Fprintf(d.w, "    #%d\n", fnID)
+	_, _ = fmt.Fprintf(d.w, "    %d\n", fnID)
+}
+
+func (d *Disassembler) pushNativeFunctionInstruction() {
+	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
+	_, _ = fmt.Fprintf(d.w, "%-16s", "PUSH_NATIVE_FN")
+
+	constIdx := d.readUint32()
+
+	_, _ = fmt.Fprintf(d.w, " #%d\n", constIdx)
 }
 
 func (d *Disassembler) callInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-12s", "CALL")
+	_, _ = fmt.Fprintf(d.w, "%-16s", "CALL")
 
 	argCount := d.readByte()
 
@@ -155,7 +167,7 @@ func (d *Disassembler) callInstruction() {
 
 func (d *Disassembler) funDeclInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-12s", "FN_DECL")
+	_, _ = fmt.Fprintf(d.w, "%-16s", "FN_DECL")
 
 	fnNameIdx := d.readUint32()
 	entryPoint := d.readUint32()
@@ -165,7 +177,7 @@ func (d *Disassembler) funDeclInstruction() {
 
 func (d *Disassembler) defineSymbolInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-12s", "DEF_SYMBOL")
+	_, _ = fmt.Fprintf(d.w, "%-16s", "DEF_SYMBOL")
 
 	nameIdx := d.readUint32()
 
@@ -174,7 +186,7 @@ func (d *Disassembler) defineSymbolInstruction() {
 
 func (d *Disassembler) getSymbolInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-12s", "GET_SYMBOL")
+	_, _ = fmt.Fprintf(d.w, "%-16s", "GET_SYMBOL")
 
 	nameIdx := d.readUint32()
 
@@ -183,7 +195,7 @@ func (d *Disassembler) getSymbolInstruction() {
 
 func (d *Disassembler) setSymbolInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-12s", "SET_SYMBOL")
+	_, _ = fmt.Fprintf(d.w, "%-16s", "SET_SYMBOL")
 
 	nameIdx := d.readUint32()
 
@@ -192,7 +204,7 @@ func (d *Disassembler) setSymbolInstruction() {
 
 func (d *Disassembler) jumpToInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-12s", "JUMP_TO")
+	_, _ = fmt.Fprintf(d.w, "%-16s", "JUMP_TO")
 
 	jumpTo := d.readUint32()
 
@@ -201,7 +213,7 @@ func (d *Disassembler) jumpToInstruction() {
 
 func (d *Disassembler) jumpIfFalseInstruction() {
 	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-12s", "JUMP_IF_FALSE")
+	_, _ = fmt.Fprintf(d.w, "%-16s", "JUMP_IF_FALSE")
 
 	jumpTo := d.readUint32()
 

@@ -10,6 +10,7 @@ func (e *emitter) AfterFunDecl(*parser.FunDecl) {
 
 func (e *emitter) BeforeFunDecl(fn *parser.FunDecl) {
 	fnName := e.lex.Lexeme(fn.Identifier)
+
 	fnID := e.fnIDs[fnName]
 	e.ch.fnTable[fnID] = e.ch.ip
 
