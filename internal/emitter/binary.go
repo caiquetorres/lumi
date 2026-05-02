@@ -43,11 +43,8 @@ func (e *Emitter) AfterBinaryExpr(be *parser.BinaryExpr) {
 func (e *Emitter) handleAssignment(be *parser.BinaryExpr) {
 	switch left := be.Left.(type) {
 	case *parser.IdentifierExpr:
-		e.ch.emit(SetSymbol)
-
 		name := e.lex.Lexeme(left.Name)
-		idx := e.ch.pool.InternConstant(name)
-		e.ch.emitUint32(idx)
+		e.storeLocal(name)
 
 	default:
 		panic("Invalid assignment target.")

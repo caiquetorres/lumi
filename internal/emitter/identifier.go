@@ -1,13 +1,23 @@
 package emitter
 
-import "github.com/caiquetorres/lumi/internal/parser"
+import (
+	"github.com/caiquetorres/lumi/internal/parser"
+)
 
 // REVIEW: The order of execution is completely wrong
 
 func (e *Emitter) BeforeIdentifierExpr(id *parser.IdentifierExpr) {
 	name := e.lex.Lexeme(id.Name)
 
-	if fnID, exists := e.funcIDs[name]; exists {
+	local, exists := e.locals.lookup(name)
+	if exists {
+		e.ch.emit(LoadLocal)
+		e.ch.emitUint32(uint32(local.offset))
+
+		return
+	}
+
+	if fnID, exists := e.globals.lookup(name); exists {
 		e.ch.emit(PushFn)
 		e.ch.emitUint32(fnID)
 
@@ -22,16 +32,4 @@ func (e *Emitter) BeforeIdentifierExpr(id *parser.IdentifierExpr) {
 
 		return
 	}
-
-	e.loadLocal(name)
-}
-
-func (e *Emitter) loadLocal(name string) {
-	sym, exists := e.locals.lookup(name)
-	if !exists {
-		return
-	}
-
-	e.ch.emit(LoadLocal)
-	e.ch.emitUint32(uint32(sym.offset))
 }

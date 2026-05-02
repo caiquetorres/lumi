@@ -11,23 +11,23 @@ type Emitter struct {
 
 	jumpStack *jumpStack
 	loopStack *loopStack
-	locals    *locals
 
-	funcIDs   map[string]uint32
+	locals  *locals
+	globals *globals
+
 	nativeFns map[string]struct{}
 
 	err error
 }
 
-func newEmitter(lex *lexer.Lexer, fnIDs map[string]uint32) *Emitter {
+func newEmitter(lex *lexer.Lexer, globals *globals) *Emitter {
 	return &Emitter{
-		ch:  newChunk(len(fnIDs)),
+		ch:  newChunk(globals.len()),
 		lex: lex,
 
-		funcIDs:   fnIDs,
+		globals:   globals,
 		nativeFns: make(map[string]struct{}),
 
-		locals:    newLocals(nil, 0),
 		loopStack: newLoopStack(),
 		jumpStack: newJumpStack(),
 	}

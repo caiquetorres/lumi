@@ -10,11 +10,11 @@ type locals struct {
 	nextIndex int
 }
 
-func newLocals(parent *locals, nextIndex int) *locals {
+func newLocals(parent *locals) *locals {
 	return &locals{
 		symbols:   make(map[string]symbol),
 		parent:    parent,
-		nextIndex: nextIndex,
+		nextIndex: 0,
 	}
 }
 

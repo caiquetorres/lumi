@@ -6,8 +6,8 @@ import (
 )
 
 type fnVisitor struct {
-	fnIDs  map[string]uint32
-	nextID uint32
+	globals *globals
+	nextID  uint32
 
 	lex *lexer.Lexer
 }
@@ -42,9 +42,7 @@ func (f *fnVisitor) BeforeWhileCondition(*parser.WhileStmt)      {}
 
 func (f *fnVisitor) BeforeFunDecl(fn *parser.FunDecl) {
 	fnName := f.lex.Lexeme(fn.Identifier)
-
-	f.fnIDs[fnName] = f.nextID
-	f.nextID++
+	f.globals.define(fnName)
 }
 
 var _ parser.Visitor = (*fnVisitor)(nil)

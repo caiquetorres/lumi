@@ -1,12 +1,10 @@
 package emitter
 
 const (
-	LoadConst byte = iota + 1
-
-	PushString
-	PushInt
-	PushTrue
+	PushTrue byte = iota + 1
 	PushFalse
+	PushInt
+	PushString
 	PushNativeFn
 	PushFn
 
@@ -19,10 +17,6 @@ const (
 	Eq
 	Less
 	LessEq
-
-	// GetSymbol
-	SetSymbol
-	DefineSymbol
 
 	StoreLocal
 	LoadLocal

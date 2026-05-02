@@ -1,11 +1,14 @@
 fun main() {
-    let a = 2
-    let b = 3
-
-    let res = sum(a, b)
-    println(res)
+    let i = 1
+    while i <= 10 {
+        println(factorial(i))
+        i = i + 1
+    }
 }
 
-fun sum(a int, b int) int {
-    return a + b
+fun factorial(n int) {
+    if n <= 1 {
+        return 1
+    }
+    return n * factorial(n - 1)
 }

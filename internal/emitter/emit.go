@@ -12,9 +12,9 @@ const (
 )
 
 func Emit(ast *parser.Ast, lex *lexer.Lexer, w io.Writer) (*Chunk, error) {
-	funcIDs := collectFunctionIDs(lex, ast)
+	globals := buildGlobals(lex, ast)
 
-	e := newEmitter(lex, funcIDs)
+	e := newEmitter(lex, globals)
 	e.registerNativeFn("println")
 	e.registerNativeFn("printf")
 	e.registerNativeFn("sprintf")
@@ -32,15 +32,15 @@ func Emit(ast *parser.Ast, lex *lexer.Lexer, w io.Writer) (*Chunk, error) {
 	return e.ch, e.ch.Serialize(w)
 }
 
-func collectFunctionIDs(lex *lexer.Lexer, ast *parser.Ast) map[string]uint32 {
+func buildGlobals(lex *lexer.Lexer, ast *parser.Ast) *globals {
 	fnVisitor := &fnVisitor{
-		fnIDs: make(map[string]uint32),
-		lex:   lex,
+		globals: newGlobals(),
+		lex:     lex,
 	}
 
 	parser.Walk(fnVisitor, ast)
 
-	return fnVisitor.fnIDs
+	return fnVisitor.globals
 }
 
 func (e *Emitter) registerNativeFn(name string) {

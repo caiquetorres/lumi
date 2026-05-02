@@ -35,10 +35,10 @@ func (m *vm) load() error {
 		// 		return err
 		// 	}
 
-		case emitter.LoadConst, emitter.DefineSymbol, emitter.SetSymbol:
-			if _, err := c.readUint32(); err != nil {
-				return fmt.Errorf("invalid uint32 operand for opcode %d at pc=%d: %w", opcode, c.pc, err)
-			}
+		// case emitter.LoadConst, emitter.DefineSymbol, emitter.SetSymbol:
+		// 	if _, err := c.readUint32(); err != nil {
+		// 		return fmt.Errorf("invalid uint32 operand for opcode %d at pc=%d: %w", opcode, c.pc, err)
+		// 	}
 
 		case emitter.Call:
 			// Skip the call arity operand (1 byte)

@@ -16,37 +16,37 @@ func (m *vm) run(entryPoint uint32) error {
 		}
 
 		switch opcode {
-		case emitter.LoadConst:
-			constant, err := m.readConstant()
-			if err != nil {
-				return err
-			}
+		// case emitter.LoadConst:
+		// 	constant, err := m.readConstant()
+		// 	if err != nil {
+		// 		return err
+		// 	}
 
-			// REVIEW: How does it know that the constant has a value that can be pushed onto the stack?
+		// 	// REVIEW: How does it know that the constant has a value that can be pushed onto the stack?
 
-			m.pushObject(constant)
+		// 	m.pushObject(constant)
 
-		case emitter.DefineSymbol:
-			constant, err := m.readConstant()
-			if err != nil {
-				return err
-			}
+		// case emitter.DefineSymbol:
+		// 	constant, err := m.readConstant()
+		// 	if err != nil {
+		// 		return err
+		// 	}
 
-			name, ok := constant.(string)
-			if !ok {
-				return fmt.Errorf("expected string constant for symbol name, got %T", constant)
-			}
+		// 	name, ok := constant.(string)
+		// 	if !ok {
+		// 		return fmt.Errorf("expected string constant for symbol name, got %T", constant)
+		// 	}
 
-			value, err := m.popObject()
-			if err != nil {
-				return err
-			}
+		// 	value, err := m.popObject()
+		// 	if err != nil {
+		// 		return err
+		// 	}
 
-			if val, ok := value.(int); ok {
-				value = val
-			}
+		// 	if val, ok := value.(int); ok {
+		// 		value = val
+		// 	}
 
-			m.symbolTable.define(name, value)
+		// 	m.symbolTable.define(name, value)
 
 		// case emitter.GetSymbol:
 		// 	constant, err := m.readConstant()
@@ -235,39 +235,39 @@ func (m *vm) run(entryPoint uint32) error {
 			leftInt, rightInt := left.(int), right.(int)
 			m.pushObject(leftInt <= rightInt)
 
-		case emitter.SetSymbol:
-			constant, err := m.readConstant()
-			if err != nil {
-				return err
-			}
-
-			name, ok := constant.(string)
-			if !ok {
-				return fmt.Errorf("expected string constant for symbol name, got %T", constant)
-			}
-
-			value, err := m.popObject()
-			if err != nil {
-				return err
-			}
-
-			if val, ok := value.(int); ok {
-				value = val
-			}
-
-			if !m.symbolTable.set(name, value) {
-				return fmt.Errorf("symbol %q not found for assignment", name)
-			}
-
-			m.pushObject(value)
-
-			// case emitter.BeginScope:
-			// 	m.symbolTable = newSymbolTable(m.symbolTable)
-
-			// case emitter.EndScope:
-			// 	if m.symbolTable.parent != nil {
-			// 		m.symbolTable = m.symbolTable.parent
+			// case emitter.SetSymbol:
+			// 	constant, err := m.readConstant()
+			// 	if err != nil {
+			// 		return err
 			// 	}
+
+			// 	name, ok := constant.(string)
+			// 	if !ok {
+			// 		return fmt.Errorf("expected string constant for symbol name, got %T", constant)
+			// 	}
+
+			// 	value, err := m.popObject()
+			// 	if err != nil {
+			// 		return err
+			// 	}
+
+			// 	if val, ok := value.(int); ok {
+			// 		value = val
+			// 	}
+
+			// 	if !m.symbolTable.set(name, value) {
+			// 		return fmt.Errorf("symbol %q not found for assignment", name)
+			// 	}
+
+			// 	m.pushObject(value)
+
+			// 	// case emitter.BeginScope:
+			// 	// 	m.symbolTable = newSymbolTable(m.symbolTable)
+
+			// 	// case emitter.EndScope:
+			// 	// 	if m.symbolTable.parent != nil {
+			// 	// 		m.symbolTable = m.symbolTable.parent
+			// 	// 	}
 		}
 	}
 }

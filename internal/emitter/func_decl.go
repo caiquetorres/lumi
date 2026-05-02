@@ -9,9 +9,11 @@ func (e *Emitter) AfterFunDecl(*parser.FunDecl) {
 }
 
 func (e *Emitter) BeforeFunDecl(fn *parser.FunDecl) {
+	e.locals = newLocals(nil)
+
 	fnName := e.lex.Lexeme(fn.Identifier)
 
-	funcID := e.funcIDs[fnName]
+	funcID, _ := e.globals.lookup(fnName)
 	e.ch.fnTable[funcID] = e.ch.ip
 
 	for _, param := range fn.Params {

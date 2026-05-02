@@ -42,9 +42,6 @@ func (d *Disassembler) disassembleInstruction() {
 	opcode := d.readByte()
 
 	switch opcode {
-	case LoadConst:
-		d.uint32Instruction("LOAD_CONST")
-
 	case PushString:
 		d.pushStringInstruction()
 
@@ -68,9 +65,6 @@ func (d *Disassembler) disassembleInstruction() {
 
 	case LoadLocal:
 		d.uint32Instruction("LOAD_LOCAL")
-
-	case DefineSymbol:
-		d.uint32Instruction("DEFINE_SYMBOL")
 
 	case JumpTo:
 		d.uint32Instruction("JUMP_TO")
