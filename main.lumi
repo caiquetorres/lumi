@@ -1,8 +1,11 @@
 fun main() {
-    sum()
+    let a = 2
+    let b = 3
+
+    let res = sum(a, b)
+    println(res)
 }
 
-fun sum() {
-    println(2)
-    return 1 + 2
+fun sum(a int, b int) int {
+    return a + b
 }

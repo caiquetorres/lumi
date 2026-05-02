@@ -17,7 +17,7 @@ func (e *Emitter) BeforeLiteralExpr(lit *parser.LiteralExpr) {
 			return
 		}
 
-		e.ch.emit(LoadConst)
+		e.ch.emit(PushString)
 		idx := e.ch.pool.InternConstant(value)
 		e.ch.emitUint32(idx)
 

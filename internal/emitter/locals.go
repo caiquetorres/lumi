@@ -1,45 +1,39 @@
 package emitter
 
 type symbol struct {
-	offset, size int
-
-	ty     string
-	isHeap bool
+	offset int
 }
 
-type symbolTable struct {
+type locals struct {
 	symbols   map[string]symbol
-	parent    *symbolTable
+	parent    *locals
 	nextIndex int
 }
 
-func newSymbolTable(parent *symbolTable, nextIndex int) *symbolTable {
-	return &symbolTable{
+func newLocals(parent *locals, nextIndex int) *locals {
+	return &locals{
 		symbols:   make(map[string]symbol),
 		parent:    parent,
 		nextIndex: nextIndex,
 	}
 }
 
-func (st *symbolTable) define(name, ty string, size int, isHeap bool) symbol {
+func (st *locals) define(name string) symbol {
 	if idx, ok := st.symbols[name]; ok {
 		return idx
 	}
 
 	idx := symbol{
 		offset: st.nextIndex,
-		size:   size,
-		ty:     ty,
-		isHeap: isHeap,
 	}
 
 	st.symbols[name] = idx
-	st.nextIndex += size
+	st.nextIndex += 8
 
 	return idx
 }
 
-func (st *symbolTable) lookup(name string) (symbol, bool) {
+func (st *locals) lookup(name string) (symbol, bool) {
 	if sym, ok := st.symbols[name]; ok {
 		return sym, true
 	}

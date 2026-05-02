@@ -3,13 +3,12 @@ package emitter
 const (
 	LoadConst byte = iota + 1
 
+	PushString
 	PushInt
 	PushTrue
 	PushFalse
 	PushNativeFn
 	PushFn
-
-	FnDecl
 
 	Not
 
@@ -24,6 +23,9 @@ const (
 	// GetSymbol
 	SetSymbol
 	DefineSymbol
+
+	StoreLocal
+	LoadLocal
 
 	Call
 	Return

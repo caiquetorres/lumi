@@ -7,4 +7,6 @@ func (e *Emitter) BeforeCallExpr(expr *parser.CallExpr) {}
 func (e *Emitter) AfterCallExpr(call *parser.CallExpr) {
 	e.ch.emit(Call)
 	e.ch.emitUint8(uint8(len(call.Args)))
+
+	e.locals = newLocals(nil, e.locals.nextIndex)
 }

@@ -20,20 +20,20 @@ func (m *vm) load() error {
 		}
 
 		switch opcode {
-		case emitter.FnDecl:
-			nameIdx, err := c.readUint32()
-			if err != nil {
-				return fmt.Errorf("invalid function declaration name index at pc=%d: %w", c.pc, err)
-			}
+		// case emitter.FnDecl:
+		// 	nameIdx, err := c.readUint32()
+		// 	if err != nil {
+		// 		return fmt.Errorf("invalid function declaration name index at pc=%d: %w", c.pc, err)
+		// 	}
 
-			entryPoint, err := c.readUint32()
-			if err != nil {
-				return fmt.Errorf("invalid function declaration entry point at pc=%d: %w", c.pc, err)
-			}
+		// 	entryPoint, err := c.readUint32()
+		// 	if err != nil {
+		// 		return fmt.Errorf("invalid function declaration entry point at pc=%d: %w", c.pc, err)
+		// 	}
 
-			if err := m.registerFunction(nameIdx, entryPoint); err != nil {
-				return err
-			}
+		// 	if err := m.registerFunction(nameIdx, entryPoint); err != nil {
+		// 		return err
+		// 	}
 
 		case emitter.LoadConst, emitter.DefineSymbol, emitter.SetSymbol:
 			if _, err := c.readUint32(); err != nil {

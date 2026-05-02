@@ -11,7 +11,7 @@ type Emitter struct {
 
 	jumpStack *jumpStack
 	loopStack *loopStack
-	symTable  *symbolTable
+	locals    *locals
 
 	funcIDs   map[string]uint32
 	nativeFns map[string]struct{}
@@ -27,7 +27,7 @@ func newEmitter(lex *lexer.Lexer, fnIDs map[string]uint32) *Emitter {
 		funcIDs:   fnIDs,
 		nativeFns: make(map[string]struct{}),
 
-		symTable:  newSymbolTable(nil, 0),
+		locals:    newLocals(nil, 0),
 		loopStack: newLoopStack(),
 		jumpStack: newJumpStack(),
 	}

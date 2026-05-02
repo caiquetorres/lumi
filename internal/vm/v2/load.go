@@ -19,9 +19,9 @@ func (m *vm) load(entryPoint uint32) error {
 		}
 
 		switch opcode {
-		case emitter.FnDecl:
-			_, _ = m.frames.current().readUint32(m.src) // name index
-			_, _ = m.frames.current().readUint32(m.src) // entry point
+		// case emitter.FnDecl:
+		// 	_, _ = m.frames.current().readUint32(m.src) // name index
+		// 	_, _ = m.frames.current().readUint32(m.src) // entry point
 
 		case emitter.PushInt:
 			_, _ = m.frames.current().readUint32(m.src)

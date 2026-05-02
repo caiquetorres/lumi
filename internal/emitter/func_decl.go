@@ -14,6 +14,11 @@ func (e *Emitter) BeforeFunDecl(fn *parser.FunDecl) {
 	funcID := e.funcIDs[fnName]
 	e.ch.fnTable[funcID] = e.ch.ip
 
+	for _, param := range fn.Params {
+		name := e.lex.Lexeme(param.Name)
+		e.storeLocal(name)
+	}
+
 	if fnName == "main" {
 		e.ch.entryPoint = e.ch.ip
 		e.ch.hasEntryPoint = true
