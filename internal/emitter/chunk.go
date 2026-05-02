@@ -12,6 +12,9 @@ const defaultChunkSize = 512
 type Chunk struct {
 	ip uint32
 
+	hasEntryPoint bool
+	entryPoint    uint32
+
 	code []byte
 	pool *constpool.ConstantPool
 }

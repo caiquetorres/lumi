@@ -6,16 +6,8 @@ import (
 	"github.com/caiquetorres/lumi/internal/emitter"
 )
 
-func (m *vm) run() error {
-	mainFnObj, hasMain := m.globals.lookup("main")
-	if !hasMain {
-		return fmt.Errorf("no main function found")
-	}
-
-	mainFn := mainFnObj.(fn)
-	if err := m.callFn(&mainFn, 0); err != nil {
-		return err
-	}
+func (m *vm) run(entryPoint uint32) error {
+	m.frames.push(entryPoint, m.src, m.symbolTable)
 
 	for {
 		opcode, err := m.frames.current().readUint8()

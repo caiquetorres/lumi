@@ -21,6 +21,11 @@ func Execute(src io.ReadSeeker) error {
 		return err
 	}
 
+	entryPoint, hasEntryPoint, err := getEntryPoint(src)
+	if err != nil {
+		return err
+	}
+
 	instructions, err := getInstructions(src)
 	if err != nil {
 		return err
@@ -40,5 +45,9 @@ func Execute(src io.ReadSeeker) error {
 		return err
 	}
 
-	return machine.run()
+	if hasEntryPoint {
+		machine.run(entryPoint)
+	}
+
+	return nil
 }

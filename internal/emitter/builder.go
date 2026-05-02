@@ -16,16 +16,29 @@ func newBuilder(w io.Writer) *builder {
 	return &builder{w: bufio.NewWriter(w)}
 }
 
-func (b *builder) build(constantPool []byte, instructions []byte) error {
+func (b *builder) build(ch *Chunk) error {
 	if err := b.writeMagic(); err != nil {
 		return err
 	}
 
-	if err := b.writeConstantPool(constantPool); err != nil {
+	if err := b.writeConstantPool(ch.pool.Serialize()); err != nil {
 		return err
 	}
 
-	if _, err := b.w.Write(instructions); err != nil {
+	if ch.hasEntryPoint {
+		if err := b.w.WriteByte(1); err != nil {
+			return err
+		}
+		if err := b.writeUint32(ch.entryPoint); err != nil {
+			return err
+		}
+	} else {
+		if err := b.w.WriteByte(10); err != nil {
+			return err
+		}
+	}
+
+	if _, err := b.w.Write(ch.code); err != nil {
 		return err
 	}
 

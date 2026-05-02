@@ -53,3 +53,22 @@ func getInstructions(fp io.ReadSeeker) ([]byte, error) {
 
 	return instructions, nil
 }
+
+func getEntryPoint(fp io.ReadSeeker) (uint32, bool, error) {
+	var hasEntryPointBuf [1]byte
+	if _, err := fp.Read(hasEntryPointBuf[:]); err != nil {
+		return 0, false, err
+	}
+
+	if hasEntryPointBuf[0] != 1 {
+		return 0, false, nil
+	}
+
+	var entryPointBuf [4]byte
+	if _, err := fp.Read(entryPointBuf[:]); err != nil {
+		return 0, false, err
+	}
+
+	entryPoint := binary.BigEndian.Uint32(entryPointBuf[:])
+	return entryPoint, true, nil
+}

@@ -39,6 +39,11 @@ func (e *emitter) BeforeFunDecl(fn *parser.FunDecl) {
 		idx := e.ch.pool.InternConstant(paramName)
 		e.ch.emitUint32(idx)
 	}
+
+	if fnName == "main" {
+		e.ch.entryPoint = entryPoint
+		e.ch.hasEntryPoint = true
+	}
 }
 
 func (e *emitter) AfterParam(*parser.Param) {}
