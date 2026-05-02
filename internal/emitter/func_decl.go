@@ -11,8 +11,8 @@ func (e *Emitter) AfterFunDecl(*parser.FunDecl) {
 func (e *Emitter) BeforeFunDecl(fn *parser.FunDecl) {
 	fnName := e.lex.Lexeme(fn.Identifier)
 
-	fnID := e.fnIDs[fnName]
-	e.ch.fnTable[fnID] = e.ch.ip
+	funcID := e.funcIDs[fnName]
+	e.ch.fnTable[funcID] = e.ch.ip
 
 	if fnName == "main" {
 		e.ch.entryPoint = e.ch.ip
