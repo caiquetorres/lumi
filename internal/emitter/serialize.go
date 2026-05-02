@@ -39,15 +39,12 @@ func (c *Chunk) Serialize(w io.Writer) error {
 	return nil
 }
 
-func writeFunctionTable(w io.Writer, fnTable map[uint32]uint32) error {
+func writeFunctionTable(w io.Writer, fnTable []uint32) error {
 	if err := writeUint32(w, uint32(len(fnTable))); err != nil {
 		return err
 	}
 
-	for id, offset := range fnTable {
-		if err := writeUint32(w, id); err != nil {
-			return err
-		}
+	for _, offset := range fnTable {
 		if err := writeUint32(w, offset); err != nil {
 			return err
 		}

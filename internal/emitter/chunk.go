@@ -19,14 +19,14 @@ type Chunk struct {
 
 	code    []byte
 	pool    *constpool.ConstantPool
-	fnTable map[uint32]uint32
+	fnTable []uint32
 }
 
-func newChunk() *Chunk {
+func newChunk(fnTableSize int) *Chunk {
 	return &Chunk{
 		code:    make([]byte, 0, defaultChunkSize),
 		pool:    constpool.New(),
-		fnTable: make(map[uint32]uint32),
+		fnTable: make([]uint32, fnTableSize),
 	}
 }
 

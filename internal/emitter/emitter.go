@@ -21,7 +21,7 @@ type Emitter struct {
 
 func newEmitter(lex *lexer.Lexer, fnIDs map[string]uint32) *Emitter {
 	return &Emitter{
-		ch:  newChunk(),
+		ch:  newChunk(len(fnIDs)),
 		lex: lex,
 
 		funcIDs:   fnIDs,
