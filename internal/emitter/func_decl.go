@@ -5,6 +5,8 @@ import (
 )
 
 func (e *Emitter) AfterFunDecl(*parser.FunDecl) {
+	e.ch.emit(PushInt)
+	e.ch.emitUint32(0)
 	e.ch.emit(Return)
 }
 
