@@ -1,9 +1,7 @@
 fun main() {
-    let i = 1
-    while i <= 10 {
+    for i in 1..=10 {
         let fac = factorial(i)
         printf("fac(%d): %d\n", i, fac)
-        i += 1
     }
 }
 

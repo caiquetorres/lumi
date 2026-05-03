@@ -13,6 +13,7 @@ var operators = map[rune]struct{}{
 	'!': {},
 	'<': {},
 	'>': {},
+	'.': {},
 }
 
 func (l *Lexer) isOperator() bool {
@@ -48,6 +49,8 @@ func (l *Lexer) readOperator() (token.Token, error) {
 		return l.readLessOrLessEqual()
 	case '>':
 		return l.readGreaterOrGreaterEqual()
+	case '.':
+		return l.readDotOrDotDotOrDotDotEqual()
 	}
 
 	return token.Token{}, nil
@@ -163,4 +166,29 @@ func (l *Lexer) readLessOrLessEqual() (token.Token, error) {
 	}
 
 	return l.newToken(token.Less), nil
+}
+
+func (l *Lexer) readDotOrDotDotOrDotDotEqual() (token.Token, error) {
+	r, err := l.peekRune()
+	if err != nil {
+		return token.Token{}, err
+	}
+
+	if r == '.' {
+		l.bump() // consume the second '.'
+
+		r, err := l.peekRune()
+		if err != nil {
+			return token.Token{}, err
+		}
+
+		if r == '=' {
+			l.bump() // consume the '='
+			return l.newToken(token.DotDotEqual), nil
+		}
+
+		return l.newToken(token.DotDot), nil
+	}
+
+	return l.newToken(token.Dot), nil
 }

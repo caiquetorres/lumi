@@ -159,6 +159,14 @@ func (d *debugVisitor) AfterWhileBody(whileStmt *WhileStmt) {
 	d.indentOut()
 }
 
+func (d *debugVisitor) BeforeForStart(*ForStmt) {}
+func (d *debugVisitor) AfterForStart(*ForStmt)  {}
+func (d *debugVisitor) BeforeForEnd(*ForStmt)   {}
+func (d *debugVisitor) AfterForEnd(*ForStmt)    {}
+func (d *debugVisitor) AfterForBody(*ForStmt)   {}
+
+func (d *debugVisitor) AfterForCondition(forStmt *ForStmt) {}
+
 func (d *debugVisitor) BeforeReturnStmt(*ReturnStmt) {
 	d.writeIndent()
 

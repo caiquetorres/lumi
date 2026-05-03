@@ -64,6 +64,8 @@ func (w *walker) walkStmt(v Visitor, stmt Stmt) {
 		w.walkContinue(v, s)
 	case *Block:
 		w.walkBlockStmt(v, s)
+	case *ForStmt:
+		w.walkFor(v, s)
 	default:
 		w.walkExpr(v, stmt.(Expr))
 	}
@@ -81,6 +83,20 @@ func (w *walker) walkWhile(v Visitor, whileStmt *WhileStmt) {
 	w.walkBlockStmt(v, whileStmt.Body)
 
 	v.AfterWhileBody(whileStmt)
+}
+
+func (w *walker) walkFor(v Visitor, forStmt *ForStmt) {
+	v.BeforeForStart(forStmt)
+	w.walkExpr(v, forStmt.Start)
+	v.AfterForStart(forStmt)
+
+	v.BeforeForEnd(forStmt)
+	w.walkExpr(v, forStmt.End)
+	v.AfterForEnd(forStmt)
+
+	w.walkBlockStmt(v, forStmt.Block)
+
+	v.AfterForBody(forStmt)
 }
 
 func (w *walker) walkIf(v Visitor, ifStmt *IfStmt) error {

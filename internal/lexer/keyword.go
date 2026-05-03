@@ -17,6 +17,8 @@ var keywords = map[string]token.Kind{
 	"while":    token.While,
 	"break":    token.Break,
 	"continue": token.Continue,
+	"for":      token.For,
+	"in":       token.In,
 }
 
 func (l *Lexer) isKeywordOrIdentifier() bool {

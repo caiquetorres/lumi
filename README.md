@@ -18,20 +18,19 @@ More examples can be found in the [`examples/`](examples/) folder.
 
 ```lumi
 fun main() {
-    let n = 10
-    println(fibonacci(n))
+    for i in 1..=10 {
+        let fib = fibonacci(i)
+        printf("fib(%d): %d\n", i, fib)
+    }
 }
 
 fun fibonacci(n int) {
     let a = 0, b = 1
 
-    let i = 0
-    while i < n {
+    for i in 0..n {
         let tmp = a + b
         b = a
         a = tmp
-
-        i = i + 1
     }
 
     return a

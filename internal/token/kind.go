@@ -27,6 +27,11 @@ const (
 
 	Slash
 	SlashEqual
+
+	Dot
+	DotDot
+	DotDotEqual
+
 	Equal
 	EqualEqual
 	Bang
@@ -51,6 +56,8 @@ const (
 	If
 	Else
 	While
+	For
+	In
 )
 
 func (k Kind) String() string {

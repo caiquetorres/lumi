@@ -39,6 +39,12 @@ type Visitor interface {
 	AfterWhileCondition(*WhileStmt)
 	AfterWhileBody(*WhileStmt)
 
+	BeforeForStart(*ForStmt)
+	AfterForStart(*ForStmt)
+	BeforeForEnd(*ForStmt)
+	AfterForEnd(*ForStmt)
+	AfterForBody(*ForStmt)
+
 	BeforeReturnStmt(*ReturnStmt)
 	AfterReturnStmt(*ReturnStmt)
 
