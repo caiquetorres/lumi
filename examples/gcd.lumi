@@ -1,0 +1,15 @@
+fun main() {
+    printf("gcd(48, 18) = %d\n", gcd(48, 18))
+    printf("gcd(100, 75) = %d\n", gcd(100, 75))
+}
+
+fun gcd(a int, b int) {
+    while a != b {
+        if a > b {
+            a -= b
+        } else {
+            b -= a
+        }
+    }
+    return a
+}
