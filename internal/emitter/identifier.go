@@ -9,13 +9,7 @@ import (
 func (e *Emitter) BeforeIdentifierExpr(id *parser.IdentifierExpr) {
 	name := e.lex.Lexeme(id.Name)
 
-	local, exists := e.locals.lookup(name)
-	if exists {
-		e.ch.emit(LoadLocal)
-		e.ch.emitUint32(uint32(local.offset))
-
-		return
-	}
+	e.loadLocal(name)
 
 	if fnID, exists := e.globals.lookup(name); exists {
 		e.ch.emit(PushFn)
@@ -31,5 +25,13 @@ func (e *Emitter) BeforeIdentifierExpr(id *parser.IdentifierExpr) {
 		e.ch.emitUint32(idx)
 
 		return
+	}
+}
+
+func (e *Emitter) loadLocal(name string) {
+	local, exists := e.locals.lookup(name)
+	if exists {
+		e.ch.emit(LoadLocal)
+		e.ch.emitUint32(uint32(local.offset))
 	}
 }
