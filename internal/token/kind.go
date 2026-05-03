@@ -20,8 +20,13 @@ const (
 	PlusEqual
 
 	Minus
+	MinusEqual
+
 	Star
+	StarEqual
+
 	Slash
+	SlashEqual
 	Equal
 	EqualEqual
 	Bang
@@ -74,12 +79,20 @@ func (k Kind) String() string {
 		return "true"
 	case Plus:
 		return "+"
+	case PlusEqual:
+		return "+="
 	case Minus:
 		return "-"
+	case MinusEqual:
+		return "-="
 	case Star:
 		return "*"
+	case StarEqual:
+		return "*="
 	case Slash:
 		return "/"
+	case SlashEqual:
+		return "/="
 	case Equal:
 		return "="
 	case EqualEqual:

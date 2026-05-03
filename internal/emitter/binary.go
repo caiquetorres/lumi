@@ -39,7 +39,13 @@ func (e *Emitter) AfterBinaryExpr(be *parser.BinaryExpr) {
 		e.handleAssignment(be)
 
 	case token.PlusEqual:
-		e.handlePlusEqual(be)
+		e.handleCompoundAssignment(be, Add)
+	case token.MinusEqual:
+		e.handleCompoundAssignment(be, Sub)
+	case token.StarEqual:
+		e.handleCompoundAssignment(be, Mul)
+	case token.SlashEqual:
+		e.handleCompoundAssignment(be, Div)
 	}
 }
 
@@ -55,12 +61,12 @@ func (e *Emitter) handleAssignment(be *parser.BinaryExpr) {
 	}
 }
 
-func (e *Emitter) handlePlusEqual(be *parser.BinaryExpr) {
+func (e *Emitter) handleCompoundAssignment(be *parser.BinaryExpr, op byte) {
 	switch left := be.Left.(type) {
 	case *parser.IdentifierExpr:
 		name := e.lex.Lexeme(left.Name)
 
-		e.ch.emit(Add)
+		e.ch.emit(op)
 		e.storeLocal(name)
 		e.loadLocal(name)
 

@@ -35,11 +35,11 @@ func (l *Lexer) readOperator() (token.Token, error) {
 	case '+':
 		return l.readPlusOrPlusEqual()
 	case '-':
-		return l.newToken(token.Minus), nil
+		return l.readMinusOrMinusEqual()
 	case '*':
-		return l.newToken(token.Star), nil
+		return l.readStarOrStarEqual()
 	case '/':
-		return l.newToken(token.Slash), nil
+		return l.readSlashOrSlashEqual()
 	case '=':
 		return l.readEqualOrEqualEqual()
 	case '!':
@@ -65,6 +65,48 @@ func (l *Lexer) readPlusOrPlusEqual() (token.Token, error) {
 	}
 
 	return l.newToken(token.Plus), nil
+}
+
+func (l *Lexer) readMinusOrMinusEqual() (token.Token, error) {
+	r, err := l.peekRune()
+	if err != nil {
+		return token.Token{}, err
+	}
+
+	if r == '=' {
+		l.bump() // consume the '='
+		return l.newToken(token.MinusEqual), nil
+	}
+
+	return l.newToken(token.Minus), nil
+}
+
+func (l *Lexer) readStarOrStarEqual() (token.Token, error) {
+	r, err := l.peekRune()
+	if err != nil {
+		return token.Token{}, err
+	}
+
+	if r == '=' {
+		l.bump() // consume the '='
+		return l.newToken(token.StarEqual), nil
+	}
+
+	return l.newToken(token.Star), nil
+}
+
+func (l *Lexer) readSlashOrSlashEqual() (token.Token, error) {
+	r, err := l.peekRune()
+	if err != nil {
+		return token.Token{}, err
+	}
+
+	if r == '=' {
+		l.bump() // consume the '='
+		return l.newToken(token.SlashEqual), nil
+	}
+
+	return l.newToken(token.Slash), nil
 }
 
 func (l *Lexer) readEqualOrEqualEqual() (token.Token, error) {
