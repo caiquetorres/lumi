@@ -7,6 +7,7 @@ const (
 	tagBool
 	tagPtr
 	tagString
+	tagFn
 	tagNil
 )
 
@@ -18,18 +19,6 @@ const (
 
 func getTag(v uint64) tag {
 	return tag(uint64(v) >> tagShift)
-}
-
-func isInt(v uint64) bool {
-	return getTag(v) == tagInt
-}
-
-func isBool(v uint64) bool {
-	return getTag(v) == tagBool
-}
-
-func isString(v uint64) bool {
-	return getTag(v) == tagString
 }
 
 func encodeInt(v int64) uint64 {
@@ -49,6 +38,11 @@ func encodeString(addr int64) uint64 {
 		(uint64(addr) & valMask))
 }
 
+func encodeFn(addr int64) uint64 {
+	return uint64((uint64(tagFn) << tagShift) |
+		(uint64(addr) & valMask))
+}
+
 func decodeInt(v uint64) int64 {
 	payload := uint64(v) & valMask
 
@@ -64,5 +58,9 @@ func decodeBool(v uint64) bool {
 }
 
 func decodeString(v uint64) int64 {
+	return int64(v & valMask)
+}
+
+func decodeFn(v uint64) int64 {
 	return int64(v & valMask)
 }

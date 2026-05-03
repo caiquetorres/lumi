@@ -150,16 +150,6 @@ func (d *Disassembler) callInstruction() {
 	_, _ = fmt.Fprintf(d.w, " args=%d\n", argCount)
 }
 
-func (d *Disassembler) funDeclInstruction() {
-	_, _ = fmt.Fprintf(d.w, "% 4d ", d.offset-1)
-	_, _ = fmt.Fprintf(d.w, "%-16s", "FN_DECL")
-
-	fnNameIdx := d.readUint32()
-	entryPoint := d.readUint32()
-
-	_, _ = fmt.Fprintf(d.w, " name=#%d entry=%d\n", fnNameIdx, entryPoint)
-}
-
 func (d *Disassembler) readByte() byte {
 	b := d.ch.code[d.offset]
 	d.move(1)

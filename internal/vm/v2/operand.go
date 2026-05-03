@@ -15,10 +15,11 @@ const (
 type operand struct {
 	ty operandType
 
-	intValue  int64
-	boolValue bool
-	fnValue   uint32
-	strValue  uint64
+	intValue      int64
+	boolValue     bool
+	fnValue       uint32
+	nativeFnValue string
+	stringValue   uint64
 }
 
 func intOperand(value int64) operand {
@@ -51,8 +52,8 @@ func boolOperand(value bool) operand {
 
 func stringOperand(addr uint64) operand {
 	return operand{
-		ty:       operandString,
-		strValue: addr,
+		ty:          operandString,
+		stringValue: addr,
 	}
 }
 
