@@ -32,7 +32,7 @@ func (m *vm) run(entryPoint uint32) error {
 
 			pos := m.frames.current().sp + offset
 			binary.LittleEndian.PutUint64(m.locals[pos:pos+8], data)
-			m.frames.current().tmp = pos + 8
+			m.frames.current().tmp = pos
 
 		case emitter.LoadLocal:
 			offset, _ := m.frames.current().readUint32(m.src)
