@@ -1,11 +1,20 @@
 fun main() {
-    println(factorial(5))
+    let n = 10
+    println(fibonacci(n))
 }
 
-fun factorial(n int) {
-    if n <= 1 {
-        return 1
+fun fibonacci(n int) {
+    let a = 0
+    let b = 1
+
+    let i = 0
+    while i < n {
+        let tmp = a + b
+        b = a
+        a = tmp
+
+        i = i + 1
     }
 
-    return n * factorial(n - 1)
+    return a
 }

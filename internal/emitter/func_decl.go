@@ -19,6 +19,7 @@ func (e *Emitter) BeforeFunDecl(fn *parser.FunDecl) {
 	for _, param := range fn.Params {
 		name := e.lex.Lexeme(param.Name)
 		e.storeLocal(name)
+		e.ch.emit(Pop)
 	}
 
 	if fnName == "main" {
