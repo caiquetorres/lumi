@@ -4,8 +4,13 @@ type Visitor interface {
 	BeforeAst(*Ast)
 	BeforeFunDecl(*FunDecl)
 	AfterFunDecl(*FunDecl)
+
 	BeforeVarDecl(*VarDecl)
 	AfterVarDecl(*VarDecl)
+
+	BeforeAssignment(*Assignment)
+	AfterAssignment(*Assignment)
+
 	BeforeParam(*Param)
 	AfterParam(*Param)
 	BeforeLiteralExpr(*LiteralExpr)

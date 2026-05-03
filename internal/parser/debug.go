@@ -55,12 +55,16 @@ func (d *debugVisitor) BeforeAst(ast *Ast) {}
 func (d *debugVisitor) BeforeVarDecl(vd *VarDecl) {
 	d.writeIndent()
 
-	name := d.l.Lexeme(vd.Identifier)
-	str := fmt.Sprintf("var %s\n", name)
-	mustWrite(d.w.WriteString(str))
-
 	_ = d.flush()
 }
+
+func (d *debugVisitor) BeforeAssignment(as *Assignment) {
+	name := d.l.Lexeme(as.Identifier)
+	str := fmt.Sprintf("var %s\n", name)
+	mustWrite(d.w.WriteString(str))
+}
+
+func (d *debugVisitor) AfterAssignment(assignment *Assignment) {}
 
 func (d *debugVisitor) AfterVarDecl(vd *VarDecl) {}
 

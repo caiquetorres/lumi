@@ -23,7 +23,11 @@ func (w *walker) walkAst(v Visitor, ast *Ast) {
 func (w *walker) walkVarDecl(v Visitor, vd *VarDecl) {
 	v.BeforeVarDecl(vd)
 
-	w.walkExpr(v, vd.Expr)
+	for _, assignment := range vd.Assignments {
+		v.BeforeAssignment(&assignment)
+		w.walkExpr(v, assignment.Expr)
+		v.AfterAssignment(&assignment)
+	}
 
 	v.AfterVarDecl(vd)
 }

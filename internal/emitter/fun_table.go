@@ -39,6 +39,8 @@ func (f *fnVisitor) BeforeParam(*parser.Param)                   {}
 func (f *fnVisitor) BeforeReturnStmt(*parser.ReturnStmt)         {}
 func (f *fnVisitor) BeforeVarDecl(*parser.VarDecl)               {}
 func (f *fnVisitor) BeforeWhileCondition(*parser.WhileStmt)      {}
+func (f *fnVisitor) AfterAssignment(*parser.Assignment)          {}
+func (f *fnVisitor) BeforeAssignment(*parser.Assignment)         {}
 
 func (f *fnVisitor) BeforeFunDecl(fn *parser.FunDecl) {
 	fnName := f.lex.Lexeme(fn.Identifier)
