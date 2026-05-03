@@ -9,6 +9,7 @@ const (
 	operandBool
 	operandString
 	operandFn
+	operandNativeFn
 )
 
 type operand struct {
@@ -26,6 +27,20 @@ func intOperand(value int64) operand {
 	}
 }
 
+func fnOperand(value uint32) operand {
+	return operand{
+		ty:      operandFn,
+		fnValue: value,
+	}
+}
+
+func nativeFnOperand(value uint32) operand {
+	return operand{
+		ty:      operandNativeFn,
+		fnValue: value,
+	}
+}
+
 func boolOperand(value bool) operand {
 	return operand{
 		ty:        operandBool,
@@ -34,27 +49,26 @@ func boolOperand(value bool) operand {
 }
 
 type operandStack struct {
-	top  int
 	data []operand
 }
 
 func newOperandStack(size int) *operandStack {
 	return &operandStack{
-		top:  0,
 		data: make([]operand, 0, size),
 	}
 }
 
 func (s *operandStack) push(v operand) {
 	s.data = append(s.data, v)
-	s.top++
 }
 
 func (s *operandStack) pop() operand {
-	if s.top == 0 {
-		log.Panic("stack underflow: no values to pop")
+	top := len(s.data) - 1
+	if top < 0 {
+		log.Panic("operand stack underflow: cannot pop from an empty stack")
 	}
 
-	s.top--
-	return s.data[s.top]
+	v := s.data[top]
+	s.data = s.data[:top]
+	return v
 }

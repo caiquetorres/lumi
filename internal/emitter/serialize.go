@@ -36,7 +36,7 @@ func (c *Chunk) Serialize(w io.Writer) error {
 		return err
 	}
 
-	return nil
+	return b.Flush()
 }
 
 func writeFunctionTable(w io.Writer, fnTable []uint32) error {

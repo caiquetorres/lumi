@@ -4,18 +4,24 @@ import (
 	"bufio"
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"io"
 
 	"github.com/caiquetorres/lumi/internal/constpool"
 )
 
+type nativeFn func(args ...operand) (operand, error)
+
 type vm struct {
 	src []byte
 
-	pool         *constpool.ConstantPool
-	frames       *frames
-	operandStack *operandStack
-	heap         *heap
+	pool          *constpool.ConstantPool
+	frames        *frames
+	operandStack  *operandStack
+	fnTable       []uint32
+	nativeFnTable map[string]nativeFn
+	heap          *heap
+	locals        [1024]byte
 }
 
 func Exec(src io.Reader) error {
@@ -35,6 +41,11 @@ func Exec(src io.Reader) error {
 		return err
 	}
 
+	fnTable, err := getFunctionTable(r)
+	if err != nil {
+		return err
+	}
+
 	entryPoint, hasEntryPoint, err := getEntryPoint(r)
 	if err != nil {
 		return err
@@ -45,19 +56,33 @@ func Exec(src io.Reader) error {
 		return err
 	}
 
+	nativeFnTable := map[string]nativeFn{
+		"println": func(args ...operand) (operand, error) {
+			values := make([]any, len(args))
+			for i, arg := range args {
+				switch arg.ty {
+				case operandInt:
+					values[i] = arg.intValue
+				case operandBool:
+					values[i] = arg.boolValue
+				default:
+					return operand{}, fmt.Errorf("unsupported operand type for println: %v", arg.ty)
+				}
+			}
+			fmt.Println(values...)
+			return operand{}, nil
+		},
+	}
+
 	machine := &vm{
-		src:          instructions,
-		pool:         pool,
-		frames:       newFrames(),
-		operandStack: newOperandStack(1024),
-		heap:         newHeap(4 * 1024 * 1024), // 4 MB heap
+		src:           instructions,
+		pool:          pool,
+		frames:        newFrames(),
+		operandStack:  newOperandStack(1024),
+		fnTable:       fnTable,
+		nativeFnTable: nativeFnTable,
+		heap:          newHeap(4 * 1024 * 1024), // 4 MB heap
 	}
-
-	if err := machine.load(0); err != nil {
-		return err
-	}
-
-	machine.frames.reset()
 
 	if hasEntryPoint {
 		return machine.run(entryPoint)
@@ -123,6 +148,29 @@ func getEntryPoint(fp *bufio.Reader) (uint32, bool, error) {
 
 	entryPoint := binary.BigEndian.Uint32(entryPointBuf[:])
 	return entryPoint, true, nil
+}
+
+func getFunctionTable(fp *bufio.Reader) ([]uint32, error) {
+	var sizeBuf [4]byte
+
+	n, err := fp.Read(sizeBuf[:])
+	if err != nil || n != 4 {
+		return nil, err
+	}
+
+	size := binary.BigEndian.Uint32(sizeBuf[:])
+	fnTable := make([]uint32, size)
+
+	for i := uint32(0); i < size; i++ {
+		var offsetBuf [4]byte
+		if _, err := fp.Read(offsetBuf[:]); err != nil {
+			return nil, err
+		}
+
+		fnTable[i] = binary.BigEndian.Uint32(offsetBuf[:])
+	}
+
+	return fnTable, nil
 }
 
 func getInstructions(fp *bufio.Reader) ([]byte, error) {

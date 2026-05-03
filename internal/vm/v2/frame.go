@@ -12,8 +12,9 @@ const (
 )
 
 type frame struct {
-	sp uint32 // stack pointer
-	ip uint32 // instruction pointer and bytecode
+	tmp uint32
+	sp  uint32 // stack pointer
+	ip  uint32 // instruction pointer and bytecode
 }
 
 func (f *frame) moveTo(offset uint32) {
