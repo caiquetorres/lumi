@@ -18,6 +18,7 @@ type operand struct {
 	intValue  int64
 	boolValue bool
 	fnValue   uint32
+	strValue  uint64
 }
 
 func intOperand(value int64) operand {
@@ -45,6 +46,13 @@ func boolOperand(value bool) operand {
 	return operand{
 		ty:        operandBool,
 		boolValue: value,
+	}
+}
+
+func stringOperand(addr uint64) operand {
+	return operand{
+		ty:       operandString,
+		strValue: addr,
 	}
 }
 

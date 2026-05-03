@@ -10,7 +10,7 @@ import (
 	"github.com/caiquetorres/lumi/internal/constpool"
 )
 
-type nativeFn func(args ...operand) (operand, error)
+type nativeFn func(m *vm, args ...operand) (operand, error)
 
 type vm struct {
 	src []byte
@@ -57,7 +57,7 @@ func Exec(src io.Reader) error {
 	}
 
 	nativeFnTable := map[string]nativeFn{
-		"println": func(args ...operand) (operand, error) {
+		"println": func(m *vm, args ...operand) (operand, error) {
 			values := make([]any, len(args))
 			for i, arg := range args {
 				switch arg.ty {
@@ -65,11 +65,58 @@ func Exec(src io.Reader) error {
 					values[i] = arg.intValue
 				case operandBool:
 					values[i] = arg.boolValue
+				case operandString:
+					strAddr := decodeString(arg.strValue)
+					strObj, err := m.heap.readObject(strAddr)
+					if err != nil {
+						return operand{}, fmt.Errorf("failed to read string from heap: %w", err)
+					}
+					values[i] = string(strObj.data)
 				default:
 					return operand{}, fmt.Errorf("unsupported operand type for println: %v", arg.ty)
 				}
 			}
 			fmt.Println(values...)
+			return operand{}, nil
+		},
+		"printf": func(m *vm, args ...operand) (operand, error) {
+			if len(args) == 0 {
+				return operand{}, errors.New("printf requires at least a format string")
+			}
+
+			formatArg := args[0]
+			if formatArg.ty != operandString {
+				return operand{}, errors.New("first argument to printf must be a string")
+			}
+
+			formatAddr := decodeString(formatArg.strValue)
+			formatObj, err := m.heap.readObject(formatAddr)
+			if err != nil {
+				return operand{}, fmt.Errorf("failed to read format string from heap: %w", err)
+			}
+
+			formatStr := string(formatObj.data)
+
+			values := make([]any, len(args)-1)
+			for i, arg := range args[1:] {
+				switch arg.ty {
+				case operandInt:
+					values[i] = arg.intValue
+				case operandBool:
+					values[i] = arg.boolValue
+				case operandString:
+					strAddr := decodeString(arg.strValue)
+					strObj, err := m.heap.readObject(strAddr)
+					if err != nil {
+						return operand{}, fmt.Errorf("failed to read string from heap: %w", err)
+					}
+					values[i] = string(strObj.data)
+				default:
+					return operand{}, fmt.Errorf("unsupported operand type for printf: %v", arg.ty)
+				}
+			}
+
+			fmt.Printf(formatStr, values...)
 			return operand{}, nil
 		},
 	}

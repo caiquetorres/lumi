@@ -24,6 +24,8 @@ func (m *vm) run(entryPoint uint32) error {
 				data = encodeInt(val.intValue)
 			case operandBool:
 				data = encodeBool(val.boolValue)
+			case operandString:
+				data = encodeString(int64(val.strValue))
 			default:
 				return fmt.Errorf("unsupported operand type for LoadLocal: %v", val.ty)
 			}
@@ -43,9 +45,26 @@ func (m *vm) run(entryPoint uint32) error {
 				m.operandStack.push(intOperand(decodeInt(data)))
 			case tagBool:
 				m.operandStack.push(boolOperand(decodeBool(data)))
+			case tagString:
+				strAddr := decodeString(data)
+				m.operandStack.push(stringOperand(uint64(strAddr)))
 			default:
 				return fmt.Errorf("unsupported tag for LoadLocal: %v", getTag(data))
 			}
+
+		case emitter.PushString:
+			constIdx, _ := m.frames.current().readUint32(m.src)
+			constStr, _ := m.pool.GetConstant(constIdx)
+
+			str := []byte(constStr.(string))
+			strObj := heapObject{
+				tag:  tagString,
+				size: len(str),
+				data: str,
+			}
+
+			addr, _ := m.heap.allocAndWriteObject(strObj)
+			m.operandStack.push(stringOperand(encodeString(addr)))
 
 		case emitter.PushInt:
 			value, _ := m.frames.current().readUint32(m.src)
@@ -79,7 +98,7 @@ func (m *vm) run(entryPoint uint32) error {
 					operands[i] = m.operandStack.pop()
 				}
 
-				res, err := m.nativeFnTable[fnNameConst.(string)](operands...)
+				res, err := m.nativeFnTable[fnNameConst.(string)](m, operands...)
 				if err != nil {
 					return fmt.Errorf("error calling native function: %w", err)
 				}
