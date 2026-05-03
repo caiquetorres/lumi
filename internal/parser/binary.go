@@ -95,7 +95,7 @@ func isBinaryOperator(tok token.Token) bool {
 	case token.Plus, token.Minus, token.Star, token.Slash,
 		token.Equal, token.EqualEqual, token.BangEqual,
 		token.Less, token.LessEqual, token.Greater,
-		token.GreaterEqual:
+		token.GreaterEqual, token.PlusEqual:
 		return true
 	default:
 		return false
@@ -109,7 +109,7 @@ func precedence(kind token.Kind) int {
 		{token.Plus, token.Minus},
 		{token.Less, token.LessEqual, token.Greater, token.GreaterEqual},
 		{token.EqualEqual, token.BangEqual},
-		{token.Equal},
+		{token.Equal, token.PlusEqual},
 		// lower precedence
 	}
 

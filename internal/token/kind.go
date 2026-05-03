@@ -17,6 +17,8 @@ const (
 	NewLine
 
 	Plus
+	PlusEqual
+
 	Minus
 	Star
 	Slash

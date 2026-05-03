@@ -37,6 +37,9 @@ func (e *Emitter) AfterBinaryExpr(be *parser.BinaryExpr) {
 
 	case token.Equal:
 		e.handleAssignment(be)
+
+	case token.PlusEqual:
+		e.handlePlusEqual(be)
 	}
 }
 
@@ -44,6 +47,20 @@ func (e *Emitter) handleAssignment(be *parser.BinaryExpr) {
 	switch left := be.Left.(type) {
 	case *parser.IdentifierExpr:
 		name := e.lex.Lexeme(left.Name)
+		e.storeLocal(name)
+		e.loadLocal(name)
+
+	default:
+		panic("Invalid assignment target.")
+	}
+}
+
+func (e *Emitter) handlePlusEqual(be *parser.BinaryExpr) {
+	switch left := be.Left.(type) {
+	case *parser.IdentifierExpr:
+		name := e.lex.Lexeme(left.Name)
+
+		e.ch.emit(Add)
 		e.storeLocal(name)
 		e.loadLocal(name)
 

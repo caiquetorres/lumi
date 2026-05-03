@@ -33,7 +33,7 @@ func (l *Lexer) readOperator() (token.Token, error) {
 
 	switch r {
 	case '+':
-		return l.newToken(token.Plus), nil
+		return l.readPlusOrPlusEqual()
 	case '-':
 		return l.newToken(token.Minus), nil
 	case '*':
@@ -51,6 +51,20 @@ func (l *Lexer) readOperator() (token.Token, error) {
 	}
 
 	return token.Token{}, nil
+}
+
+func (l *Lexer) readPlusOrPlusEqual() (token.Token, error) {
+	r, err := l.peekRune()
+	if err != nil {
+		return token.Token{}, err
+	}
+
+	if r == '=' {
+		l.bump() // consume the '='
+		return l.newToken(token.PlusEqual), nil
+	}
+
+	return l.newToken(token.Plus), nil
 }
 
 func (l *Lexer) readEqualOrEqualEqual() (token.Token, error) {
