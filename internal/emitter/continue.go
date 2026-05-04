@@ -6,7 +6,7 @@ func (e *Emitter) BeforeContinueStmt(*parser.ContinueStmt) {
 	e.ch.emit(JumpTo)
 
 	if top, ok := e.loopStack.top(); ok {
-		top.end = append(top.end, e.ch.reserveUint32())
+		e.ch.emitUint32(top.start)
 	}
 }
 

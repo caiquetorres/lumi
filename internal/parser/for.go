@@ -3,43 +3,43 @@ package parser
 import "github.com/caiquetorres/lumi/internal/token"
 
 type ForStmt struct {
-	Identifier token.Token
-	Start      Expr
-	Op         token.Token // either .. or ..=
-	End        Expr
-	Block      *Block
+	Init  Stmt
+	Cond  Expr
+	Inc   Stmt
+	Block *Block
 }
 
 func (p *Parser) parseFor() (*ForStmt, error) {
-	// for <identifier> in <start> .. <end> { ... }
-	// for <identifier> in <start> ..= <end> { ... }
-
 	_, err := p.lookahead().next().expect(token.For)
 	if err != nil {
 		return nil, err
 	}
 
-	identifier, err := p.lookahead().next().expect(token.Identifier)
-	if err != nil {
+	var initStmt Stmt
+	if !p.lookahead().peek().is(token.Semicolon) {
+		initStmt, err = p.parseStmt()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if _, err := p.lookahead().next().expect(token.Semicolon); err != nil {
 		return nil, err
 	}
 
-	_, err = p.lookahead().next().expect(token.In)
-	if err != nil {
+	var condExpr Expr
+	if !p.lookahead().peek().is(token.Semicolon) {
+		condExpr, err = p.parseExpr()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if _, err := p.lookahead().next().expect(token.Semicolon); err != nil {
 		return nil, err
 	}
 
-	start, err := p.parseExpr()
-	if err != nil {
-		return nil, err
-	}
-
-	op, err := p.lookahead().next().expectOneOf(token.DotDot, token.DotDotEqual)
-	if err != nil {
-		return nil, err
-	}
-
-	end, err := p.parseExpr()
+	incStmt, err := p.parseStmt()
 	if err != nil {
 		return nil, err
 	}
@@ -50,10 +50,9 @@ func (p *Parser) parseFor() (*ForStmt, error) {
 	}
 
 	return &ForStmt{
-		Identifier: identifier,
-		Start:      start,
-		Op:         op,
-		End:        end,
-		Block:      block,
+		Init:  initStmt,
+		Cond:  condExpr,
+		Inc:   incStmt,
+		Block: block,
 	}, nil
 }

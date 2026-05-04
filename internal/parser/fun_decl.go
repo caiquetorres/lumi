@@ -133,6 +133,10 @@ func (p *Parser) parseFunDeclBody() ([]Stmt, error) {
 			return nil, err
 		}
 
+		if err := p.expectEndOfLine(); err != nil {
+			return nil, err
+		}
+
 		body = append(body, stmt)
 	}
 

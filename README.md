@@ -18,24 +18,21 @@ More examples can be found in the [`examples/`](examples/) folder.
 
 ```lumi
 fun main() {
-    for i in 2..=20 {
-        if isPrime(i) {
-            printf("%d is prime\n", i)
-        }
+    for let i = 1; i <= 10; i += 1 {
+        let fib = fibonacci(i)
+        printf("fib(%d): %d\n", i, fib)
     }
 }
 
-fun isPrime(n int) {
-    if n < 2 {
-        return false
+fun fibonacci(n int) {
+    let a = 0, b = 1
+
+    for let i = 0; i < n; i += 1 {
+        let tmp = a + b
+        b = a
+        a = tmp
     }
-    let i = 2
-    while i * i <= n {
-        if n / i * i == n {
-            return false
-        }
-        i += 1
-    }
-    return true
+
+    return a
 }
 ```

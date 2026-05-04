@@ -1,33 +1,30 @@
 package emitter
 
-import (
-	"github.com/caiquetorres/lumi/internal/parser"
-	"github.com/caiquetorres/lumi/internal/token"
-)
+import "github.com/caiquetorres/lumi/internal/parser"
 
-func (e *Emitter) BeforeForStart(forStmt *parser.ForStmt) {}
+func (e *Emitter) BeforeForInit(forStmt *parser.ForStmt) {}
 
-func (e *Emitter) AfterForStart(forStmt *parser.ForStmt) {
-	name := e.lex.Lexeme(forStmt.Identifier)
-	e.storeLocal(name)
+func (e *Emitter) AfterForInit(forStmt *parser.ForStmt) {
+	e.ch.emit(JumpTo)
+	jumpTo := e.ch.reserveUint32() // jump to condition
 
 	e.loopStack.push(loop{
-		start: e.ch.ip,
+		start:     e.ch.ip,
+		condStart: jumpTo,
 	})
-
-	e.loadLocal(name)
 }
 
-func (e *Emitter) BeforeForEnd(forStmt *parser.ForStmt) {}
+func (e *Emitter) BeforeForInc(forStmt *parser.ForStmt) {}
 
-func (e *Emitter) AfterForEnd(forStmt *parser.ForStmt) {
-	switch forStmt.Op.Kind() {
-	case token.DotDot:
-		e.ch.emit(Less)
-	case token.DotDotEqual:
-		e.ch.emit(LessEq)
+func (e *Emitter) AfterForInc(forStmt *parser.ForStmt) {}
+
+func (e *Emitter) BeforeForCond(forStmt *parser.ForStmt) {
+	if top, ok := e.loopStack.top(); ok {
+		e.ch.patchUint32(top.condStart, e.ch.ip)
 	}
+}
 
+func (e *Emitter) AfterForCond(forStmt *parser.ForStmt) {
 	e.ch.emit(JumpIfFalse)
 	jumpTo := e.ch.reserveUint32()
 
@@ -37,16 +34,6 @@ func (e *Emitter) AfterForEnd(forStmt *parser.ForStmt) {
 }
 
 func (e *Emitter) AfterForBody(forStmt *parser.ForStmt) {
-	name := e.lex.Lexeme(forStmt.Identifier)
-	e.loadLocal(name)
-
-	e.ch.emit(PushInt)
-	e.ch.emitUint32(1)
-
-	e.ch.emit(Add)
-
-	e.storeLocal(name)
-
 	if top, ok := e.loopStack.pop(); ok {
 		e.ch.emit(JumpTo)
 		e.ch.emitUint32(top.start)

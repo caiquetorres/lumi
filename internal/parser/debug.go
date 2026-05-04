@@ -159,11 +159,13 @@ func (d *debugVisitor) AfterWhileBody(whileStmt *WhileStmt) {
 	d.indentOut()
 }
 
-func (d *debugVisitor) BeforeForStart(*ForStmt) {}
-func (d *debugVisitor) AfterForStart(*ForStmt)  {}
-func (d *debugVisitor) BeforeForEnd(*ForStmt)   {}
-func (d *debugVisitor) AfterForEnd(*ForStmt)    {}
-func (d *debugVisitor) AfterForBody(*ForStmt)   {}
+func (f *debugVisitor) BeforeForInit(*ForStmt) {}
+func (f *debugVisitor) AfterForInit(*ForStmt)  {}
+func (f *debugVisitor) BeforeForInc(*ForStmt)  {}
+func (f *debugVisitor) AfterForInc(*ForStmt)   {}
+func (f *debugVisitor) BeforeForCond(*ForStmt) {}
+func (f *debugVisitor) AfterForCond(*ForStmt)  {}
+func (f *debugVisitor) AfterForBody(*ForStmt)  {}
 
 func (d *debugVisitor) AfterForCondition(forStmt *ForStmt) {}
 

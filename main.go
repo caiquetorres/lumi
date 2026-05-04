@@ -40,7 +40,6 @@ func main() {
 
 	case "build":
 		args := parseArgs()
-		log.Printf("running with file: %s", args.filePath)
 
 		f, err := os.Open(args.filePath)
 		if err != nil {

@@ -86,16 +86,25 @@ func (w *walker) walkWhile(v Visitor, whileStmt *WhileStmt) {
 }
 
 func (w *walker) walkFor(v Visitor, forStmt *ForStmt) {
-	v.BeforeForStart(forStmt)
-	w.walkExpr(v, forStmt.Start)
-	v.AfterForStart(forStmt)
+	v.BeforeForInit(forStmt)
+	if forStmt.Init != nil {
+		w.walkStmt(v, forStmt.Init)
+	}
+	v.AfterForInit(forStmt)
 
-	v.BeforeForEnd(forStmt)
-	w.walkExpr(v, forStmt.End)
-	v.AfterForEnd(forStmt)
+	v.BeforeForInc(forStmt)
+	if forStmt.Inc != nil {
+		w.walkStmt(v, forStmt.Inc)
+	}
+	v.AfterForInc(forStmt)
+
+	v.BeforeForCond(forStmt)
+	if forStmt.Cond != nil {
+		w.walkExpr(v, forStmt.Cond)
+	}
+	v.AfterForCond(forStmt)
 
 	w.walkBlockStmt(v, forStmt.Block)
-
 	v.AfterForBody(forStmt)
 }
 

@@ -34,6 +34,10 @@ func (p *Parser) parseBlock() (*Block, error) {
 			return nil, err
 		}
 
+		if err := p.expectEndOfLine(); err != nil {
+			return nil, err
+		}
+
 		stms = append(stms, stmt)
 	}
 

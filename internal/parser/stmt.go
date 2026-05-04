@@ -37,9 +37,5 @@ func (p *Parser) parseStmt() (Stmt, error) {
 		return nil, err
 	}
 
-	if err := p.expectEndOfLine(); err != nil {
-		return nil, err
-	}
-
 	return stmt, nil
 }

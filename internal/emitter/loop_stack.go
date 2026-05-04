@@ -1,8 +1,9 @@
 package emitter
 
 type loop struct {
-	start uint32
-	end   []uint32
+	start     uint32
+	condStart uint32
+	end       []uint32
 }
 
 type loopStack struct {
