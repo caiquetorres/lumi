@@ -39,9 +39,12 @@ func (p *Parser) parseFor() (*ForStmt, error) {
 		return nil, err
 	}
 
-	incStmt, err := p.parseStmt()
-	if err != nil {
-		return nil, err
+	var incStmt Stmt
+	if !p.lookahead().peek().is(token.OpenBrace) {
+		incStmt, err = p.parseStmt()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	block, err := p.parseBlock()

@@ -4,9 +4,15 @@ import "github.com/caiquetorres/lumi/internal/parser"
 
 func (e *Emitter) BeforeForInit(forStmt *parser.ForStmt) {}
 
-func (e *Emitter) AfterForInit(forStmt *parser.ForStmt) {
-	e.ch.emit(JumpTo)
-	jumpTo := e.ch.reserveUint32() // jump to condition
+func (e *Emitter) AfterForInit(forStmt *parser.ForStmt) {}
+
+func (e *Emitter) BeforeForInc(forStmt *parser.ForStmt) {
+	var jumpTo uint32
+
+	if forStmt.Inc != nil {
+		e.ch.emit(JumpTo)
+		jumpTo = e.ch.reserveUint32() // jump to condition
+	}
 
 	e.loopStack.push(loop{
 		start:     e.ch.ip,
@@ -14,17 +20,21 @@ func (e *Emitter) AfterForInit(forStmt *parser.ForStmt) {
 	})
 }
 
-func (e *Emitter) BeforeForInc(forStmt *parser.ForStmt) {}
-
-func (e *Emitter) AfterForInc(forStmt *parser.ForStmt) {}
-
-func (e *Emitter) BeforeForCond(forStmt *parser.ForStmt) {
-	if top, ok := e.loopStack.top(); ok {
-		e.ch.patchUint32(top.condStart, e.ch.ip)
+func (e *Emitter) AfterForInc(forStmt *parser.ForStmt) {
+	if forStmt.Inc != nil {
+		if top, ok := e.loopStack.top(); ok {
+			e.ch.patchUint32(top.condStart, e.ch.ip)
+		}
 	}
 }
 
+func (e *Emitter) BeforeForCond(forStmt *parser.ForStmt) {}
+
 func (e *Emitter) AfterForCond(forStmt *parser.ForStmt) {
+	if forStmt.Cond == nil {
+		return
+	}
+
 	e.ch.emit(JumpIfFalse)
 	jumpTo := e.ch.reserveUint32()
 
