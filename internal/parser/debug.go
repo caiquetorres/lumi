@@ -166,6 +166,8 @@ func (f *debugVisitor) AfterForInc(*ForStmt)   {}
 func (f *debugVisitor) BeforeForCond(*ForStmt) {}
 func (f *debugVisitor) AfterForCond(*ForStmt)  {}
 func (f *debugVisitor) AfterForBody(*ForStmt)  {}
+func (f *debugVisitor) BeforeLoopBody(*Loop)   {}
+func (f *debugVisitor) AfterLoopBody(*Loop)    {}
 
 func (d *debugVisitor) AfterForCondition(forStmt *ForStmt) {}
 

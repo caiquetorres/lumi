@@ -15,6 +15,8 @@ func (p *Parser) parseStmt() (Stmt, error) {
 		stmt, err = p.parseVarDecl()
 	case p.lookahead().peek().is(token.If):
 		stmt, err = p.parseIf()
+	case p.lookahead().peek().is(token.Loop):
+		stmt, err = p.parseLoop()
 	case p.lookahead().peek().is(token.While):
 		stmt, err = p.parseWhile()
 	case p.lookahead().peek().is(token.Return):

@@ -14,6 +14,7 @@ var keywords = map[string]token.Kind{
 	"false":    token.False,
 	"if":       token.If,
 	"else":     token.Else,
+	"loop":     token.Loop,
 	"while":    token.While,
 	"break":    token.Break,
 	"continue": token.Continue,

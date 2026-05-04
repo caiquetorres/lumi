@@ -56,6 +56,8 @@ func (w *walker) walkStmt(v Visitor, stmt Stmt) {
 		w.walkReturn(v, s)
 	case *IfStmt:
 		w.walkIf(v, s)
+	case *Loop:
+		w.walkLoop(v, s)
 	case *WhileStmt:
 		w.walkWhile(v, s)
 	case *BreakStmt:
@@ -71,6 +73,12 @@ func (w *walker) walkStmt(v Visitor, stmt Stmt) {
 	}
 
 	v.AfterStmt(stmt)
+}
+
+func (w *walker) walkLoop(v Visitor, loop *Loop) {
+	v.BeforeLoopBody(loop)
+	w.walkBlockStmt(v, loop.Body)
+	v.AfterLoopBody(loop)
 }
 
 func (w *walker) walkWhile(v Visitor, whileStmt *WhileStmt) {

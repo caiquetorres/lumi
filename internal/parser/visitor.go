@@ -35,6 +35,9 @@ type Visitor interface {
 	AfterIfThenBlock(*IfStmt)
 	AfterElseBlock(*IfStmt)
 
+	BeforeLoopBody(*Loop)
+	AfterLoopBody(*Loop)
+
 	BeforeWhileCondition(*WhileStmt)
 	AfterWhileCondition(*WhileStmt)
 	AfterWhileBody(*WhileStmt)

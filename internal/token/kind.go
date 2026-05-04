@@ -55,6 +55,7 @@ const (
 	Continue
 	If
 	Else
+	Loop
 	While
 	For
 	In

@@ -48,6 +48,8 @@ func (f *fnVisitor) AfterForInc(*parser.ForStmt)                 {}
 func (f *fnVisitor) BeforeForCond(*parser.ForStmt)               {}
 func (f *fnVisitor) AfterForCond(*parser.ForStmt)                {}
 func (f *fnVisitor) AfterForBody(*parser.ForStmt)                {}
+func (f *fnVisitor) BeforeLoopBody(*parser.Loop)                 {}
+func (f *fnVisitor) AfterLoopBody(*parser.Loop)                  {}
 
 func (f *fnVisitor) BeforeFunDecl(fn *parser.FunDecl) {
 	fnName := f.lex.Lexeme(fn.Identifier)
