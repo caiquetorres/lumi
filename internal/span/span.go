@@ -15,6 +15,16 @@ func New(start, end uint32) Span {
 	}
 }
 
+func Merge(a, b Spanner) Span {
+	aSpan := a.Span()
+	bSpan := b.Span()
+
+	return Span{
+		start: min(aSpan.Start(), bSpan.Start()),
+		end:   max(aSpan.End(), bSpan.End()),
+	}
+}
+
 func (s Span) Span() Span {
 	return s
 }

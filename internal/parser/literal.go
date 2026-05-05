@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"github.com/caiquetorres/lumi/internal/span"
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
@@ -23,6 +24,10 @@ func literalExpr(k LiteralKind, value token.Token) *LiteralExpr {
 		Kind:  k,
 		Value: value,
 	}
+}
+
+func (l *LiteralExpr) Span() span.Span {
+	return l.Value.Span()
 }
 
 func (l *LiteralExpr) expr() {}

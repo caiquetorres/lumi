@@ -1,19 +1,27 @@
 package parser
 
 import (
+	"github.com/caiquetorres/lumi/internal/span"
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
 type CallExpr struct {
 	Callee Expr
 	Args   []Expr
+
+	span span.Spanner
 }
 
-func callExpr(callee Expr, args []Expr) *CallExpr {
+func callExpr(callee Expr, args []Expr, span span.Spanner) *CallExpr {
 	return &CallExpr{
 		Callee: callee,
 		Args:   args,
+		span:   span,
 	}
+}
+
+func (c *CallExpr) Span() span.Span {
+	return c.span.Span()
 }
 
 var _ Expr = (*CallExpr)(nil)
@@ -49,7 +57,10 @@ func (p *Parser) parseCallExpr(callee Expr) (Expr, error) {
 		return nil, ErrUnexpectedEOF
 	}
 
-	p.bump() // close brace
+	closeBraceTok, err := p.lookahead().next().expect(token.CloseParen)
+	if err != nil {
+		return nil, err
+	}
 
-	return callExpr(callee, args), nil
+	return callExpr(callee, args, span.Merge(callee, closeBraceTok)), nil
 }

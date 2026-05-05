@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"github.com/caiquetorres/lumi/internal/span"
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
@@ -15,6 +16,10 @@ func identifierExpr(name token.Token) *IdentifierExpr {
 }
 
 func (l *IdentifierExpr) expr() {}
+
+func (l *IdentifierExpr) Span() span.Span {
+	return l.Name.Span()
+}
 
 var _ Expr = (*IdentifierExpr)(nil)
 

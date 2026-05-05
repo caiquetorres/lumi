@@ -1,21 +1,31 @@
 package parser
 
-import "github.com/caiquetorres/lumi/internal/token"
+import (
+	"github.com/caiquetorres/lumi/internal/span"
+	"github.com/caiquetorres/lumi/internal/token"
+)
 
 type WhileStmt struct {
 	Condition Expr
 	Body      *Block
+
+	span span.Span
 }
 
-func whileStmt(condition Expr, body *Block) *WhileStmt {
+func whileStmt(condition Expr, body *Block, span span.Spanner) *WhileStmt {
 	return &WhileStmt{
 		Condition: condition,
 		Body:      body,
+		span:      span.Span(),
 	}
 }
 
+func (s *WhileStmt) Span() span.Span {
+	return s.span
+}
+
 func (p *Parser) parseWhile() (*WhileStmt, error) {
-	_, err := p.lookahead().next().expect(token.While)
+	whileTok, err := p.lookahead().next().expect(token.While)
 	if err != nil {
 		return nil, err
 	}
@@ -30,5 +40,5 @@ func (p *Parser) parseWhile() (*WhileStmt, error) {
 		return nil, err
 	}
 
-	return whileStmt(condition, body), nil
+	return whileStmt(condition, body, span.Merge(whileTok, body)), nil
 }

@@ -1,23 +1,37 @@
 package parser
 
-import "github.com/caiquetorres/lumi/internal/token"
+import (
+	"github.com/caiquetorres/lumi/internal/span"
+	"github.com/caiquetorres/lumi/internal/token"
+)
 
 type IfStmt struct {
 	Condition Expr
 	Then      *Block
 	Else      *Block
+
+	span span.Span
 }
 
-func ifStmt(condition Expr, thenBlock, elseBlock *Block) *IfStmt {
+func ifStmt(
+	condition Expr,
+	thenBlock, elseBlock *Block,
+	span span.Spanner,
+) *IfStmt {
 	return &IfStmt{
 		Condition: condition,
 		Then:      thenBlock,
 		Else:      elseBlock,
+		span:      span.Span(),
 	}
 }
 
+func (s *IfStmt) Span() span.Span {
+	return s.span
+}
+
 func (p *Parser) parseIf() (*IfStmt, error) {
-	_, err := p.lookahead().next().expect(token.If)
+	ifTok, err := p.lookahead().next().expect(token.If)
 	if err != nil {
 		return nil, err
 	}
@@ -32,9 +46,11 @@ func (p *Parser) parseIf() (*IfStmt, error) {
 		return nil, err
 	}
 
+	var lastSpan span.Spanner = thenBlock
+
 	var elseBlock *Block
 	if p.lookahead().peek().is(token.Else) {
-		p.lookahead().next() // consume 'else'
+		p.bump() // consume 'else'
 
 		if p.lookahead().peek().is(token.If) {
 			elseIf, err := p.parseIf()
@@ -51,7 +67,13 @@ func (p *Parser) parseIf() (*IfStmt, error) {
 				return nil, err
 			}
 		}
+
+		lastSpan = elseBlock
 	}
 
-	return ifStmt(condition, thenBlock, elseBlock), nil
+	return ifStmt(
+		condition,
+		thenBlock, elseBlock,
+		span.Merge(ifTok, lastSpan),
+	), nil
 }

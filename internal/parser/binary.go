@@ -3,6 +3,7 @@ package parser
 import (
 	"slices"
 
+	"github.com/caiquetorres/lumi/internal/span"
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
@@ -10,6 +11,10 @@ type BinaryExpr struct {
 	Left     Expr
 	Operator token.Token
 	Right    Expr
+}
+
+func (b *BinaryExpr) Span() span.Span {
+	return span.Merge(b.Left, b.Right)
 }
 
 func (b *BinaryExpr) expr() {}

@@ -1,8 +1,13 @@
 package parser
 
-import "github.com/caiquetorres/lumi/internal/token"
+import (
+	"github.com/caiquetorres/lumi/internal/span"
+	"github.com/caiquetorres/lumi/internal/token"
+)
 
-type Stmt any
+type Stmt interface {
+	span.Spanner
+}
 
 func (p *Parser) parseStmt() (Stmt, error) {
 	var (

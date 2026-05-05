@@ -7,8 +7,8 @@ import (
 type FunDecl struct {
 	Identifier token.Token
 	Params     []Param
-	Body       []Stmt
 	Return     *Type
+	Body       []Stmt
 }
 
 func funDecl(identifier token.Token, params []Param, body []Stmt, returnType *Type) *FunDecl {
@@ -67,15 +67,16 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 		}
 	}
 
-	var body []Stmt
-	if p.lookahead().peek().is(token.OpenBrace) {
-		// The function body is optional, so we only parse it if we see an
-		// opening brace.
+	// var body []Stmt
+	// if p.lookahead().peek().is(token.OpenBrace) {
+	// 	// The function body is optional, so we only parse it if we see an
+	// 	// opening brace.
+	// }
 
-		body, err = p.parseFunDeclBody()
-		if err != nil {
-			return nil, err
-		}
+	// REVIEW: I want to make the body optional
+	body, err := p.parseFunDeclBody()
+	if err != nil {
+		return nil, err
 	}
 
 	return funDecl(identifier, params, body, ty), nil
@@ -83,10 +84,10 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 
 type Param struct {
 	Name token.Token
-	Type Type
+	Type *Type
 }
 
-func param(name token.Token, ty Type) *Param {
+func param(name token.Token, ty *Type) *Param {
 	return &Param{
 		Name: name,
 		Type: ty,
@@ -110,7 +111,7 @@ func (p *Parser) parseParam() (*Param, error) {
 		}
 	}
 
-	return param(tok, *ty), nil
+	return param(tok, ty), nil
 }
 
 func (p *Parser) parseFunDeclBody() ([]Stmt, error) {

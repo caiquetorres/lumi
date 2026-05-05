@@ -5,8 +5,8 @@ import "github.com/caiquetorres/lumi/internal/span"
 type SymbolID int
 
 type Token struct {
-	kind Kind
 	s    span.Span
+	kind Kind
 
 	symbolID  SymbolID
 	hasSymbol bool

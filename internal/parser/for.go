@@ -1,16 +1,25 @@
 package parser
 
-import "github.com/caiquetorres/lumi/internal/token"
+import (
+	"github.com/caiquetorres/lumi/internal/span"
+	"github.com/caiquetorres/lumi/internal/token"
+)
 
 type ForStmt struct {
 	Init  Stmt
 	Cond  Expr
 	Inc   Stmt
 	Block *Block
+
+	span span.Span
+}
+
+func (s *ForStmt) Span() span.Span {
+	return s.span
 }
 
 func (p *Parser) parseFor() (*ForStmt, error) {
-	_, err := p.lookahead().next().expect(token.For)
+	forTok, err := p.lookahead().next().expect(token.For)
 	if err != nil {
 		return nil, err
 	}
@@ -57,5 +66,6 @@ func (p *Parser) parseFor() (*ForStmt, error) {
 		Cond:  condExpr,
 		Inc:   incStmt,
 		Block: block,
+		span:  span.Merge(forTok, block),
 	}, nil
 }

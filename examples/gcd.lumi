@@ -3,7 +3,7 @@ fun main() {
     printf("gcd(100, 75) = %d\n", gcd(100, 75))
 }
 
-fun gcd(a int, b int) {
+fun gcd(a int, b int) int {
     while a != b {
         if a > b {
             a -= b
@@ -11,5 +11,6 @@ fun gcd(a int, b int) {
             b -= a
         }
     }
+
     return a
 }

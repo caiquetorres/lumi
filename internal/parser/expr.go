@@ -1,10 +1,13 @@
 package parser
 
 import (
+	"github.com/caiquetorres/lumi/internal/span"
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
 type Expr interface {
+	span.Spanner
+
 	expr() // marker method
 }
 

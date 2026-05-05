@@ -6,7 +6,7 @@ fun main() {
     }
 }
 
-fun isPrime(n int) {
+fun isPrime(n int) bool {
     if n < 2 {
         return false
     }
