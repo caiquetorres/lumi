@@ -52,8 +52,10 @@ func (p *Parser) expectSequence(ks ...token.Kind) ([]token.Token, error) {
 		}
 
 		if tok.Kind() != k {
-			return nil, fmt.Errorf("expected token of kind %s at position %d: %w",
-				k.String(), i, ErrUnexpectedToken)
+			return nil, &ParseError{
+				Err:  fmt.Errorf("expected token of kind %s at position %d: %w", k.String(), i, ErrUnexpectedToken),
+				Span: tok.Span(),
+			}
 		}
 
 		toks[i] = tok

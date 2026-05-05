@@ -97,9 +97,10 @@ func (t *tokenResult) expect(k token.Kind) (token.Token, error) {
 	}
 
 	if !t.is(k) {
-		return token.Token{}, fmt.Errorf("expected token of kind %s, got %s: %w",
-			k.String(), t.tok.Kind().String(), ErrUnexpectedToken,
-		)
+		return token.Token{}, &ParseError{
+			Err:  fmt.Errorf("expected token of kind %s, got %s: %w", k.String(), t.tok.Kind().String(), ErrUnexpectedToken),
+			Span: t.tok.Span(),
+		}
 	}
 
 	return t.tok, nil
@@ -114,9 +115,10 @@ func (t *tokenResult) expectOneOf(ks ...token.Kind) (token.Token, error) {
 	}
 
 	if !t.isOneOf(ks...) {
-		return token.Token{}, fmt.Errorf("expected token of one of kinds %v, got %s: %w",
-			ks, t.tok.Kind().String(), ErrUnexpectedToken,
-		)
+		return token.Token{}, &ParseError{
+			Err:  fmt.Errorf("expected token of one of kinds %v, got %s: %w", ks, t.tok.Kind().String(), ErrUnexpectedToken),
+			Span: t.tok.Span(),
+		}
 	}
 
 	return t.tok, nil

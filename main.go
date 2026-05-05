@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -64,7 +65,7 @@ func main() {
 	}
 }
 
-func compilePipeline(src io.Reader, out io.Writer, disassemble bool) error {
+func compilePipeline(src io.ReadSeeker, out io.Writer, disassemble bool) error {
 	var (
 		l = lexer.New(src)
 		p = parser.New(l)
@@ -72,7 +73,7 @@ func compilePipeline(src io.Reader, out io.Writer, disassemble bool) error {
 
 	ast, err := p.Parse()
 	if err != nil {
-		return err
+		return fmt.Errorf("%s", parser.Format(err, src))
 	}
 
 	if err := semantic.Analyze(ast); err != nil {

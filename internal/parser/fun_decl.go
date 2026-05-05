@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"fmt"
+
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
@@ -54,7 +56,11 @@ func (p *Parser) parseFunDecl() (*FunDecl, error) {
 	}
 
 	if p.lookahead().peek().is(token.EOF) {
-		return nil, ErrUnexpectedEOF
+		tok, _ := p.lookahead().peek().get()
+		return nil, &ParseError{
+			Err:  fmt.Errorf("unexpected end of file: %w", ErrUnexpectedEOF),
+			Span: tok.Span(),
+		}
 	}
 
 	p.bump() // consume the ')'
@@ -142,7 +148,11 @@ func (p *Parser) parseFunDeclBody() ([]Stmt, error) {
 	}
 
 	if p.lookahead().peek().is(token.EOF) {
-		return nil, ErrUnexpectedEOF
+		tok, _ := p.lookahead().peek().get()
+		return nil, &ParseError{
+			Err:  fmt.Errorf("unexpected end of file: %w", ErrUnexpectedEOF),
+			Span: tok.Span(),
+		}
 	}
 
 	p.bump() // consume the '}'
