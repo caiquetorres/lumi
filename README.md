@@ -18,21 +18,22 @@ More examples can be found in the [`examples/`](examples/) folder.
 
 ```lumi
 fun main() {
-    for let i = 1; i <= 10; i += 1 {
-        let fib = fibonacci(i)
-        printf("fib(%d): %d\n", i, fib)
+    for let n = 1; n <= 15; n += 1 {
+        let steps = collatz(n)
+        printf("collatz(%d): %d steps\n", n, steps)
     }
 }
 
-fun fibonacci(n int) {
-    let a = 0, b = 1
-
-    for let i = 0; i < n; i += 1 {
-        let tmp = a + b
-        b = a
-        a = tmp
+fun collatz(n int) int {
+    let steps = 0
+    while n != 1 {
+        if n / 2 * 2 == n {
+            n /= 2
+        } else {
+            n = 3 * n + 1
+        }
+        steps += 1
     }
-
-    return a
+    return steps
 }
 ```
