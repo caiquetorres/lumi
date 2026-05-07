@@ -8,7 +8,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/caiquetorres/lumi/internal/emitter"
+	"github.com/caiquetorres/lumi/internal/emitter/v2"
 	"github.com/caiquetorres/lumi/internal/lexer"
 	"github.com/caiquetorres/lumi/internal/parser"
 	"github.com/caiquetorres/lumi/internal/semantic"

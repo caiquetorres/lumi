@@ -4,13 +4,7 @@ import (
 	"github.com/caiquetorres/lumi/internal/parser"
 )
 
-func (e *Emitter) AfterFunDecl(*parser.FunDecl) {
-	e.ch.emit(PushInt)
-	e.ch.emitUint32(0)
-	e.ch.emit(Return)
-}
-
-func (e *Emitter) BeforeFunDecl(fn *parser.FunDecl) {
+func (e *Emitter) emitFunDecl(fn *parser.FunDecl) {
 	e.locals = newLocals(nil)
 
 	fnName := e.lex.Lexeme(fn.Identifier)
@@ -26,7 +20,12 @@ func (e *Emitter) BeforeFunDecl(fn *parser.FunDecl) {
 		e.ch.entryPoint = e.ch.ip
 		e.ch.hasEntryPoint = true
 	}
-}
 
-func (e *Emitter) AfterParam(*parser.Param)  {}
-func (e *Emitter) BeforeParam(*parser.Param) {}
+	for _, stmt := range fn.Body {
+		e.emitStmt(stmt)
+	}
+
+	e.ch.emit(PushInt)
+	e.ch.emitUint32(0)
+	e.ch.emit(Return)
+}

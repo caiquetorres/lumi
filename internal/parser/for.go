@@ -6,10 +6,10 @@ import (
 )
 
 type ForStmt struct {
-	Init  Stmt
-	Cond  Expr
-	Inc   Stmt
-	Block *Block
+	Init Stmt
+	Cond Expr
+	Inc  Stmt
+	Body *Block
 
 	span span.Span
 }
@@ -62,10 +62,10 @@ func (p *Parser) parseFor() (*ForStmt, error) {
 	}
 
 	return &ForStmt{
-		Init:  initStmt,
-		Cond:  condExpr,
-		Inc:   incStmt,
-		Block: block,
-		span:  span.Merge(forTok, block),
+		Init: initStmt,
+		Cond: condExpr,
+		Inc:  incStmt,
+		Body: block,
+		span: span.Merge(forTok, block),
 	}, nil
 }

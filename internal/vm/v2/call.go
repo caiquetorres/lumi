@@ -28,7 +28,7 @@ func (m *vm) call() error {
 	}
 
 	operands := make([]operand, arity)
-	for i := int(arity) - 1; i >= 0; i-- {
+	for i := range operands {
 		operands[i] = m.operandStack.pop()
 	}
 

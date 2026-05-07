@@ -1,18 +1,14 @@
 fun main() {
     for let i = 1; i <= 10; i += 1 {
-        let fib = fibonacci(i)
-        printf("fib(%d): %d\n", i, fib)
+        printf("2^%d = %d\n", i, power(2, i))
     }
 }
 
-fun fibonacci(n int) {
-    let a = 0, b = 1
-
-    for let i = 0; i < n; i += 1 {
-        let tmp = a + b
-        b = a
-        a = tmp
+fun power(base int, exp int) {
+    let result = 1
+    for let i = 0; i < exp; i += 1 {
+        result *= base
     }
 
-    return a
+    return result
 }

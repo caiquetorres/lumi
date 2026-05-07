@@ -112,7 +112,7 @@ func (w *walker) walkFor(v Visitor, forStmt *ForStmt) {
 	}
 	v.AfterForCond(forStmt)
 
-	w.walkBlockStmt(v, forStmt.Block)
+	w.walkBlockStmt(v, forStmt.Body)
 	v.AfterForBody(forStmt)
 }
 

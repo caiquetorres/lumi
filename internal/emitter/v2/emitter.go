@@ -2,8 +2,6 @@ package emitter
 
 import (
 	"github.com/caiquetorres/lumi/internal/lexer"
-	"github.com/caiquetorres/lumi/internal/parser"
-	"github.com/caiquetorres/lumi/internal/semantic"
 )
 
 type Emitter struct {
@@ -18,22 +16,17 @@ type Emitter struct {
 
 	nativeFns map[string]struct{}
 
-	analyzer *semantic.Analyzer
-	err      error
+	err error
 }
 
 func newEmitter(lex *lexer.Lexer, globals *globals) *Emitter {
 	return &Emitter{
-		ch:  newChunk(globals.len()),
-		lex: lex,
-
+		ch:        newChunk(len(globals.symbols)),
+		lex:       lex,
 		globals:   globals,
 		nativeFns: make(map[string]struct{}),
-
 		loopStack: newLoopStack(),
 		jumpStack: newJumpStack(),
-
-		analyzer: semantic.NewAnalyzer(),
 	}
 }
 
@@ -42,7 +35,3 @@ func (e *Emitter) setErr(err error) {
 		e.err = err
 	}
 }
-
-func (e *Emitter) BeforeAst(*parser.Ast) {}
-
-var _ parser.Visitor = (*Emitter)(nil)
