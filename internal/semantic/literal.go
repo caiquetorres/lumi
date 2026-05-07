@@ -4,7 +4,20 @@ import (
 	"strconv"
 
 	"github.com/caiquetorres/lumi/internal/parser"
+	"github.com/caiquetorres/lumi/internal/token"
 )
+
+type LiteralExpr struct {
+	Kind  parser.LiteralKind
+	Value token.Token
+}
+
+func literalExpr(le *parser.LiteralExpr) *LiteralExpr {
+	return &LiteralExpr{
+		Kind:  le.Kind,
+		Value: le.Value,
+	}
+}
 
 func (a *Analyzer) AnalyzeLiteral(lit *parser.LiteralExpr) (*AnalyzedExpr, error) {
 	var (

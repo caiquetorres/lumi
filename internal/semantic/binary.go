@@ -20,10 +20,17 @@ func (a *Analyzer) AnalyzeExpr(expr parser.Expr) (*AnalyzedExpr, error) {
 }
 
 type BinaryExpr struct {
-	Kind  Kind
-	Value any
+	Left     Expr
+	Operator token.Token
+	Right    Expr
+}
 
-	Node *parser.BinaryExpr
+func binaryExpr(be *parser.BinaryExpr) *BinaryExpr {
+	return &BinaryExpr{
+		Left:     exprN(be.Left),
+		Operator: be.Operator,
+		Right:    exprN(be.Right),
+	}
 }
 
 func (a *Analyzer) AnalyzeBinaryExpr(expr *parser.BinaryExpr) (*AnalyzedExpr, error) {

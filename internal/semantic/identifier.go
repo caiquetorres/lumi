@@ -5,15 +5,12 @@ import (
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
-type Type struct {
+type IdentifierExpr struct {
 	Name token.Token
 }
 
-func typeN(ty *parser.Type) *Type {
-	if ty == nil {
-		return nil
-	}
-	return &Type{
-		Name: ty.Name,
+func identifierExpr(ie *parser.IdentifierExpr) *IdentifierExpr {
+	return &IdentifierExpr{
+		Name: ie.Name,
 	}
 }
