@@ -1,0 +1,6 @@
+   0 PUSH_STRING      #0
+   5 PUSH_NATIVE_FN   1
+  10 CALL             args=1
+  12 POP
+  13 PUSH_INT         0
+  18 RETURN

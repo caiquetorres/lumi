@@ -80,8 +80,12 @@ func compilePipeline(src io.ReadSeeker, out io.Writer, disassemble bool) error {
 		return err
 	}
 
-	ch, err := emitter.Emit(ast, l, out)
+	ch, err := emitter.Emit(ast, l)
 	if err != nil {
+		return err
+	}
+
+	if err := emitter.WriteLumiFile(ch, out); err != nil {
 		return err
 	}
 

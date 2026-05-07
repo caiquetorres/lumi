@@ -1,0 +1,48 @@
+   0 PUSH_INT         18
+   5 PUSH_INT         48
+  10 PUSH_FN          addr=66    1
+  15 CALL             args=2
+  17 PUSH_STRING      #0
+  22 PUSH_NATIVE_FN   1
+  27 CALL             args=2
+  29 POP
+  30 PUSH_INT         75
+  35 PUSH_INT         100
+  40 PUSH_FN          addr=66    1
+  45 CALL             args=2
+  47 PUSH_STRING      #2
+  52 PUSH_NATIVE_FN   1
+  57 CALL             args=2
+  59 POP
+  60 PUSH_INT         0
+  65 RETURN
+  66 STORE_LOCAL      0
+  71 STORE_LOCAL      8
+  76 LOAD_LOCAL       0
+  81 LOAD_LOCAL       8
+  86 EQ
+  87 NOT
+  88 JUMP_IF_FALSE    164
+  93 LOAD_LOCAL       0
+  98 LOAD_LOCAL       8
+ 103 LESS_EQ
+ 104 NOT
+ 105 JUMP_IF_FALSE    137
+ 110 LOAD_LOCAL       0
+ 115 LOAD_LOCAL       8
+ 120 SUB
+ 121 STORE_LOCAL      0
+ 126 LOAD_LOCAL       0
+ 131 POP
+ 132 JUMP_TO          159
+ 137 LOAD_LOCAL       8
+ 142 LOAD_LOCAL       0
+ 147 SUB
+ 148 STORE_LOCAL      8
+ 153 LOAD_LOCAL       8
+ 158 POP
+ 159 JUMP_TO          76
+ 164 LOAD_LOCAL       0
+ 169 RETURN
+ 170 PUSH_INT         0
+ 175 RETURN

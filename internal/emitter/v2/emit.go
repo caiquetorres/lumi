@@ -9,7 +9,16 @@ import (
 
 const lumiMagic = "LUMI"
 
-func Emit(ast *parser.Ast, lex *lexer.Lexer, w io.Writer) (*Chunk, error) {
+func WriteLumiFile(ch *Chunk, w io.Writer) error {
+	_, err := w.Write([]byte(lumiMagic))
+	if err != nil {
+		return err
+	}
+
+	return ch.Serialize(w)
+}
+
+func Emit(ast *parser.Ast, lex *lexer.Lexer) (*Chunk, error) {
 	globals := buildGlobals(ast, lex)
 
 	e := newEmitter(lex, globals)
@@ -23,12 +32,7 @@ func Emit(ast *parser.Ast, lex *lexer.Lexer, w io.Writer) (*Chunk, error) {
 		return nil, e.err
 	}
 
-	_, err := w.Write([]byte(lumiMagic))
-	if err != nil {
-		return nil, err
-	}
-
-	return e.ch, e.ch.Serialize(w)
+	return e.ch, nil
 }
 
 func (e *Emitter) emitAst(ast *parser.Ast) {
