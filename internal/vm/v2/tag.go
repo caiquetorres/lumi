@@ -8,6 +8,7 @@ const (
 	tagPtr
 	tagString
 	tagFn
+	tagNativeFn
 	tagNil
 )
 
@@ -43,6 +44,11 @@ func encodeFn(addr int64) uint64 {
 		(uint64(addr) & valMask))
 }
 
+func encodeNativeFn(constIdx uint32) uint64 {
+	return uint64((uint64(tagNativeFn) << tagShift) |
+		(uint64(constIdx) & valMask))
+}
+
 func decodeInt(v uint64) int64 {
 	payload := uint64(v) & valMask
 
@@ -63,4 +69,8 @@ func decodeString(v uint64) int64 {
 
 func decodeFn(v uint64) int64 {
 	return int64(v & valMask)
+}
+
+func decodeNativeFn(v uint64) uint32 {
+	return uint32(v & valMask)
 }

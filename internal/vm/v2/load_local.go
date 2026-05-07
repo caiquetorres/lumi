@@ -30,8 +30,13 @@ func (m *vm) loadLocal() error {
 		m.operandStack.push(op)
 
 	case tagFn:
-		fnIndex := uint32(decodeString(data))
+		fnIndex := uint32(decodeFn(data))
 		op := fnOperand(fnIndex)
+		m.operandStack.push(op)
+
+	case tagNativeFn:
+		constIdx := decodeNativeFn(data)
+		op := nativeFnOperand(constIdx)
 		m.operandStack.push(op)
 
 	default:

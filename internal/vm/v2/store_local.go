@@ -29,6 +29,10 @@ func (m *vm) storeLocal() error {
 		fnIdx := int64(val.fnValue)
 		data = encodeFn(fnIdx)
 
+	case operandNativeFn:
+		constIdx := uint32(val.nativeFnValue)
+		data = encodeNativeFn(constIdx)
+
 	default:
 		return fmt.Errorf("unsupported operand type for StoreLocal: %v", val.ty)
 	}

@@ -18,7 +18,7 @@ type operand struct {
 	intValue      int64
 	boolValue     bool
 	fnValue       uint32
-	nativeFnValue string
+	nativeFnValue uint32 // const pool index
 	stringValue   uint64
 }
 
