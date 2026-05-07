@@ -1,8 +1,8 @@
 package emitter
 
-import "github.com/caiquetorres/lumi/internal/parser"
+import "github.com/caiquetorres/lumi/internal/semantic"
 
-func (e *Emitter) emitLet(l *parser.VarDecl) {
+func (e *Emitter) emitLet(l *semantic.VarDecl) {
 	for _, as := range l.Assignments {
 		e.emitExpr(as.Expr)
 

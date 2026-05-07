@@ -1,8 +1,8 @@
 package emitter
 
-import "github.com/caiquetorres/lumi/internal/parser"
+import "github.com/caiquetorres/lumi/internal/semantic"
 
-func (e *Emitter) emitFor(forStmt *parser.ForStmt) {
+func (e *Emitter) emitFor(forStmt *semantic.ForStmt) {
 	if forStmt.Init != nil {
 		e.emitStmt(forStmt.Init)
 	}

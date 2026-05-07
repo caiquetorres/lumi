@@ -1,28 +1,28 @@
 package emitter
 
-import "github.com/caiquetorres/lumi/internal/parser"
+import "github.com/caiquetorres/lumi/internal/semantic"
 
-func (e *Emitter) emitStmt(stmt parser.Stmt) {
+func (e *Emitter) emitStmt(stmt semantic.Stmt) {
 	switch s := stmt.(type) {
-	case *parser.Block:
+	case *semantic.Block:
 		e.emitBlock(s)
-	case *parser.WhileStmt:
+	case *semantic.WhileStmt:
 		e.emitWhile(s)
-	case *parser.Loop:
+	case *semantic.Loop:
 		e.emitLoop(s)
-	case *parser.ForStmt:
+	case *semantic.ForStmt:
 		e.emitFor(s)
-	case *parser.IfStmt:
+	case *semantic.IfStmt:
 		e.emitIf(s)
-	case *parser.BreakStmt:
+	case *semantic.BreakStmt:
 		e.emitBreak()
-	case *parser.VarDecl:
+	case *semantic.VarDecl:
 		e.emitLet(s)
-	case *parser.ContinueStmt:
+	case *semantic.ContinueStmt:
 		e.emitContinue()
-	case *parser.ReturnStmt:
+	case *semantic.ReturnStmt:
 		e.emitReturn(s)
-	case parser.Expr:
+	case semantic.Expr:
 		e.emitExpr(s)
 		e.ch.emit(Pop)
 	}

@@ -4,25 +4,26 @@ import (
 	"strconv"
 
 	"github.com/caiquetorres/lumi/internal/parser"
+	"github.com/caiquetorres/lumi/internal/semantic"
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
-func (e *Emitter) emitExpr(expr parser.Expr) {
+func (e *Emitter) emitExpr(expr semantic.Expr) {
 	switch expr := expr.(type) {
-	case *parser.LiteralExpr:
+	case *semantic.LiteralExpr:
 		e.emitLiteral(expr)
-	case *parser.IdentifierExpr:
+	case *semantic.IdentifierExpr:
 		e.emitIdentifier(expr)
-	case *parser.CallExpr:
+	case *semantic.CallExpr:
 		e.emitCall(expr)
-	case *parser.BinaryExpr:
+	case *semantic.BinaryExpr:
 		e.emitBinaryExpr(expr)
 	default:
 		panic("unreachable")
 	}
 }
 
-func (e *Emitter) emitLiteral(lit *parser.LiteralExpr) {
+func (e *Emitter) emitLiteral(lit *semantic.LiteralExpr) {
 	litValue := e.lex.Lexeme(lit.Value)
 
 	switch lit.Kind {
@@ -55,7 +56,7 @@ func (e *Emitter) emitLiteral(lit *parser.LiteralExpr) {
 	}
 }
 
-func (e *Emitter) emitIdentifier(id *parser.IdentifierExpr) {
+func (e *Emitter) emitIdentifier(id *semantic.IdentifierExpr) {
 	name := e.lex.Lexeme(id.Name)
 
 	e.loadLocal(name)
@@ -77,7 +78,7 @@ func (e *Emitter) emitIdentifier(id *parser.IdentifierExpr) {
 	}
 }
 
-func (e *Emitter) emitCall(ca *parser.CallExpr) {
+func (e *Emitter) emitCall(ca *semantic.CallExpr) {
 	for i := len(ca.Args) - 1; i >= 0; i-- {
 		e.emitExpr(ca.Args[i])
 	}
@@ -88,7 +89,7 @@ func (e *Emitter) emitCall(ca *parser.CallExpr) {
 	e.ch.emitUint8(uint8(len(ca.Args)))
 }
 
-func (e *Emitter) emitBinaryExpr(be *parser.BinaryExpr) {
+func (e *Emitter) emitBinaryExpr(be *semantic.BinaryExpr) {
 	e.emitExpr(be.Left)
 	e.emitExpr(be.Right)
 
@@ -133,9 +134,9 @@ func (e *Emitter) emitBinaryExpr(be *parser.BinaryExpr) {
 	}
 }
 
-func (e *Emitter) handleAssignment(be *parser.BinaryExpr) {
+func (e *Emitter) handleAssignment(be *semantic.BinaryExpr) {
 	switch left := be.Left.(type) {
-	case *parser.IdentifierExpr:
+	case *semantic.IdentifierExpr:
 		name := e.lex.Lexeme(left.Name)
 		e.storeLocal(name)
 		e.loadLocal(name)
@@ -145,9 +146,9 @@ func (e *Emitter) handleAssignment(be *parser.BinaryExpr) {
 	}
 }
 
-func (e *Emitter) handleCompoundAssignment(be *parser.BinaryExpr, op byte) {
+func (e *Emitter) handleCompoundAssignment(be *semantic.BinaryExpr, op byte) {
 	switch left := be.Left.(type) {
-	case *parser.IdentifierExpr:
+	case *semantic.IdentifierExpr:
 		name := e.lex.Lexeme(left.Name)
 
 		e.ch.emit(op)

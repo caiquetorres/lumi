@@ -76,11 +76,12 @@ func compilePipeline(src io.ReadSeeker, out io.Writer, disassemble bool) error {
 		return fmt.Errorf("%s", parser.Format(err, src))
 	}
 
-	if err := semantic.Analyze(ast); err != nil {
+	sAst, err := semantic.Analyze(ast)
+	if err != nil {
 		return err
 	}
 
-	ch, err := emitter.Emit(ast, l)
+	ch, err := emitter.Emit(sAst, l)
 	if err != nil {
 		return err
 	}

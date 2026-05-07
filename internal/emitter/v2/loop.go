@@ -1,8 +1,8 @@
 package emitter
 
-import "github.com/caiquetorres/lumi/internal/parser"
+import "github.com/caiquetorres/lumi/internal/semantic"
 
-func (e *Emitter) emitLoop(l *parser.Loop) {
+func (e *Emitter) emitLoop(l *semantic.Loop) {
 	e.loopStack.push(loop{
 		start: e.ch.ip,
 	})

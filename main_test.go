@@ -9,6 +9,7 @@ import (
 	"github.com/caiquetorres/lumi/internal/emitter/v2"
 	"github.com/caiquetorres/lumi/internal/lexer"
 	"github.com/caiquetorres/lumi/internal/parser"
+	"github.com/caiquetorres/lumi/internal/semantic"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -55,7 +56,12 @@ func compileToBytecodeString(srcPath string) (string, error) {
 		return "", err
 	}
 
-	ch, err := emitter.Emit(ast, lex)
+	sAst, err := semantic.Analyze(ast)
+	if err != nil {
+		return "", err
+	}
+
+	ch, err := emitter.Emit(sAst, lex)
 	if err != nil {
 		return "", err
 	}

@@ -1,8 +1,8 @@
 package emitter
 
-import "github.com/caiquetorres/lumi/internal/parser"
+import "github.com/caiquetorres/lumi/internal/semantic"
 
-func (e *Emitter) emitReturn(re *parser.ReturnStmt) {
+func (e *Emitter) emitReturn(re *semantic.ReturnStmt) {
 	if re.Expr != nil {
 		e.emitExpr(re.Expr)
 	} else {

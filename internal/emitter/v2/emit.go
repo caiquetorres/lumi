@@ -4,7 +4,7 @@ import (
 	"io"
 
 	"github.com/caiquetorres/lumi/internal/lexer"
-	"github.com/caiquetorres/lumi/internal/parser"
+	"github.com/caiquetorres/lumi/internal/semantic"
 )
 
 const lumiMagic = "LUMI"
@@ -18,7 +18,7 @@ func WriteLumiFile(ch *Chunk, w io.Writer) error {
 	return ch.Serialize(w)
 }
 
-func Emit(ast *parser.Ast, lex *lexer.Lexer) (*Chunk, error) {
+func Emit(ast *semantic.Ast, lex *lexer.Lexer) (*Chunk, error) {
 	globals := buildGlobals(ast, lex)
 
 	e := newEmitter(lex, globals)
@@ -35,20 +35,20 @@ func Emit(ast *parser.Ast, lex *lexer.Lexer) (*Chunk, error) {
 	return e.ch, nil
 }
 
-func (e *Emitter) emitAst(ast *parser.Ast) {
+func (e *Emitter) emitAst(ast *semantic.Ast) {
 	for _, stmt := range ast.Statements {
 		switch stmt := stmt.(type) {
-		case *parser.FunDecl:
+		case *semantic.FunDecl:
 			e.emitFunDecl(stmt)
 		}
 	}
 }
 
-func buildGlobals(ast *parser.Ast, lex *lexer.Lexer) *globals {
+func buildGlobals(ast *semantic.Ast, lex *lexer.Lexer) *globals {
 	g := newGlobals()
 	for _, stmt := range ast.Statements {
 		switch stmt := stmt.(type) {
-		case *parser.FunDecl:
+		case *semantic.FunDecl:
 			fnName := lex.Lexeme(stmt.Identifier)
 			_ = g.define(fnName)
 		}
