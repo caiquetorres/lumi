@@ -21,10 +21,6 @@ func (f *frame) moveTo(offset uint32) {
 	f.ip = offset
 }
 
-func (f *frame) hasMore(data []byte) bool {
-	return f.ip < uint32(len(data))
-}
-
 func (f *frame) readUint8(data []byte) (uint8, error) {
 	if f.ip+uint8Size > uint32(len(data)) {
 		return 0, io.EOF
@@ -60,10 +56,6 @@ func newFrames() *frames {
 	}
 }
 
-func (f *frames) reset() {
-	f.data = f.data[:0]
-}
-
 func (f *frames) current() *frame {
 	if len(f.data) == 0 {
 		log.Panic("no frames available: cannot get current frame")
@@ -85,7 +77,7 @@ func (f *frames) pop() {
 	f.data = f.data[:len(f.data)-1]
 }
 
-func (f *frames) push(ip, sp uint32, data []byte) {
+func (f *frames) push(ip, sp uint32) {
 	if len(f.data) >= MAX_STACK_SIZE {
 		log.Panic("stack overflow: too many frames")
 	}

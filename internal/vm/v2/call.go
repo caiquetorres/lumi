@@ -14,14 +14,26 @@ func (m *vm) call() error {
 		return fmt.Errorf("failed to read arity for Call: %w", err)
 	}
 
-	if val.ty == operandFn {
-		tmp := m.frames.current().tmp
-		m.frames.push(val.fnValue, tmp, m.src)
-
-		return nil
+	switch val.ty {
+	case operandFn:
+		return m.callFn(&val)
+	case operandNativeFn:
+		return m.callNativeFn(&val, arity)
 	}
 
-	fnNameIndex := val.fnValue
+	// unreachable
+	return nil
+}
+
+func (m *vm) callFn(op *operand) error {
+	tmp := m.frames.current().tmp
+	m.frames.push(op.fnValue, tmp)
+
+	return nil
+}
+
+func (m *vm) callNativeFn(op *operand, arity uint8) error {
+	fnNameIndex := op.fnValue
 	fnNameConst, exists := m.pool.GetConstant(fnNameIndex)
 	if !exists {
 		return fmt.Errorf("failed to get function name constant")

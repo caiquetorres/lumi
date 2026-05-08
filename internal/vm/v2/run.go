@@ -7,7 +7,7 @@ import (
 )
 
 func (m *vm) run(entryPoint uint32) error {
-	m.frames.push(entryPoint, 0, m.src)
+	m.frames.push(entryPoint, 0)
 
 	for {
 		opcode, _ := m.frames.current().readUint8(m.src)

@@ -3,3 +3,6 @@ build:
 
 run: build
 	@go run . run out.lbc
+
+test:
+	@go test -shuffle=on ./...

@@ -1,6 +1,9 @@
 package lexer
 
 import (
+	"errors"
+	"io"
+
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
@@ -58,6 +61,9 @@ func (l *Lexer) readOperator() (token.Token, error) {
 
 func (l *Lexer) readPlusOrPlusEqual() (token.Token, error) {
 	r, err := l.peekRune()
+	if errors.Is(err, io.EOF) {
+		return l.newToken(token.Plus), nil
+	}
 	if err != nil {
 		return token.Token{}, err
 	}
@@ -72,6 +78,9 @@ func (l *Lexer) readPlusOrPlusEqual() (token.Token, error) {
 
 func (l *Lexer) readMinusOrMinusEqual() (token.Token, error) {
 	r, err := l.peekRune()
+	if errors.Is(err, io.EOF) {
+		return l.newToken(token.Minus), nil
+	}
 	if err != nil {
 		return token.Token{}, err
 	}
@@ -86,6 +95,9 @@ func (l *Lexer) readMinusOrMinusEqual() (token.Token, error) {
 
 func (l *Lexer) readStarOrStarEqual() (token.Token, error) {
 	r, err := l.peekRune()
+	if errors.Is(err, io.EOF) {
+		return l.newToken(token.Star), nil
+	}
 	if err != nil {
 		return token.Token{}, err
 	}
@@ -100,6 +112,9 @@ func (l *Lexer) readStarOrStarEqual() (token.Token, error) {
 
 func (l *Lexer) readSlashOrSlashEqual() (token.Token, error) {
 	r, err := l.peekRune()
+	if errors.Is(err, io.EOF) {
+		return l.newToken(token.Slash), nil
+	}
 	if err != nil {
 		return token.Token{}, err
 	}
@@ -114,6 +129,9 @@ func (l *Lexer) readSlashOrSlashEqual() (token.Token, error) {
 
 func (l *Lexer) readEqualOrEqualEqual() (token.Token, error) {
 	r, err := l.peekRune()
+	if errors.Is(err, io.EOF) {
+		return l.newToken(token.Equal), nil
+	}
 	if err != nil {
 		return token.Token{}, err
 	}
@@ -128,6 +146,9 @@ func (l *Lexer) readEqualOrEqualEqual() (token.Token, error) {
 
 func (l *Lexer) readBangOrBangEqual() (token.Token, error) {
 	r, err := l.peekRune()
+	if errors.Is(err, io.EOF) {
+		return l.newToken(token.Bang), nil
+	}
 	if err != nil {
 		return token.Token{}, err
 	}
@@ -142,6 +163,9 @@ func (l *Lexer) readBangOrBangEqual() (token.Token, error) {
 
 func (l *Lexer) readGreaterOrGreaterEqual() (token.Token, error) {
 	r, err := l.peekRune()
+	if errors.Is(err, io.EOF) {
+		return l.newToken(token.Greater), nil
+	}
 	if err != nil {
 		return token.Token{}, err
 	}
@@ -156,6 +180,9 @@ func (l *Lexer) readGreaterOrGreaterEqual() (token.Token, error) {
 
 func (l *Lexer) readLessOrLessEqual() (token.Token, error) {
 	r, err := l.peekRune()
+	if errors.Is(err, io.EOF) {
+		return l.newToken(token.Less), nil
+	}
 	if err != nil {
 		return token.Token{}, err
 	}
@@ -170,6 +197,9 @@ func (l *Lexer) readLessOrLessEqual() (token.Token, error) {
 
 func (l *Lexer) readDotOrDotDotOrDotDotEqual() (token.Token, error) {
 	r, err := l.peekRune()
+	if errors.Is(err, io.EOF) {
+		return l.newToken(token.Dot), nil
+	}
 	if err != nil {
 		return token.Token{}, err
 	}
@@ -178,6 +208,9 @@ func (l *Lexer) readDotOrDotDotOrDotDotEqual() (token.Token, error) {
 		l.bump() // consume the second '.'
 
 		r, err := l.peekRune()
+		if errors.Is(err, io.EOF) {
+			return l.newToken(token.DotDot), nil
+		}
 		if err != nil {
 			return token.Token{}, err
 		}

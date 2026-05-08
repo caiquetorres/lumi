@@ -15,13 +15,15 @@ type nativeFn func(m *vm, args ...operand) (operand, error)
 type vm struct {
 	src []byte
 
-	pool          *constpool.ConstantPool
-	frames        *frames
-	operandStack  *operandStack
+	pool         *constpool.ConstantPool
+	frames       *frames
+	operandStack *operandStack
+
 	fnTable       []uint32
 	nativeFnTable map[string]nativeFn
-	heap          *heap
-	locals        [1024]byte
+
+	heap   *heap
+	locals [1024]byte
 }
 
 func Exec(src io.Reader) error {
