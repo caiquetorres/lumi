@@ -77,8 +77,7 @@ func (m *vm) pushString() error {
 		return err
 	}
 
-	srtAddr := encodeString(addr)
-	op := stringOperand(srtAddr)
+	op := stringOperand(addr)
 	m.operandStack.push(op)
 
 	return nil

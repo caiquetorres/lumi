@@ -25,7 +25,7 @@ func (m *vm) loadLocal() error {
 		m.operandStack.push(op)
 
 	case tagString:
-		strAddr := uint64(decodeString(data))
+		strAddr := decodeString(data)
 		op := stringOperand(strAddr)
 		m.operandStack.push(op)
 

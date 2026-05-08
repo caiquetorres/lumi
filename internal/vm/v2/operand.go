@@ -17,9 +17,9 @@ type operand struct {
 
 	intValue      int64
 	boolValue     bool
-	fnValue       uint32
+	fnValue       uint32 // fn index
 	nativeFnValue uint32 // const pool index
-	stringValue   uint64
+	stringValue   int    // address
 }
 
 func intOperand(value int64) operand {
@@ -50,7 +50,7 @@ func boolOperand(value bool) operand {
 	}
 }
 
-func stringOperand(addr uint64) operand {
+func stringOperand(addr int) operand {
 	return operand{
 		ty:          operandString,
 		stringValue: addr,

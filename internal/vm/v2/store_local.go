@@ -22,11 +22,10 @@ func (m *vm) storeLocal() error {
 		data = encodeBool(val.boolValue)
 
 	case operandString:
-		addr := int64(val.stringValue)
-		data = encodeString(addr)
+		data = encodeString(val.stringValue)
 
 	case operandFn:
-		fnIdx := int64(val.fnValue)
+		fnIdx := int(val.fnValue)
 		data = encodeFn(fnIdx)
 
 	case operandNativeFn:

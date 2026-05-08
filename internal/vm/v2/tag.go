@@ -34,12 +34,12 @@ func encodeBool(b bool) uint64 {
 	return (uint64(tagBool) << tagShift) | v
 }
 
-func encodeString(addr int64) uint64 {
+func encodeString(addr int) uint64 {
 	return uint64((uint64(tagString) << tagShift) |
 		(uint64(addr) & valMask))
 }
 
-func encodeFn(addr int64) uint64 {
+func encodeFn(addr int) uint64 {
 	return uint64((uint64(tagFn) << tagShift) |
 		(uint64(addr) & valMask))
 }
@@ -63,12 +63,12 @@ func decodeBool(v uint64) bool {
 	return (uint64(v) & 1) == 1
 }
 
-func decodeString(v uint64) int64 {
-	return int64(v & valMask)
+func decodeString(v uint64) int {
+	return int(v & valMask)
 }
 
-func decodeFn(v uint64) int64 {
-	return int64(v & valMask)
+func decodeFn(v uint64) int {
+	return int(v & valMask)
 }
 
 func decodeNativeFn(v uint64) uint32 {

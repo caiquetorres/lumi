@@ -79,15 +79,13 @@ func (m *vm) eq() error {
 		result = left.boolValue == right.boolValue
 
 	case operandString:
-		addr := decodeString(left.stringValue)
-		leftStr, err := m.heap.readObject(addr)
+		leftStr, err := m.heap.readObject(left.stringValue)
 
 		if err != nil {
 			return fmt.Errorf("failed to read string object: %w", err)
 		}
 
-		addr = decodeString(right.stringValue)
-		rightStr, err := m.heap.readObject(addr)
+		rightStr, err := m.heap.readObject(right.stringValue)
 
 		if err != nil {
 			return fmt.Errorf("failed to read string object: %w", err)

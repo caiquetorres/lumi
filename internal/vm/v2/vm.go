@@ -68,8 +68,7 @@ func Exec(src io.Reader) error {
 				case operandBool:
 					values[i] = arg.boolValue
 				case operandString:
-					strAddr := decodeString(arg.stringValue)
-					strObj, err := m.heap.readObject(strAddr)
+					strObj, err := m.heap.readObject(arg.stringValue)
 					if err != nil {
 						return operand{}, fmt.Errorf("failed to read string from heap: %w", err)
 					}
@@ -91,8 +90,7 @@ func Exec(src io.Reader) error {
 				return operand{}, errors.New("first argument to printf must be a string")
 			}
 
-			formatAddr := decodeString(formatArg.stringValue)
-			formatObj, err := m.heap.readObject(formatAddr)
+			formatObj, err := m.heap.readObject(formatArg.stringValue)
 			if err != nil {
 				return operand{}, fmt.Errorf("failed to read format string from heap: %w", err)
 			}
@@ -107,8 +105,7 @@ func Exec(src io.Reader) error {
 				case operandBool:
 					values[i] = arg.boolValue
 				case operandString:
-					strAddr := decodeString(arg.stringValue)
-					strObj, err := m.heap.readObject(strAddr)
+					strObj, err := m.heap.readObject(arg.stringValue)
 					if err != nil {
 						return operand{}, fmt.Errorf("failed to read string from heap: %w", err)
 					}

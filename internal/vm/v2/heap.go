@@ -13,7 +13,7 @@ type heapObject struct {
 
 type heap struct {
 	memory []byte
-	offset int64
+	offset int
 }
 
 var (
@@ -28,17 +28,17 @@ func newHeap(size int) *heap {
 	}
 }
 
-func (h *heap) alloc(size int) (int64, error) {
-	if int(h.offset)+size > len(h.memory) {
+func (h *heap) alloc(size int) (int, error) {
+	if h.offset+size > len(h.memory) {
 		return 0, ErrOutOfMemory
 	}
 
 	addr := h.offset
-	h.offset += int64(size)
+	h.offset += size
 	return addr, nil
 }
 
-func (h *heap) allocAndWriteObject(obj heapObject) (int64, error) {
+func (h *heap) allocAndWriteObject(obj heapObject) (int, error) {
 	totalSize := 1 + 4 + obj.size // 1 byte for tag, 4 bytes for size, rest for data
 
 	addr, err := h.alloc(totalSize)
@@ -53,7 +53,7 @@ func (h *heap) allocAndWriteObject(obj heapObject) (int64, error) {
 	return addr, nil
 }
 
-func (h *heap) writeInt32(addr int64, value int32) error {
+func (h *heap) writeInt32(addr int, value int32) error {
 	var buf [4]byte
 	binary.BigEndian.PutUint32(buf[:], uint32(value))
 
@@ -68,28 +68,28 @@ func (h *heap) read(addr int, size int) ([]byte, error) {
 	return h.memory[addr : addr+size], nil
 }
 
-func (h *heap) readObject(addr int64) (heapObject, error) {
-	if addr < 0 || addr+5 > int64(len(h.memory)) {
+func (h *heap) readObject(addr int) (heapObject, error) {
+	if addr < 0 || addr+5 > len(h.memory) {
 		return heapObject{}, ErrInvalidAddress
 	}
 
 	tag := tag(h.memory[addr])
-	size := binary.BigEndian.Uint32(h.memory[addr+1 : addr+5])
+	size := int(binary.BigEndian.Uint32(h.memory[addr+1 : addr+5]))
 
-	if addr+5+int64(size) > int64(len(h.memory)) {
+	if addr+5+size > len(h.memory) {
 		return heapObject{}, ErrInvalidAddress
 	}
 
-	data := h.memory[addr+5 : addr+5+int64(size)]
+	data := h.memory[addr+5 : addr+5+size]
 	return heapObject{
 		tag:  tag,
-		size: int(size),
+		size: size,
 		data: data,
 	}, nil
 }
 
-func (h *heap) write(addr int64, data []byte) error {
-	if addr < 0 || addr+int64(len(data)) > int64(len(h.memory)) {
+func (h *heap) write(addr int, data []byte) error {
+	if addr < 0 || addr+len(data) > len(h.memory) {
 		return ErrInvalidAddress
 	}
 
