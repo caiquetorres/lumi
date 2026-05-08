@@ -410,6 +410,41 @@ func TestLexer(t *testing.T) {
 		})
 	})
 
+	t.Run("lexeme", func(t *testing.T) {
+		tests := []struct {
+			name       string
+			input      string
+			wantLexeme string
+		}{
+			{name: "identifier", input: "foo", wantLexeme: "foo"},
+			{name: "number", input: "123", wantLexeme: "123"},
+			{name: "string", input: `"hello"`, wantLexeme: `"hello"`},
+			{name: "keyword", input: "let", wantLexeme: "let"},
+			{name: "operator", input: "+", wantLexeme: "+"},
+			{name: "compound operator", input: "+=", wantLexeme: "+="},
+		}
+
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				l := lexer.New(strings.NewReader(tt.input))
+				tok, err := l.Next()
+
+				assert.NoError(t, err)
+				assert.Equal(t, tt.wantLexeme, l.Lexeme(tok))
+			})
+		}
+
+		t.Run("same string interns to same lexeme", func(t *testing.T) {
+			l := lexer.New(strings.NewReader("foo foo"))
+
+			tok1, _ := l.Next()
+			tok2, _ := l.Next()
+
+			assert.Equal(t, l.Lexeme(tok1), l.Lexeme(tok2))
+			assert.Equal(t, tok1.SymbolID(), tok2.SymbolID())
+		})
+	})
+
 	t.Run("sequence of tokens", func(t *testing.T) {
 		t.Run("empty input", func(t *testing.T) {
 			l := lexer.New(strings.NewReader(""))
