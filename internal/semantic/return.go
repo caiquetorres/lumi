@@ -6,8 +6,8 @@ type ReturnStmt struct {
 	Expr Expr
 }
 
-func (a *TypeChecker) analyzeReturnStmt(rs *parser.ReturnStmt) *ReturnStmt {
+func (t *TypeChecker) analyzeReturnStmt(rs *parser.ReturnStmt) *ReturnStmt {
 	return &ReturnStmt{
-		Expr: a.analyzeExpr(rs.Expr),
+		Expr: t.analyzeExpr(rs.Expr),
 	}
 }

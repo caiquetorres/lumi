@@ -4,28 +4,28 @@ import "github.com/caiquetorres/lumi/internal/parser"
 
 type Stmt any
 
-func (a *TypeChecker) analyzeStmt(s parser.Stmt) Stmt {
+func (t *TypeChecker) analyzeStmt(s parser.Stmt) Stmt {
 	switch n := s.(type) {
 	case *parser.VarDecl:
-		return a.analyzeVarDecl(n)
+		return t.analyzeVarDecl(n)
 	case *parser.IfStmt:
-		return a.analyzeIfStmt(n)
+		return t.analyzeIfStmt(n)
 	case *parser.ReturnStmt:
-		return a.analyzeReturnStmt(n)
+		return t.analyzeReturnStmt(n)
 	case *parser.ForStmt:
-		return a.analyzeForStmt(n)
+		return t.analyzeForStmt(n)
 	case *parser.WhileStmt:
-		return a.analyzeWhileStmt(n)
+		return t.analyzeWhileStmt(n)
 	case *parser.BreakStmt:
-		return a.analyzeBreakStmt(n)
+		return t.analyzeBreakStmt(n)
 	case *parser.ContinueStmt:
-		return a.analyzeContinueStmt(n)
+		return t.analyzeContinueStmt(n)
 	case *parser.Loop:
-		return a.analyzeLoop(n)
+		return t.analyzeLoop(n)
 	case *parser.Block:
-		return a.analyzeBlock(n)
+		return t.analyzeBlock(n)
 	default:
-		return a.analyzeExpr(s.(parser.Expr))
+		return t.analyzeExpr(s.(parser.Expr))
 	}
 }
 
@@ -33,14 +33,14 @@ type Block struct {
 	Stmts []Stmt
 }
 
-func (a *TypeChecker) analyzeBlock(b *parser.Block) *Block {
+func (t *TypeChecker) analyzeBlock(b *parser.Block) *Block {
 	if b == nil {
 		return nil
 	}
 
 	stmts := make([]Stmt, len(b.Stmts))
 	for i, s := range b.Stmts {
-		stmts[i] = a.analyzeStmt(s)
+		stmts[i] = t.analyzeStmt(s)
 	}
 
 	return &Block{

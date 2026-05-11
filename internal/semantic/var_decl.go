@@ -9,10 +9,10 @@ type VarDecl struct {
 	Assignments []Assignment
 }
 
-func (a *TypeChecker) analyzeVarDecl(vd *parser.VarDecl) *VarDecl {
+func (t *TypeChecker) analyzeVarDecl(vd *parser.VarDecl) *VarDecl {
 	assignments := make([]Assignment, len(vd.Assignments))
 	for i, as := range vd.Assignments {
-		assignments[i] = a.analyzeAssignment(as)
+		assignments[i] = t.analyzeAssignment(as)
 	}
 	return &VarDecl{
 		Assignments: assignments,
@@ -24,12 +24,12 @@ type Assignment struct {
 	Expr       Expr
 }
 
-func (a *TypeChecker) analyzeAssignment(as parser.Assignment) Assignment {
-	name := a.lex.Lexeme(as.Identifier)
-	a.symTable.Define(name, as.Expr)
+func (t *TypeChecker) analyzeAssignment(as parser.Assignment) Assignment {
+	name := t.lex.Lexeme(as.Identifier)
+	t.symTable.Define(name, as.Expr)
 
 	return Assignment{
 		Identifier: as.Identifier,
-		Expr:       a.analyzeExpr(as.Expr),
+		Expr:       t.analyzeExpr(as.Expr),
 	}
 }

@@ -20,7 +20,7 @@ func (l *LiteralExpr) Type() *TypedExpr {
 
 var _ Expr = (*LiteralExpr)(nil)
 
-func (a *TypeChecker) analyzeLiteralExpr(lit *parser.LiteralExpr) *LiteralExpr {
+func (t *TypeChecker) analyzeLiteralExpr(lit *parser.LiteralExpr) *LiteralExpr {
 	var (
 		kind Kind
 		val  any
@@ -31,7 +31,7 @@ func (a *TypeChecker) analyzeLiteralExpr(lit *parser.LiteralExpr) *LiteralExpr {
 	case parser.LiteralInt:
 		kind = Int{}
 
-		text := a.lex.Lexeme(lit.Value)
+		text := t.lex.Lexeme(lit.Value)
 		val, err = strconv.Atoi(text)
 		if err != nil {
 			panic(err)

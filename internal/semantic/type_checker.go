@@ -16,8 +16,8 @@ func NewAnalyzer(lex *lexer.Lexer) *TypeChecker {
 	}
 }
 
-func (a *TypeChecker) addErr(err error) {
-	a.err = append(a.err, err)
+func (t *TypeChecker) addErr(err error) {
+	t.err = append(t.err, err)
 }
 
 type TypedExpr struct {

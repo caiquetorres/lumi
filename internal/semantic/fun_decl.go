@@ -12,7 +12,10 @@ type FunDecl struct {
 	Body       []Stmt
 }
 
-func funDecl(idenfier token.Token, params []Param, returnType *Type, body []Stmt) *FunDecl {
+func funDecl(
+	idenfier token.Token, params []Param,
+	returnType *Type, body []Stmt,
+) *FunDecl {
 	return &FunDecl{
 		Identifier: idenfier,
 		Params:     params,
@@ -21,27 +24,27 @@ func funDecl(idenfier token.Token, params []Param, returnType *Type, body []Stmt
 	}
 }
 
-func (a *TypeChecker) analyzeFunDecl(fd *parser.FunDecl) *FunDecl {
+func (t *TypeChecker) analyzeFunDecl(fd *parser.FunDecl) *FunDecl {
 	params := make([]Param, len(fd.Params))
 	for i, p := range fd.Params {
-		params[i] = a.analyzeParam(p)
+		params[i] = t.analyzeParam(p)
 	}
 
-	re := a.analyzeType(fd.Return)
+	re := t.analyzeType(fd.Return)
 
 	body := make([]Stmt, len(fd.Body))
 	for i, s := range fd.Body {
-		body[i] = a.analyzeStmt(s)
+		body[i] = t.analyzeStmt(s)
 	}
 
-	sre := a.parseType(fd.Return)
+	sre := t.parseType(fd.Return)
 	sparams := make([]Kind, len(params))
 	for i, p := range fd.Params {
-		sparams[i] = a.parseType(p.Type)
+		sparams[i] = t.parseType(p.Type)
 	}
 
-	name := a.lex.Lexeme(fd.Identifier)
-	a.symTable.Define(name, Function{
+	name := t.lex.Lexeme(fd.Identifier)
+	t.symTable.Define(name, Function{
 		Params: sparams,
 		Return: sre,
 	})
@@ -54,9 +57,9 @@ type Param struct {
 	Type *Type
 }
 
-func (a *TypeChecker) analyzeParam(p parser.Param) Param {
+func (t *TypeChecker) analyzeParam(p parser.Param) Param {
 	return Param{
 		Name: p.Name,
-		Type: a.analyzeType(p.Type),
+		Type: t.analyzeType(p.Type),
 	}
 }

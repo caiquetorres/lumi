@@ -33,10 +33,10 @@ func (l *BinaryExpr) Type() *TypedExpr {
 
 var _ Expr = (*BinaryExpr)(nil)
 
-func (a *TypeChecker) analyzeBinaryExpr(be *parser.BinaryExpr) *BinaryExpr {
+func (t *TypeChecker) analyzeBinaryExpr(be *parser.BinaryExpr) *BinaryExpr {
 	var (
-		left  = a.analyzeExpr(be.Left)
-		right = a.analyzeExpr(be.Right)
+		left  = t.analyzeExpr(be.Left)
+		right = t.analyzeExpr(be.Right)
 	)
 
 	if left.Type().IsAny() || right.Type().IsAny() {
@@ -47,7 +47,7 @@ func (a *TypeChecker) analyzeBinaryExpr(be *parser.BinaryExpr) *BinaryExpr {
 		err := fmt.Errorf("type mismatch: left is %T, right is %T",
 			left.Type().Kind, right.Type().Kind)
 
-		a.addErr(err)
+		t.addErr(err)
 		return binaryExpr(anyExpr(), left, right, be.Operator)
 	}
 
@@ -57,9 +57,9 @@ func (a *TypeChecker) analyzeBinaryExpr(be *parser.BinaryExpr) *BinaryExpr {
 	)
 
 	if left.Type().IsInt() {
-		typedExpr, err = a.analyzeBinaryExprForInts(be, left.Type(), right.Type())
+		typedExpr, err = t.analyzeBinaryExprForInts(be, left.Type(), right.Type())
 		if err != nil {
-			a.addErr(err)
+			t.addErr(err)
 			return binaryExpr(anyExpr(), left, right, be.Operator)
 		}
 	}
@@ -67,12 +67,12 @@ func (a *TypeChecker) analyzeBinaryExpr(be *parser.BinaryExpr) *BinaryExpr {
 	return binaryExpr(typedExpr, left, right, be.Operator)
 }
 
-func (a *TypeChecker) analyzeBinaryExprForInts(
+func (t *TypeChecker) analyzeBinaryExprForInts(
 	expr *parser.BinaryExpr,
 	left, right *TypedExpr,
 ) (*TypedExpr, error) {
 	if left.IsConst() && right.IsConst() {
-		return a.evaluateBinaryForInts(expr.Operator, left, right)
+		return t.evaluateBinaryForInts(expr.Operator, left, right)
 	}
 
 	switch expr.Operator.Kind() {
@@ -87,7 +87,7 @@ func (a *TypeChecker) analyzeBinaryExprForInts(
 	}
 }
 
-func (a *TypeChecker) evaluateBinaryForInts(op token.Token, left, right *TypedExpr) (*TypedExpr, error) {
+func (t *TypeChecker) evaluateBinaryForInts(op token.Token, left, right *TypedExpr) (*TypedExpr, error) {
 	var (
 		leftVal  = left.Value.(int)
 		rightVal = right.Value.(int)
@@ -101,7 +101,7 @@ func (a *TypeChecker) evaluateBinaryForInts(op token.Token, left, right *TypedEx
 	case token.Star:
 		return newTypedExpr(Int{}, leftVal*rightVal), nil
 	case token.Slash:
-		return a.evaluateDivision(leftVal, rightVal)
+		return t.evaluateDivision(leftVal, rightVal)
 	case token.EqualEqual:
 		return newTypedExpr(Bool{}, leftVal == rightVal), nil
 	case token.BangEqual:
@@ -111,7 +111,7 @@ func (a *TypeChecker) evaluateBinaryForInts(op token.Token, left, right *TypedEx
 	}
 }
 
-func (a *TypeChecker) evaluateDivision(left, right int) (*TypedExpr, error) {
+func (t *TypeChecker) evaluateDivision(left, right int) (*TypedExpr, error) {
 	if right == 0 {
 		return nil, fmt.Errorf("division by zero")
 	}

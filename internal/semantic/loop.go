@@ -6,8 +6,8 @@ type Loop struct {
 	Body *Block
 }
 
-func (a *TypeChecker) analyzeLoop(l *parser.Loop) *Loop {
+func (t *TypeChecker) analyzeLoop(l *parser.Loop) *Loop {
 	return &Loop{
-		Body: a.analyzeBlock(l.Body),
+		Body: t.analyzeBlock(l.Body),
 	}
 }

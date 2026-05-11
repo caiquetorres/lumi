@@ -24,12 +24,12 @@ func (i *IdentifierExpr) Type() *TypedExpr {
 	return i.typedExpr
 }
 
-func (a *TypeChecker) analyzeIdentifierExpr(ie *parser.IdentifierExpr) *IdentifierExpr {
-	name := a.lex.Lexeme(ie.Name)
+func (t *TypeChecker) analyzeIdentifierExpr(ie *parser.IdentifierExpr) *IdentifierExpr {
+	name := t.lex.Lexeme(ie.Name)
 	idExpr := identifierExpr(ie.Name, anyExpr())
 
-	k, exists := a.symTable.Lookup(name)
-	if !exists {
+	k, exists := t.symTable.Lookup(name)
+	if exists {
 		idExpr.typedExpr = newTypedExprKindOnly(k)
 	}
 

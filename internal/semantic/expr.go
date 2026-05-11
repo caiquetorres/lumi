@@ -6,20 +6,20 @@ type Expr interface {
 	Type() *TypedExpr
 }
 
-func (a *TypeChecker) analyzeExpr(exp parser.Expr) Expr {
+func (t *TypeChecker) analyzeExpr(exp parser.Expr) Expr {
 	if exp == nil {
 		return nil
 	}
 
 	switch n := exp.(type) {
 	case *parser.LiteralExpr:
-		return a.analyzeLiteralExpr(n)
+		return t.analyzeLiteralExpr(n)
 	case *parser.BinaryExpr:
-		return a.analyzeBinaryExpr(n)
+		return t.analyzeBinaryExpr(n)
 	case *parser.IdentifierExpr:
-		return a.analyzeIdentifierExpr(n)
+		return t.analyzeIdentifierExpr(n)
 	case *parser.CallExpr:
-		return a.analyzeCallExpr(n)
+		return t.analyzeCallExpr(n)
 	default:
 		panic("unreachable")
 	}

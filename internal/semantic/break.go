@@ -4,6 +4,6 @@ import "github.com/caiquetorres/lumi/internal/parser"
 
 type BreakStmt struct{}
 
-func (a *TypeChecker) analyzeBreakStmt(_ *parser.BreakStmt) *BreakStmt {
+func (t *TypeChecker) analyzeBreakStmt(_ *parser.BreakStmt) *BreakStmt {
 	return &BreakStmt{}
 }
