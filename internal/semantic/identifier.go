@@ -6,11 +6,20 @@ import (
 )
 
 type IdentifierExpr struct {
+	typedExpr *TypedExpr
+
 	Name token.Token
 }
 
-func (a *Analyzer) analyzeIdentifierExpr(ie *parser.IdentifierExpr) *IdentifierExpr {
+var _ Expr = (*IdentifierExpr)(nil)
+
+func (i *IdentifierExpr) Type() *TypedExpr {
+	return i.typedExpr
+}
+
+func (a *TypeChecker) analyzeIdentifierExpr(ie *parser.IdentifierExpr) *IdentifierExpr {
 	return &IdentifierExpr{
-		Name: ie.Name,
+		typedExpr: anyExpr(),
+		Name:      ie.Name,
 	}
 }

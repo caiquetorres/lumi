@@ -8,175 +8,113 @@ import (
 )
 
 type BinaryExpr struct {
+	typedExpr *TypedExpr
+
 	Left     Expr
 	Operator token.Token
 	Right    Expr
 }
 
-func (a *Analyzer) analyzeBinaryExpr(be *parser.BinaryExpr) *BinaryExpr {
+func binaryExpr(
+	typedInfo *TypedExpr,
+	left, right Expr, operator token.Token,
+) *BinaryExpr {
 	return &BinaryExpr{
-		Left:     a.analyzeExpr(be.Left),
-		Operator: be.Operator,
-		Right:    a.analyzeExpr(be.Right),
+		typedExpr: typedInfo,
+		Left:      left,
+		Operator:  operator,
+		Right:     right,
 	}
 }
 
-func (a *Analyzer) AnalyzeExpr(expr parser.Expr) (*AnalyzedExpr, error) {
-	switch e := expr.(type) {
-	case *parser.LiteralExpr:
-		return a.AnalyzeLiteral(e)
-	case *parser.BinaryExpr:
-		return a.AnalyzeBinaryExpr(e)
-	default:
-		// TODO: implement other expressions
-		panic("unreachable")
-	}
+func (l *BinaryExpr) Type() *TypedExpr {
+	return l.typedExpr
 }
 
-func (a *Analyzer) AnalyzeBinaryExpr(expr *parser.BinaryExpr) (*AnalyzedExpr, error) {
-	left, err := a.AnalyzeExpr(expr.Left)
-	if err != nil {
-		return nil, err
+var _ Expr = (*BinaryExpr)(nil)
+
+func (a *TypeChecker) analyzeBinaryExpr(be *parser.BinaryExpr) *BinaryExpr {
+	var (
+		left  = a.analyzeExpr(be.Left)
+		right = a.analyzeExpr(be.Right)
+	)
+
+	if left.Type().IsAny() || right.Type().IsAny() {
+		return binaryExpr(anyExpr(), left, right, be.Operator)
 	}
 
-	right, err := a.AnalyzeExpr(expr.Right)
-	if err != nil {
-		return nil, err
+	if left.Type().Kind != right.Type().Kind {
+		err := fmt.Errorf("type mismatch: left is %T, right is %T",
+			left.Type().Kind, right.Type().Kind)
+
+		a.addErr(err)
+		return binaryExpr(anyExpr(), left, right, be.Operator)
 	}
 
-	if left.Kind != right.Kind {
-		return nil, fmt.Errorf("type mismatch: left is %T, right is %T", left.Kind, right.Kind)
+	var (
+		typedExpr *TypedExpr
+		err       error
+	)
+
+	if left.Type().IsInt() {
+		typedExpr, err = a.analyzeBinaryExprForInts(be, left.Type(), right.Type())
+		if err != nil {
+			a.addErr(err)
+			return binaryExpr(anyExpr(), left, right, be.Operator)
+		}
 	}
 
-	if left.IsInt() { // left and right are both ints
-		return a.analyzeBinaryExprForInts(expr, left, right)
-	}
-
-	return nil, nil
+	return binaryExpr(typedExpr, left, right, be.Operator)
 }
 
-func (a *Analyzer) analyzeBinaryExprForInts(
+func (a *TypeChecker) analyzeBinaryExprForInts(
 	expr *parser.BinaryExpr,
-	left *AnalyzedExpr,
-	right *AnalyzedExpr,
-) (*AnalyzedExpr, error) {
+	left, right *TypedExpr,
+) (*TypedExpr, error) {
 	if left.IsConst() && right.IsConst() {
-		return a.evaluateBinaryForInts(expr, left, right)
+		return a.evaluateBinaryForInts(expr.Operator, left, right)
 	}
 
 	switch expr.Operator.Kind() {
 	case token.Plus, token.Minus, token.Star, token.Slash:
-		return &AnalyzedExpr{
-			Kind:  left.Kind,
-			Value: nil,
-			Expr:  expr,
-		}, nil
+		return newTypedExprKindOnly(left.Kind), nil
 
 	case token.EqualEqual, token.BangEqual:
-		return &AnalyzedExpr{
-			Kind:  Bool{},
-			Value: nil,
-			Expr:  expr,
-		}, nil
+		return newTypedExprKindOnly(Bool{}), nil
 
 	default:
 		panic("unreachable")
 	}
 }
 
-func (a *Analyzer) evaluateBinaryForInts(
-	expr *parser.BinaryExpr,
-	left, right *AnalyzedExpr,
-) (*AnalyzedExpr, error) {
+func (a *TypeChecker) evaluateBinaryForInts(op token.Token, left, right *TypedExpr) (*TypedExpr, error) {
 	var (
 		leftVal  = left.Value.(int)
 		rightVal = right.Value.(int)
 	)
 
-	switch expr.Operator.Kind() {
+	switch op.Kind() {
 	case token.Plus:
-		return a.evaluateAddition(expr, leftVal, rightVal)
+		return newTypedExpr(Int{}, leftVal+rightVal), nil
 	case token.Minus:
-		return a.evaluateSubtraction(expr, leftVal, rightVal)
+		return newTypedExpr(Int{}, leftVal-rightVal), nil
 	case token.Star:
-		return a.evaluateMultiplication(expr, leftVal, rightVal)
+		return newTypedExpr(Int{}, leftVal*rightVal), nil
 	case token.Slash:
-		return a.evaluateDivision(expr, leftVal, rightVal)
+		return a.evaluateDivision(leftVal, rightVal)
 	case token.EqualEqual:
-		return a.evaluateEqual(expr, leftVal, rightVal)
+		return newTypedExpr(Bool{}, leftVal == rightVal), nil
 	case token.BangEqual:
-		return a.evaluateNotEqual(expr, leftVal, rightVal)
+		return newTypedExpr(Bool{}, leftVal != rightVal), nil
 	default:
 		panic("unreachable")
 	}
 }
 
-func (a *Analyzer) evaluateAddition(
-	expr *parser.BinaryExpr,
-	left, right int,
-) (*AnalyzedExpr, error) {
-	return &AnalyzedExpr{
-		Kind:  Int{},
-		Value: left + right,
-		Expr:  expr,
-	}, nil
-}
-
-func (a *Analyzer) evaluateSubtraction(
-	expr *parser.BinaryExpr,
-	left, right int,
-) (*AnalyzedExpr, error) {
-	return &AnalyzedExpr{
-		Kind:  Int{},
-		Value: left - right,
-		Expr:  expr,
-	}, nil
-}
-
-func (a *Analyzer) evaluateMultiplication(
-	expr *parser.BinaryExpr,
-	left, right int,
-) (*AnalyzedExpr, error) {
-	return &AnalyzedExpr{
-		Kind:  Int{},
-		Value: left * right,
-		Expr:  expr,
-	}, nil
-}
-
-func (a *Analyzer) evaluateDivision(
-	expr *parser.BinaryExpr,
-	left, right int,
-) (*AnalyzedExpr, error) {
+func (a *TypeChecker) evaluateDivision(left, right int) (*TypedExpr, error) {
 	if right == 0 {
 		return nil, fmt.Errorf("division by zero")
 	}
 
-	return &AnalyzedExpr{
-		Kind:  Int{},
-		Value: left / right,
-		Expr:  expr,
-	}, nil
-}
-
-func (a *Analyzer) evaluateEqual(
-	expr *parser.BinaryExpr,
-	left, right int,
-) (*AnalyzedExpr, error) {
-	return &AnalyzedExpr{
-		Kind:  Bool{},
-		Value: left == right,
-		Expr:  expr,
-	}, nil
-}
-
-func (a *Analyzer) evaluateNotEqual(
-	expr *parser.BinaryExpr,
-	left, right int,
-) (*AnalyzedExpr, error) {
-	return &AnalyzedExpr{
-		Kind:  Bool{},
-		Value: left != right,
-		Expr:  expr,
-	}, nil
+	return newTypedExpr(Int{}, left/right), nil
 }

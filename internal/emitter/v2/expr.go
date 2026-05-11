@@ -90,6 +90,13 @@ func (e *Emitter) emitCall(ca *semantic.CallExpr) {
 }
 
 func (e *Emitter) emitBinaryExpr(be *semantic.BinaryExpr) {
+	if be.Type().IsInt() && be.Type().IsConst() {
+		e.ch.emit(PushInt)
+		e.ch.emitUint32(uint32(be.Type().Value.(int)))
+
+		return
+	}
+
 	e.emitExpr(be.Left)
 	e.emitExpr(be.Right)
 

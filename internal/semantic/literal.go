@@ -8,18 +8,19 @@ import (
 )
 
 type LiteralExpr struct {
+	typedExpr *TypedExpr
+
 	Kind  parser.LiteralKind
 	Value token.Token
 }
 
-func (a *Analyzer) analyzeLiteralExpr(le *parser.LiteralExpr) *LiteralExpr {
-	return &LiteralExpr{
-		Kind:  le.Kind,
-		Value: le.Value,
-	}
+func (l *LiteralExpr) Type() *TypedExpr {
+	return l.typedExpr
 }
 
-func (a *Analyzer) AnalyzeLiteral(lit *parser.LiteralExpr) (*AnalyzedExpr, error) {
+var _ Expr = (*LiteralExpr)(nil)
+
+func (a *TypeChecker) analyzeLiteralExpr(lit *parser.LiteralExpr) *LiteralExpr {
 	var (
 		kind Kind
 		val  any
@@ -33,24 +34,27 @@ func (a *Analyzer) AnalyzeLiteral(lit *parser.LiteralExpr) (*AnalyzedExpr, error
 		text := a.lex.Lexeme(lit.Value)
 		val, err = strconv.Atoi(text)
 		if err != nil {
-			return nil, err
+			panic(err)
 		}
 
 	case parser.LiteralString:
 		kind = String{}
 
-	case parser.LiteralFalse, parser.LiteralTrue:
+	case parser.LiteralFalse:
 		kind = Bool{}
-		text := a.lex.Lexeme(lit.Value)
+		val = false
 
-		val = text == "true"
+	case parser.LiteralTrue:
+		kind = Bool{}
+		val = true
+
 	default:
 		panic("unreachable")
 	}
 
-	return &AnalyzedExpr{
-		Kind:  kind,
-		Value: val,
-		Expr:  lit,
-	}, nil
+	return &LiteralExpr{
+		typedExpr: newTypedExpr(kind, val),
+		Kind:      lit.Kind,
+		Value:     lit.Value,
+	}
 }

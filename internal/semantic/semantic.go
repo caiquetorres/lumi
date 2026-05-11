@@ -1,6 +1,7 @@
 package semantic
 
 import (
+	"github.com/caiquetorres/lumi/internal/lexer"
 	"github.com/caiquetorres/lumi/internal/parser"
 )
 
@@ -13,10 +14,10 @@ func (e *semanticError) Error() string {
 	panic("unimplemented")
 }
 
-func Analyze(ast *parser.Ast) (*Ast, error) {
+func Analyze(ast *parser.Ast, lex *lexer.Lexer) (*Ast, error) {
 	stmts := make([]TopLevelStmt, len(ast.Statements))
 
-	analyzer := NewAnalyzer()
+	analyzer := NewAnalyzer(lex)
 	for i, s := range ast.Statements {
 		stmts[i] = analyzer.analyzeTopLevelStmt(s)
 	}
@@ -26,6 +27,8 @@ func Analyze(ast *parser.Ast) (*Ast, error) {
 	}, nil
 }
 
-func NewAnalyzer() *Analyzer {
-	return &Analyzer{}
+func NewAnalyzer(lex *lexer.Lexer) *TypeChecker {
+	return &TypeChecker{
+		lex: lex,
+	}
 }

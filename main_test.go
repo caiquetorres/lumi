@@ -56,7 +56,7 @@ func compileToBytecodeString(srcPath string) (string, error) {
 		return "", err
 	}
 
-	sAst, err := semantic.Analyze(ast)
+	sAst, err := semantic.Analyze(ast, lex)
 	if err != nil {
 		return "", err
 	}

@@ -9,7 +9,7 @@ type VarDecl struct {
 	Assignments []Assignment
 }
 
-func (a *Analyzer) analyzeVarDecl(vd *parser.VarDecl) *VarDecl {
+func (a *TypeChecker) analyzeVarDecl(vd *parser.VarDecl) *VarDecl {
 	assignments := make([]Assignment, len(vd.Assignments))
 	for i, as := range vd.Assignments {
 		assignments[i] = a.analyzeAssignment(as)
@@ -24,7 +24,7 @@ type Assignment struct {
 	Expr       Expr
 }
 
-func (a *Analyzer) analyzeAssignment(as parser.Assignment) Assignment {
+func (a *TypeChecker) analyzeAssignment(as parser.Assignment) Assignment {
 	return Assignment{
 		Identifier: as.Identifier,
 		Expr:       a.analyzeExpr(as.Expr),

@@ -18,7 +18,7 @@ type Emitter struct {
 
 	nativeFns map[string]struct{}
 
-	analyzer *semantic.Analyzer
+	analyzer *semantic.TypeChecker
 	err      error
 }
 
@@ -33,7 +33,7 @@ func newEmitter(lex *lexer.Lexer, globals *globals) *Emitter {
 		loopStack: newLoopStack(),
 		jumpStack: newJumpStack(),
 
-		analyzer: semantic.NewAnalyzer(),
+		analyzer: semantic.NewAnalyzer(lex),
 	}
 }
 

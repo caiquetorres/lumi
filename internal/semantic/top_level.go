@@ -8,7 +8,7 @@ type Ast struct {
 	Statements []TopLevelStmt
 }
 
-func (a *Analyzer) analyzeTopLevelStmt(s parser.TopLevelStmt) TopLevelStmt {
+func (a *TypeChecker) analyzeTopLevelStmt(s parser.TopLevelStmt) TopLevelStmt {
 	switch n := s.(type) {
 	case *parser.FunDecl:
 		return a.analyzeFunDecl(n)

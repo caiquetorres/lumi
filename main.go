@@ -67,21 +67,21 @@ func main() {
 
 func compilePipeline(src io.ReadSeeker, out io.Writer, disassemble bool) error {
 	var (
-		l = lexer.New(src)
-		p = parser.New(l)
+		lex = lexer.New(src)
+		par = parser.New(lex)
 	)
 
-	ast, err := p.Parse()
+	ast, err := par.Parse()
 	if err != nil {
 		return fmt.Errorf("%s", parser.Format(err, src))
 	}
 
-	sAst, err := semantic.Analyze(ast)
+	sAst, err := semantic.Analyze(ast, lex)
 	if err != nil {
 		return err
 	}
 
-	ch, err := emitter.Emit(sAst, l)
+	ch, err := emitter.Emit(sAst, lex)
 	if err != nil {
 		return err
 	}

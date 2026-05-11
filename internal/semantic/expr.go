@@ -2,13 +2,16 @@ package semantic
 
 import "github.com/caiquetorres/lumi/internal/parser"
 
-type Expr any
+type Expr interface {
+	Type() *TypedExpr
+}
 
-func (a *Analyzer) analyzeExpr(e parser.Expr) Expr {
-	if e == nil {
+func (a *TypeChecker) analyzeExpr(exp parser.Expr) Expr {
+	if exp == nil {
 		return nil
 	}
-	switch n := e.(type) {
+
+	switch n := exp.(type) {
 	case *parser.LiteralExpr:
 		return a.analyzeLiteralExpr(n)
 	case *parser.BinaryExpr:
