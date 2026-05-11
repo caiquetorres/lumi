@@ -4,6 +4,6 @@ import "github.com/caiquetorres/lumi/internal/parser"
 
 type ContinueStmt struct{}
 
-func continueStmt(_ *parser.ContinueStmt) *ContinueStmt {
+func (a *Analyzer) analyzeContinueStmt(cs *parser.ContinueStmt) *ContinueStmt {
 	return &ContinueStmt{}
 }

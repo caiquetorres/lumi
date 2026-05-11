@@ -7,6 +7,20 @@ import (
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
+type BinaryExpr struct {
+	Left     Expr
+	Operator token.Token
+	Right    Expr
+}
+
+func (a *Analyzer) analyzeBinaryExpr(be *parser.BinaryExpr) *BinaryExpr {
+	return &BinaryExpr{
+		Left:     a.analyzeExpr(be.Left),
+		Operator: be.Operator,
+		Right:    a.analyzeExpr(be.Right),
+	}
+}
+
 func (a *Analyzer) AnalyzeExpr(expr parser.Expr) (*AnalyzedExpr, error) {
 	switch e := expr.(type) {
 	case *parser.LiteralExpr:
@@ -16,20 +30,6 @@ func (a *Analyzer) AnalyzeExpr(expr parser.Expr) (*AnalyzedExpr, error) {
 	default:
 		// TODO: implement other expressions
 		panic("unreachable")
-	}
-}
-
-type BinaryExpr struct {
-	Left     Expr
-	Operator token.Token
-	Right    Expr
-}
-
-func binaryExpr(be *parser.BinaryExpr) *BinaryExpr {
-	return &BinaryExpr{
-		Left:     exprN(be.Left),
-		Operator: be.Operator,
-		Right:    exprN(be.Right),
 	}
 }
 

@@ -4,19 +4,19 @@ import "github.com/caiquetorres/lumi/internal/parser"
 
 type Expr any
 
-func exprN(e parser.Expr) Expr {
+func (a *Analyzer) analyzeExpr(e parser.Expr) Expr {
 	if e == nil {
 		return nil
 	}
 	switch n := e.(type) {
 	case *parser.LiteralExpr:
-		return literalExpr(n)
+		return a.analyzeLiteralExpr(n)
 	case *parser.BinaryExpr:
-		return binaryExpr(n)
+		return a.analyzeBinaryExpr(n)
 	case *parser.IdentifierExpr:
-		return identifierExpr(n)
+		return a.analyzeIdentifierExpr(n)
 	case *parser.CallExpr:
-		return callExpr(n)
+		return a.analyzeCallExpr(n)
 	default:
 		panic("unreachable")
 	}

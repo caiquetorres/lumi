@@ -8,12 +8,12 @@ type Ast struct {
 	Statements []TopLevelStmt
 }
 
-func topLevelStmt(s parser.TopLevelStmt) TopLevelStmt {
+func (a *Analyzer) analyzeTopLevelStmt(s parser.TopLevelStmt) TopLevelStmt {
 	switch n := s.(type) {
 	case *parser.FunDecl:
-		return funDecl(n)
+		return a.analyzeFunDecl(n)
 	case *parser.VarDecl:
-		return varDecl(n)
+		return a.analyzeVarDecl(n)
 	default:
 		panic("unreachable")
 	}

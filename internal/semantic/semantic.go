@@ -14,19 +14,18 @@ func (e *semanticError) Error() string {
 }
 
 func Analyze(ast *parser.Ast) (*Ast, error) {
-	return astN(ast), nil
+	stmts := make([]TopLevelStmt, len(ast.Statements))
+
+	analyzer := NewAnalyzer()
+	for i, s := range ast.Statements {
+		stmts[i] = analyzer.analyzeTopLevelStmt(s)
+	}
+
+	return &Ast{
+		Statements: stmts,
+	}, nil
 }
 
 func NewAnalyzer() *Analyzer {
 	return &Analyzer{}
-}
-
-func astN(a *parser.Ast) *Ast {
-	stmts := make([]TopLevelStmt, len(a.Statements))
-	for i, s := range a.Statements {
-		stmts[i] = topLevelStmt(s)
-	}
-	return &Ast{
-		Statements: stmts,
-	}
 }

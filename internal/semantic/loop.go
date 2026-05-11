@@ -6,8 +6,8 @@ type Loop struct {
 	Body *Block
 }
 
-func loop(l *parser.Loop) *Loop {
+func (a *Analyzer) analyzeLoop(l *parser.Loop) *Loop {
 	return &Loop{
-		Body: block(l.Body),
+		Body: a.analyzeBlock(l.Body),
 	}
 }

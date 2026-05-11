@@ -12,7 +12,7 @@ type LiteralExpr struct {
 	Value token.Token
 }
 
-func literalExpr(le *parser.LiteralExpr) *LiteralExpr {
+func (a *Analyzer) analyzeLiteralExpr(le *parser.LiteralExpr) *LiteralExpr {
 	return &LiteralExpr{
 		Kind:  le.Kind,
 		Value: le.Value,

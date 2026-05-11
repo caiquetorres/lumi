@@ -9,10 +9,10 @@ type VarDecl struct {
 	Assignments []Assignment
 }
 
-func varDecl(vd *parser.VarDecl) *VarDecl {
+func (a *Analyzer) analyzeVarDecl(vd *parser.VarDecl) *VarDecl {
 	assignments := make([]Assignment, len(vd.Assignments))
-	for i, a := range vd.Assignments {
-		assignments[i] = assignment(a)
+	for i, as := range vd.Assignments {
+		assignments[i] = a.analyzeAssignment(as)
 	}
 	return &VarDecl{
 		Assignments: assignments,
@@ -24,9 +24,9 @@ type Assignment struct {
 	Expr       Expr
 }
 
-func assignment(a parser.Assignment) Assignment {
+func (a *Analyzer) analyzeAssignment(as parser.Assignment) Assignment {
 	return Assignment{
-		Identifier: a.Identifier,
-		Expr:       exprN(a.Expr),
+		Identifier: as.Identifier,
+		Expr:       a.analyzeExpr(as.Expr),
 	}
 }

@@ -12,22 +12,22 @@ type FunDecl struct {
 	Body       []Stmt
 }
 
-func funDecl(fd *parser.FunDecl) *FunDecl {
+func (a *Analyzer) analyzeFunDecl(fd *parser.FunDecl) *FunDecl {
 	params := make([]Param, len(fd.Params))
 	for i, p := range fd.Params {
-		params[i] = param(p)
+		params[i] = a.analyzeParam(p)
 	}
 
 	body := make([]Stmt, len(fd.Body))
 	for i, s := range fd.Body {
-		body[i] = stmtN(s)
+		body[i] = a.analyzeStmt(s)
 	}
 
 	return &FunDecl{
 		Identifier: fd.Identifier,
 		Params:     params,
 		Body:       body,
-		Return:     typeN(fd.Return),
+		Return:     a.analyzeType(fd.Return),
 	}
 }
 
@@ -36,9 +36,9 @@ type Param struct {
 	Type *Type
 }
 
-func param(p parser.Param) Param {
+func (a *Analyzer) analyzeParam(p parser.Param) Param {
 	return Param{
 		Name: p.Name,
-		Type: typeN(p.Type),
+		Type: a.analyzeType(p.Type),
 	}
 }

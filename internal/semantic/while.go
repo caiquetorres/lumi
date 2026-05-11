@@ -7,9 +7,9 @@ type WhileStmt struct {
 	Body      *Block
 }
 
-func whileStmt(ws *parser.WhileStmt) *WhileStmt {
+func (a *Analyzer) analyzeWhileStmt(ws *parser.WhileStmt) *WhileStmt {
 	return &WhileStmt{
-		Condition: exprN(ws.Condition),
-		Body:      block(ws.Body),
+		Condition: a.analyzeExpr(ws.Condition),
+		Body:      a.analyzeBlock(ws.Body),
 	}
 }

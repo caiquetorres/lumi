@@ -7,13 +7,13 @@ type CallExpr struct {
 	Args   []Expr
 }
 
-func callExpr(ce *parser.CallExpr) *CallExpr {
+func (a *Analyzer) analyzeCallExpr(ce *parser.CallExpr) *CallExpr {
 	args := make([]Expr, len(ce.Args))
-	for i, a := range ce.Args {
-		args[i] = exprN(a)
+	for i, arg := range ce.Args {
+		args[i] = a.analyzeExpr(arg)
 	}
 	return &CallExpr{
-		Callee: exprN(ce.Callee),
+		Callee: a.analyzeExpr(ce.Callee),
 		Args:   args,
 	}
 }

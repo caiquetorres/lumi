@@ -4,28 +4,28 @@ import "github.com/caiquetorres/lumi/internal/parser"
 
 type Stmt any
 
-func stmtN(s parser.Stmt) Stmt {
+func (a *Analyzer) analyzeStmt(s parser.Stmt) Stmt {
 	switch n := s.(type) {
 	case *parser.VarDecl:
-		return varDecl(n)
+		return a.analyzeVarDecl(n)
 	case *parser.IfStmt:
-		return ifStmt(n)
+		return a.analyzeIfStmt(n)
 	case *parser.ReturnStmt:
-		return returnStmt(n)
+		return a.analyzeReturnStmt(n)
 	case *parser.ForStmt:
-		return forStmt(n)
+		return a.analyzeForStmt(n)
 	case *parser.WhileStmt:
-		return whileStmt(n)
+		return a.analyzeWhileStmt(n)
 	case *parser.BreakStmt:
-		return breakStmt(n)
+		return a.analyzeBreakStmt(n)
 	case *parser.ContinueStmt:
-		return continueStmt(n)
+		return a.analyzeContinueStmt(n)
 	case *parser.Loop:
-		return loop(n)
+		return a.analyzeLoop(n)
 	case *parser.Block:
-		return block(n)
+		return a.analyzeBlock(n)
 	default:
-		return exprN(s.(parser.Expr))
+		return a.analyzeExpr(s.(parser.Expr))
 	}
 }
 
@@ -33,13 +33,13 @@ type Block struct {
 	Stmts []Stmt
 }
 
-func block(b *parser.Block) *Block {
+func (a *Analyzer) analyzeBlock(b *parser.Block) *Block {
 	if b == nil {
 		return nil
 	}
 	stmts := make([]Stmt, len(b.Stmts))
 	for i, s := range b.Stmts {
-		stmts[i] = stmtN(s)
+		stmts[i] = a.analyzeStmt(s)
 	}
 	return &Block{
 		Stmts: stmts,

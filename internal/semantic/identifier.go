@@ -9,7 +9,7 @@ type IdentifierExpr struct {
 	Name token.Token
 }
 
-func identifierExpr(ie *parser.IdentifierExpr) *IdentifierExpr {
+func (a *Analyzer) analyzeIdentifierExpr(ie *parser.IdentifierExpr) *IdentifierExpr {
 	return &IdentifierExpr{
 		Name: ie.Name,
 	}

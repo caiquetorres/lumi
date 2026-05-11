@@ -6,8 +6,8 @@ type ReturnStmt struct {
 	Expr Expr
 }
 
-func returnStmt(rs *parser.ReturnStmt) *ReturnStmt {
+func (a *Analyzer) analyzeReturnStmt(rs *parser.ReturnStmt) *ReturnStmt {
 	return &ReturnStmt{
-		Expr: exprN(rs.Expr),
+		Expr: a.analyzeExpr(rs.Expr),
 	}
 }

@@ -9,7 +9,7 @@ type Type struct {
 	Name token.Token
 }
 
-func typeN(ty *parser.Type) *Type {
+func (a *Analyzer) analyzeType(ty *parser.Type) *Type {
 	if ty == nil {
 		return nil
 	}

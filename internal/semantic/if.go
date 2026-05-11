@@ -8,10 +8,10 @@ type IfStmt struct {
 	Else      *Block
 }
 
-func ifStmt(is *parser.IfStmt) *IfStmt {
+func (a *Analyzer) analyzeIfStmt(is *parser.IfStmt) *IfStmt {
 	return &IfStmt{
-		Condition: exprN(is.Condition),
-		Then:      block(is.Then),
-		Else:      block(is.Else),
+		Condition: a.analyzeExpr(is.Condition),
+		Then:      a.analyzeBlock(is.Then),
+		Else:      a.analyzeBlock(is.Else),
 	}
 }
