@@ -8,24 +8,18 @@ type Token struct {
 	s    span.Span
 	kind Kind
 
-	symbolID  SymbolID
-	hasSymbol bool
+	symbolID SymbolID
 }
 
 func New(id SymbolID, kind Kind, s span.Span) Token {
 	return Token{
-		kind:      kind,
-		s:         s,
-		symbolID:  id,
-		hasSymbol: true,
+		kind:     kind,
+		s:        s,
+		symbolID: id,
 	}
 }
 
 func (t Token) SymbolID() SymbolID {
-	if !t.hasSymbol {
-		return -1
-	}
-
 	return t.symbolID
 }
 

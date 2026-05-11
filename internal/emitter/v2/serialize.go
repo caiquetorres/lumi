@@ -26,10 +26,8 @@ func (c *Chunk) Serialize(w io.Writer) error {
 		if err := writeUint32(b, c.entryPoint); err != nil {
 			return err
 		}
-	} else {
-		if err := b.WriteByte(0); err != nil {
-			return err
-		}
+	} else if err := b.WriteByte(0); err != nil {
+		return err
 	}
 
 	if _, err := b.Write(c.code); err != nil {
