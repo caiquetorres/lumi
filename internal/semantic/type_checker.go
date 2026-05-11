@@ -3,8 +3,17 @@ package semantic
 import "github.com/caiquetorres/lumi/internal/lexer"
 
 type TypeChecker struct {
-	lex *lexer.Lexer
+	lex      *lexer.Lexer
+	symTable *SymbolTable
+
 	err []error
+}
+
+func NewAnalyzer(lex *lexer.Lexer) *TypeChecker {
+	return &TypeChecker{
+		lex:      lex,
+		symTable: NewRootSymbolTable(),
+	}
 }
 
 func (a *TypeChecker) addErr(err error) {
@@ -99,14 +108,12 @@ func (t *TypedExpr) AsBool() bool {
 	panic("type is not a bool")
 }
 
-type FunctionType struct{}
-
-func (t *TypedExpr) AsFunction() FunctionType {
+func (t *TypedExpr) AsFunction() Function {
 	if !t.IsFunction() {
 		panic("type is not a function")
 	}
 
-	if val, ok := t.Value.(FunctionType); ok {
+	if val, ok := t.Value.(Function); ok {
 		return val
 	}
 

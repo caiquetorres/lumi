@@ -26,9 +26,3 @@ func Analyze(ast *parser.Ast, lex *lexer.Lexer) (*Ast, error) {
 		Statements: stmts,
 	}, nil
 }
-
-func NewAnalyzer(lex *lexer.Lexer) *TypeChecker {
-	return &TypeChecker{
-		lex: lex,
-	}
-}

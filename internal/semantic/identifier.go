@@ -6,9 +6,16 @@ import (
 )
 
 type IdentifierExpr struct {
-	typedExpr *TypedExpr
-
 	Name token.Token
+
+	typedExpr *TypedExpr
+}
+
+func identifierExpr(name token.Token, typedExpr *TypedExpr) *IdentifierExpr {
+	return &IdentifierExpr{
+		typedExpr: typedExpr,
+		Name:      name,
+	}
 }
 
 var _ Expr = (*IdentifierExpr)(nil)
@@ -18,8 +25,13 @@ func (i *IdentifierExpr) Type() *TypedExpr {
 }
 
 func (a *TypeChecker) analyzeIdentifierExpr(ie *parser.IdentifierExpr) *IdentifierExpr {
-	return &IdentifierExpr{
-		typedExpr: anyExpr(),
-		Name:      ie.Name,
+	name := a.lex.Lexeme(ie.Name)
+	idExpr := identifierExpr(ie.Name, anyExpr())
+
+	k, exists := a.symTable.Lookup(name)
+	if !exists {
+		idExpr.typedExpr = newTypedExprKindOnly(k)
 	}
+
+	return idExpr
 }

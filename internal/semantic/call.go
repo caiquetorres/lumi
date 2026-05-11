@@ -20,9 +20,18 @@ func (a *TypeChecker) analyzeCallExpr(ce *parser.CallExpr) *CallExpr {
 	for i, arg := range ce.Args {
 		args[i] = a.analyzeExpr(arg)
 	}
+
+	calle := a.analyzeExpr(ce.Callee)
+
+	typedExpr := anyExpr()
+	if calle.Type().IsFunction() {
+		calleType := calle.Type().AsFunction()
+		typedExpr = newTypedExprKindOnly(calleType.Return)
+	}
+
 	return &CallExpr{
-		typedExpr: anyExpr(),
-		Callee:    a.analyzeExpr(ce.Callee),
+		typedExpr: typedExpr,
+		Callee:    calle,
 		Args:      args,
 	}
 }

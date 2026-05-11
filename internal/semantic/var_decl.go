@@ -25,6 +25,9 @@ type Assignment struct {
 }
 
 func (a *TypeChecker) analyzeAssignment(as parser.Assignment) Assignment {
+	name := a.lex.Lexeme(as.Identifier)
+	a.symTable.Define(name, as.Expr)
+
 	return Assignment{
 		Identifier: as.Identifier,
 		Expr:       a.analyzeExpr(as.Expr),
