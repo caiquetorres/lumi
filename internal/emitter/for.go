@@ -2,11 +2,11 @@ package emitter
 
 import "github.com/caiquetorres/lumi/internal/parser"
 
-func (e *Emitter) BeforeForInit(forStmt *parser.ForStmt) {}
+func (e *Emitter) BeforeForInit(forStmt *parser.For) {}
 
-func (e *Emitter) AfterForInit(forStmt *parser.ForStmt) {}
+func (e *Emitter) AfterForInit(forStmt *parser.For) {}
 
-func (e *Emitter) BeforeForInc(forStmt *parser.ForStmt) {
+func (e *Emitter) BeforeForInc(forStmt *parser.For) {
 	var jumpTo uint32
 
 	if forStmt.Inc != nil {
@@ -20,7 +20,7 @@ func (e *Emitter) BeforeForInc(forStmt *parser.ForStmt) {
 	})
 }
 
-func (e *Emitter) AfterForInc(forStmt *parser.ForStmt) {
+func (e *Emitter) AfterForInc(forStmt *parser.For) {
 	if forStmt.Inc != nil {
 		if top, ok := e.loopStack.top(); ok {
 			e.ch.patchUint32(top.condStart, e.ch.ip)
@@ -28,9 +28,9 @@ func (e *Emitter) AfterForInc(forStmt *parser.ForStmt) {
 	}
 }
 
-func (e *Emitter) BeforeForCond(forStmt *parser.ForStmt) {}
+func (e *Emitter) BeforeForCond(forStmt *parser.For) {}
 
-func (e *Emitter) AfterForCond(forStmt *parser.ForStmt) {
+func (e *Emitter) AfterForCond(forStmt *parser.For) {
 	if forStmt.Cond == nil {
 		return
 	}
@@ -43,7 +43,7 @@ func (e *Emitter) AfterForCond(forStmt *parser.ForStmt) {
 	}
 }
 
-func (e *Emitter) AfterForBody(forStmt *parser.ForStmt) {
+func (e *Emitter) AfterForBody(forStmt *parser.For) {
 	if top, ok := e.loopStack.pop(); ok {
 		e.ch.emit(JumpTo)
 		e.ch.emitUint32(top.start)

@@ -9,7 +9,7 @@ type ForStmt struct {
 	Body *Block
 }
 
-func (t *TypeChecker) analyzeForStmt(fs *parser.ForStmt) *ForStmt {
+func (t *TypeChecker) analyzeForStmt(fs *parser.For) *ForStmt {
 	return &ForStmt{
 		Init: t.analyzeStmt(fs.Init),
 		Cond: t.analyzeExpr(fs.Cond),

@@ -4,10 +4,12 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/binary"
+	"errors"
 	"fmt"
+	"io"
 )
 
-func ParseConstantPool(data []byte) (*ConstantPool, error) {
+func Parse(data []byte) (*ConstantPool, error) {
 	c := New()
 	if len(data) == 0 {
 		return c, nil
@@ -15,12 +17,15 @@ func ParseConstantPool(data []byte) (*ConstantPool, error) {
 
 	b := bufio.NewReader(bytes.NewReader(data))
 	for {
-		typeByte, err := b.ReadByte()
-		if err != nil {
+		ty, err := b.ReadByte()
+		if errors.Is(err, io.EOF) {
 			break
+		} else if err != nil {
+			return nil, err
 		}
 
-		if _, err := c.internConstantFromType(typeByte, b); err != nil {
+		_, err = c.internConstantFromType(typeByte(ty), b)
+		if err != nil {
 			return nil, fmt.Errorf("failed to parse constant: %w", err)
 		}
 	}
@@ -28,30 +33,14 @@ func ParseConstantPool(data []byte) (*ConstantPool, error) {
 	return c, nil
 }
 
-func (c *ConstantPool) internConstantFromType(typeByte byte, b *bufio.Reader) (uint32, error) {
-	switch typeByte {
-	case typeBool:
-		return c.internBool(b)
-
+func (c *ConstantPool) internConstantFromType(ty typeByte, b *bufio.Reader) (uint32, error) {
+	switch ty {
 	case typeString:
 		return c.internString(b)
 
-	case typeInt:
-		return c.internInt(b)
-
 	default:
-		return 0, fmt.Errorf("constant type %d", typeByte)
+		return 0, fmt.Errorf("constant type %d", ty)
 	}
-}
-
-func (c *ConstantPool) internBool(b *bufio.Reader) (uint32, error) {
-	valueByte, err := b.ReadByte()
-	if err != nil {
-		return 0, fmt.Errorf("failed to read bool constant: %w", err)
-	}
-
-	value := valueByte != 0
-	return c.InternConstant(value), nil
 }
 
 func (c *ConstantPool) internString(b *bufio.Reader) (uint32, error) {
@@ -61,22 +50,13 @@ func (c *ConstantPool) internString(b *bufio.Reader) (uint32, error) {
 	}
 
 	strLen := binary.BigEndian.Uint32(lenBuf[:])
-
 	strBytes := make([]byte, strLen)
-	if _, err := b.Read(strBytes); err != nil {
+
+	_, err := b.Read(strBytes)
+	if err != nil {
 		return 0, fmt.Errorf("failed to read string constant: %w", err)
 	}
 
 	value := string(strBytes)
-	return c.InternConstant(value), nil
-}
-
-func (c *ConstantPool) internInt(b *bufio.Reader) (uint32, error) {
-	var intBuf [8]byte
-	if _, err := b.Read(intBuf[:]); err != nil {
-		return 0, fmt.Errorf("failed to read int constant: %w", err)
-	}
-
-	value := int(binary.BigEndian.Uint64(intBuf[:]))
 	return c.InternConstant(value), nil
 }

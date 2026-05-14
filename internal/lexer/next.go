@@ -11,9 +11,6 @@ func (l *Lexer) next() (token.Token, error) {
 		return token.Token{}, err
 	}
 
-	r, _ := l.peekRune()
-	_ = r
-
 	switch {
 	case l.isAtEOF():
 		return l.newToken(token.EOF), nil

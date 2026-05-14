@@ -12,7 +12,7 @@ func (t *TypeChecker) analyzeTopLevelStmt(s parser.TopLevelStmt) TopLevelStmt {
 	switch n := s.(type) {
 	case *parser.FunDecl:
 		return t.analyzeFunDecl(n)
-	case *parser.VarDecl:
+	case *parser.Let:
 		return t.analyzeVarDecl(n)
 	default:
 		panic("unreachable")

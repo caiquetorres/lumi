@@ -17,7 +17,7 @@ func (e *semanticError) Error() string {
 func Analyze(ast *parser.Ast, lex *lexer.Lexer) (*Ast, error) {
 	stmts := make([]TopLevelStmt, len(ast.Statements))
 
-	analyzer := NewAnalyzer(lex)
+	analyzer := NewTypeChecker(lex)
 	for i, s := range ast.Statements {
 		stmts[i] = analyzer.analyzeTopLevelStmt(s)
 	}

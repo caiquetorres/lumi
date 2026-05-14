@@ -16,7 +16,7 @@ func (e *Emitter) emitStmt(stmt semantic.Stmt) {
 		e.emitIf(s)
 	case *semantic.BreakStmt:
 		e.emitBreak()
-	case *semantic.VarDecl:
+	case *semantic.Let:
 		e.emitLet(s)
 	case *semantic.ContinueStmt:
 		e.emitContinue()

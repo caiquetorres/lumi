@@ -5,21 +5,21 @@ import (
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
-type ContinueStmt struct {
+type Continue struct {
 	span span.Span
 }
 
-func continueStmt(span span.Spanner) *ContinueStmt {
-	return &ContinueStmt{
+func continueStmt(span span.Spanner) *Continue {
+	return &Continue{
 		span: span.Span(),
 	}
 }
 
-func (s *ContinueStmt) Span() span.Span {
+func (s *Continue) Span() span.Span {
 	return s.span
 }
 
-func (p *Parser) parseContinue() (*ContinueStmt, error) {
+func (p *Parser) parseContinue() (*Continue, error) {
 	continueTok, err := p.lookahead().next().expect(token.Continue)
 	if err != nil {
 		return nil, err

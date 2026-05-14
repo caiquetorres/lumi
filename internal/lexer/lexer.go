@@ -2,7 +2,6 @@ package lexer
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"strings"
 
@@ -33,28 +32,25 @@ func New(r io.Reader) *Lexer {
 	return &l
 }
 
+// Peek returns the next token without consuming it.
 func (l *Lexer) Peek() (token.Token, error) {
 	return l.currToken, l.currErr
 }
 
+// Next returns the next token and advances the lexer.
 func (l *Lexer) Next() (token.Token, error) {
 	currToken, currErr := l.currToken, l.currErr
-
 	l.currToken, l.currErr = l.next()
-
 	return currToken, currErr
 }
 
+// Lexeme returns the lexeme associated with the given token.
 func (l *Lexer) Lexeme(tok token.Token) string {
 	return l.symTable.lookup(tok.SymbolID())
 }
 
-func (l *Lexer) DebugTable() {
-	for sym, id := range l.symTable.index {
-		fmt.Printf("%d: %s\n", id, sym)
-	}
-}
-
+// nextRune reads the next rune from the input and extends the current
+// token.
 func (l *Lexer) nextRune() (rune, error) {
 	r, _, err := l.b.ReadRune()
 
@@ -64,6 +60,7 @@ func (l *Lexer) nextRune() (rune, error) {
 	return r, err
 }
 
+// peekRune returns the next rune from the input without consuming it.
 func (l *Lexer) peekRune() (rune, error) {
 	r, _, err := l.b.ReadRune()
 	if err != nil {

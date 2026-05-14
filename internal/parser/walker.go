@@ -20,10 +20,10 @@ func (w *walker) walkAst(v Visitor, ast *Ast) {
 	}
 }
 
-func (w *walker) walkVarDecl(v Visitor, vd *VarDecl) {
+func (w *walker) walkVarDecl(v Visitor, vd *Let) {
 	v.BeforeVarDecl(vd)
 
-	for _, assignment := range vd.Assignments {
+	for _, assignment := range vd.Bindings {
 		v.BeforeAssignment(&assignment)
 		w.walkExpr(v, assignment.Expr)
 		v.AfterAssignment(&assignment)
@@ -50,23 +50,23 @@ func (w *walker) walkFunDecl(v Visitor, fd *FunDecl) {
 
 func (w *walker) walkStmt(v Visitor, stmt Stmt) {
 	switch s := stmt.(type) {
-	case *VarDecl:
+	case *Let:
 		w.walkVarDecl(v, s)
 	case *ReturnStmt:
 		w.walkReturn(v, s)
-	case *IfStmt:
+	case *If:
 		w.walkIf(v, s)
 	case *Loop:
 		w.walkLoop(v, s)
 	case *WhileStmt:
 		w.walkWhile(v, s)
-	case *BreakStmt:
+	case *Break:
 		w.walkBreak(v, s)
-	case *ContinueStmt:
+	case *Continue:
 		w.walkContinue(v, s)
 	case *Block:
 		w.walkBlockStmt(v, s)
-	case *ForStmt:
+	case *For:
 		w.walkFor(v, s)
 	default:
 		w.walkExpr(v, stmt.(Expr))
@@ -93,7 +93,7 @@ func (w *walker) walkWhile(v Visitor, whileStmt *WhileStmt) {
 	v.AfterWhileBody(whileStmt)
 }
 
-func (w *walker) walkFor(v Visitor, forStmt *ForStmt) {
+func (w *walker) walkFor(v Visitor, forStmt *For) {
 	v.BeforeForInit(forStmt)
 	if forStmt.Init != nil {
 		w.walkStmt(v, forStmt.Init)
@@ -116,7 +116,7 @@ func (w *walker) walkFor(v Visitor, forStmt *ForStmt) {
 	v.AfterForBody(forStmt)
 }
 
-func (w *walker) walkIf(v Visitor, ifStmt *IfStmt) error {
+func (w *walker) walkIf(v Visitor, ifStmt *If) error {
 	w.walkExpr(v, ifStmt.Condition)
 
 	v.AfterIfCondition(ifStmt)
@@ -144,13 +144,13 @@ func (w *walker) walkReturn(v Visitor, r *ReturnStmt) {
 	v.AfterReturnStmt(r)
 }
 
-func (w *walker) walkBreak(v Visitor, b *BreakStmt) {
+func (w *walker) walkBreak(v Visitor, b *Break) {
 	// REVIEW: We definitely don't need two separate methods (before and after) here
 	v.BeforeBreakStmt(b)
 	v.AfterBreakStmt(b)
 }
 
-func (w *walker) walkContinue(v Visitor, c *ContinueStmt) {
+func (w *walker) walkContinue(v Visitor, c *Continue) {
 	// REVIEW: We definitely don't need two separate methods (before and after) here
 	v.BeforeContinueStmt(c)
 	v.AfterContinueStmt(c)

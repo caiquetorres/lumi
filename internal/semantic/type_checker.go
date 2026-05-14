@@ -9,7 +9,7 @@ type TypeChecker struct {
 	err []error
 }
 
-func NewAnalyzer(lex *lexer.Lexer) *TypeChecker {
+func NewTypeChecker(lex *lexer.Lexer) *TypeChecker {
 	return &TypeChecker{
 		lex:      lex,
 		symTable: NewRootSymbolTable(),

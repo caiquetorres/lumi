@@ -5,7 +5,7 @@ import (
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
-type ForStmt struct {
+type For struct {
 	Init Stmt
 	Cond Expr
 	Inc  Stmt
@@ -14,11 +14,21 @@ type ForStmt struct {
 	span span.Span
 }
 
-func (s *ForStmt) Span() span.Span {
+func forStmt(init Stmt, cond Expr, inc Stmt, body *Block, span span.Span) *For {
+	return &For{
+		Init: init,
+		Cond: cond,
+		Inc:  inc,
+		Body: body,
+		span: span,
+	}
+}
+
+func (s *For) Span() span.Span {
 	return s.span
 }
 
-func (p *Parser) parseFor() (*ForStmt, error) {
+func (p *Parser) parseFor() (*For, error) {
 	forTok, err := p.lookahead().next().expect(token.For)
 	if err != nil {
 		return nil, err
@@ -32,7 +42,8 @@ func (p *Parser) parseFor() (*ForStmt, error) {
 		}
 	}
 
-	if _, err := p.lookahead().next().expect(token.Semicolon); err != nil {
+	_, err = p.lookahead().next().expect(token.Semicolon)
+	if err != nil {
 		return nil, err
 	}
 
@@ -44,7 +55,8 @@ func (p *Parser) parseFor() (*ForStmt, error) {
 		}
 	}
 
-	if _, err := p.lookahead().next().expect(token.Semicolon); err != nil {
+	_, err = p.lookahead().next().expect(token.Semicolon)
+	if err != nil {
 		return nil, err
 	}
 
@@ -61,11 +73,8 @@ func (p *Parser) parseFor() (*ForStmt, error) {
 		return nil, err
 	}
 
-	return &ForStmt{
-		Init: initStmt,
-		Cond: condExpr,
-		Inc:  incStmt,
-		Body: block,
-		span: span.Merge(forTok, block),
-	}, nil
+	return forStmt(
+		initStmt, condExpr, incStmt, block,
+		span.Merge(forTok, block),
+	), nil
 }

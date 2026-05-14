@@ -2,7 +2,7 @@ package emitter
 
 import "github.com/caiquetorres/lumi/internal/parser"
 
-func (e *Emitter) BeforeBreakStmt(*parser.BreakStmt) {
+func (e *Emitter) BeforeBreakStmt(*parser.Break) {
 	e.ch.emit(JumpTo)
 	placeholder := e.ch.reserveUint32()
 
@@ -11,4 +11,4 @@ func (e *Emitter) BeforeBreakStmt(*parser.BreakStmt) {
 	}
 }
 
-func (e *Emitter) AfterBreakStmt(*parser.BreakStmt) {}
+func (e *Emitter) AfterBreakStmt(*parser.Break) {}

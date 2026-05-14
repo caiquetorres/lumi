@@ -5,7 +5,7 @@ import (
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
-type IfStmt struct {
+type If struct {
 	Condition Expr
 	Then      *Block
 	Else      *Block
@@ -17,8 +17,8 @@ func ifStmt(
 	condition Expr,
 	thenBlock, elseBlock *Block,
 	span span.Spanner,
-) *IfStmt {
-	return &IfStmt{
+) *If {
+	return &If{
 		Condition: condition,
 		Then:      thenBlock,
 		Else:      elseBlock,
@@ -26,11 +26,11 @@ func ifStmt(
 	}
 }
 
-func (s *IfStmt) Span() span.Span {
+func (s *If) Span() span.Span {
 	return s.span
 }
 
-func (p *Parser) parseIf() (*IfStmt, error) {
+func (p *Parser) parseIf() (*If, error) {
 	ifTok, err := p.lookahead().next().expect(token.If)
 	if err != nil {
 		return nil, err
@@ -72,8 +72,7 @@ func (p *Parser) parseIf() (*IfStmt, error) {
 	}
 
 	return ifStmt(
-		condition,
-		thenBlock, elseBlock,
+		condition, thenBlock, elseBlock,
 		span.Merge(ifTok, lastSpan),
 	), nil
 }

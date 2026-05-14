@@ -86,15 +86,6 @@ func (p *Parser) parseTerm() (Expr, error) {
 	return expr, nil
 }
 
-// func isUnaryOperator(tok token.Token) bool {
-// 	switch tok.Kind() {
-// 	case token.Bang, token.Plus, token.Minus:
-// 		return true
-// 	default:
-// 		return false
-// 	}
-// }
-
 func isBinaryOperator(tok token.Token) bool {
 	switch tok.Kind() {
 	case token.Plus, token.Minus, token.Star, token.Slash,

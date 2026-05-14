@@ -8,7 +8,7 @@ type IfStmt struct {
 	Else      *Block
 }
 
-func (t *TypeChecker) analyzeIfStmt(is *parser.IfStmt) *IfStmt {
+func (t *TypeChecker) analyzeIfStmt(is *parser.If) *IfStmt {
 	return &IfStmt{
 		Condition: t.analyzeExpr(is.Condition),
 		Then:      t.analyzeBlock(is.Then),

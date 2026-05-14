@@ -18,8 +18,8 @@ type Chunk struct {
 	entryPoint    uint32
 
 	code    []byte
-	pool    *constpool.ConstantPool
 	fnTable []uint32
+	pool    *constpool.ConstantPool
 }
 
 func newChunk(size int) *Chunk {

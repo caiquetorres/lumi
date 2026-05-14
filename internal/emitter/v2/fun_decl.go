@@ -2,7 +2,7 @@ package emitter
 
 import "github.com/caiquetorres/lumi/internal/semantic"
 
-func (e *Emitter) emitFunDecl(fn *semantic.FunDecl) {
+func (e *Emitter) emitFunDecl(fn *semantic.Fun) {
 	e.locals = newLocals(nil)
 
 	fnName := e.lex.Lexeme(fn.Identifier)

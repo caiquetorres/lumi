@@ -3,13 +3,12 @@ package constpool
 import (
 	"bytes"
 	"encoding/binary"
-	"log"
 )
 
+type typeByte byte
+
 const (
-	typeBool byte = iota + 1
-	typeString
-	typeInt
+	typeString typeByte = iota + 1
 )
 
 func (c *ConstantPool) Serialize() []byte {
@@ -21,55 +20,25 @@ func (c *ConstantPool) Serialize() []byte {
 	return buf.Bytes()
 }
 
-func (c *ConstantPool) serializeConstant(val any, buf *bytes.Buffer) uint32 {
+func (c *ConstantPool) serializeConstant(val any, buf *bytes.Buffer) {
 	switch val := val.(type) {
-	case bool:
-		c.serializeBool(val, buf)
-
 	case string:
 		c.serializeString(val, buf)
 
-	case int:
-		c.serializeInt(val, buf)
-
 	default:
-		log.Panic("unsupported constant type")
-	}
-
-	return 0
-}
-
-func (c *ConstantPool) serializeBool(value bool, buf *bytes.Buffer) {
-	_ = buf.WriteByte(typeBool)
-
-	if value {
-		_ = buf.WriteByte(1)
-	} else {
-		_ = buf.WriteByte(0)
+		panic("unsupported constant type")
 	}
 }
 
 func (c *ConstantPool) serializeString(value string, buf *bytes.Buffer) {
-	_ = buf.WriteByte(typeString)
+	_ = buf.WriteByte(byte(typeString))
+
 	strBytes := []byte(value)
-	strLen := uint32(len(strBytes))
+	strLen := len(strBytes)
 
 	var lenBuf [4]byte
-	binary.BigEndian.PutUint32(lenBuf[:], strLen)
+	binary.BigEndian.PutUint32(lenBuf[:], uint32(strLen))
 
-	{
-		// TODO: Use varint encoding for string lengths to save space for short strings.
-		_, _ = buf.Write(lenBuf[:])
-	}
-
+	_, _ = buf.Write(lenBuf[:])
 	_, _ = buf.WriteString(value)
-}
-
-func (c *ConstantPool) serializeInt(value int, buf *bytes.Buffer) {
-	_ = buf.WriteByte(typeInt)
-
-	var intBuf [8]byte
-	binary.BigEndian.PutUint64(intBuf[:], uint64(value))
-
-	_, _ = buf.Write(intBuf[:])
 }

@@ -25,11 +25,11 @@ func (d *debugVisitor) BeforeBinaryExpr(*BinaryExpr) {}
 
 func (d *debugVisitor) AfterBlockStmt(*Block) {}
 
-func (d *debugVisitor) AfterBreakStmt(*BreakStmt) {}
+func (d *debugVisitor) AfterBreakStmt(*Break) {}
 
 func (d *debugVisitor) BeforeBlockStmt(*Block) {}
 
-func (d *debugVisitor) BeforeContinueStmt(*ContinueStmt) {
+func (d *debugVisitor) BeforeContinueStmt(*Continue) {
 	d.writeIndent()
 
 	mustWrite(d.w.WriteString("continue\n"))
@@ -37,9 +37,9 @@ func (d *debugVisitor) BeforeContinueStmt(*ContinueStmt) {
 	_ = d.flush()
 }
 
-func (d *debugVisitor) AfterContinueStmt(*ContinueStmt) {}
+func (d *debugVisitor) AfterContinueStmt(*Continue) {}
 
-func (d *debugVisitor) BeforeBreakStmt(*BreakStmt) {}
+func (d *debugVisitor) BeforeBreakStmt(*Break) {}
 
 func DebugAst(ast *Ast, l *lexer.Lexer, w io.Writer) {
 	d := &debugVisitor{
@@ -52,21 +52,21 @@ func DebugAst(ast *Ast, l *lexer.Lexer, w io.Writer) {
 
 func (d *debugVisitor) BeforeAst(ast *Ast) {}
 
-func (d *debugVisitor) BeforeVarDecl(vd *VarDecl) {
+func (d *debugVisitor) BeforeVarDecl(vd *Let) {
 	d.writeIndent()
 
 	_ = d.flush()
 }
 
-func (d *debugVisitor) BeforeAssignment(as *Assignment) {
+func (d *debugVisitor) BeforeAssignment(as *Binding) {
 	name := d.l.Lexeme(as.Identifier)
 	str := fmt.Sprintf("var %s\n", name)
 	mustWrite(d.w.WriteString(str))
 }
 
-func (d *debugVisitor) AfterAssignment(assignment *Assignment) {}
+func (d *debugVisitor) AfterAssignment(assignment *Binding) {}
 
-func (d *debugVisitor) AfterVarDecl(vd *VarDecl) {}
+func (d *debugVisitor) AfterVarDecl(vd *Let) {}
 
 func (d *debugVisitor) BeforeFunDecl(fd *FunDecl) {
 	str := fmt.Sprintf("fun %s\n", d.l.Lexeme(fd.Identifier))
@@ -133,13 +133,13 @@ func (d *debugVisitor) AfterCallExpr(expr *CallExpr) {
 	_ = d.flush()
 }
 
-func (d *debugVisitor) AfterIfCondition(ifStmt *IfStmt) {}
+func (d *debugVisitor) AfterIfCondition(ifStmt *If) {}
 
-func (d *debugVisitor) AfterIfThenBlock(ifStmt *IfStmt) {
+func (d *debugVisitor) AfterIfThenBlock(ifStmt *If) {
 	d.indentOut()
 }
 
-func (d *debugVisitor) AfterElseBlock(ifStmt *IfStmt) {
+func (d *debugVisitor) AfterElseBlock(ifStmt *If) {
 	d.indentOut()
 }
 
@@ -159,17 +159,17 @@ func (d *debugVisitor) AfterWhileBody(whileStmt *WhileStmt) {
 	d.indentOut()
 }
 
-func (f *debugVisitor) BeforeForInit(*ForStmt) {}
-func (f *debugVisitor) AfterForInit(*ForStmt)  {}
-func (f *debugVisitor) BeforeForInc(*ForStmt)  {}
-func (f *debugVisitor) AfterForInc(*ForStmt)   {}
-func (f *debugVisitor) BeforeForCond(*ForStmt) {}
-func (f *debugVisitor) AfterForCond(*ForStmt)  {}
-func (f *debugVisitor) AfterForBody(*ForStmt)  {}
-func (f *debugVisitor) BeforeLoopBody(*Loop)   {}
-func (f *debugVisitor) AfterLoopBody(*Loop)    {}
+func (f *debugVisitor) BeforeForInit(*For)   {}
+func (f *debugVisitor) AfterForInit(*For)    {}
+func (f *debugVisitor) BeforeForInc(*For)    {}
+func (f *debugVisitor) AfterForInc(*For)     {}
+func (f *debugVisitor) BeforeForCond(*For)   {}
+func (f *debugVisitor) AfterForCond(*For)    {}
+func (f *debugVisitor) AfterForBody(*For)    {}
+func (f *debugVisitor) BeforeLoopBody(*Loop) {}
+func (f *debugVisitor) AfterLoopBody(*Loop)  {}
 
-func (d *debugVisitor) AfterForCondition(forStmt *ForStmt) {}
+func (d *debugVisitor) AfterForCondition(forStmt *For) {}
 
 func (d *debugVisitor) BeforeReturnStmt(*ReturnStmt) {
 	d.writeIndent()

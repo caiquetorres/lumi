@@ -5,11 +5,11 @@ type Visitor interface {
 	BeforeFunDecl(*FunDecl)
 	AfterFunDecl(*FunDecl)
 
-	BeforeVarDecl(*VarDecl)
-	AfterVarDecl(*VarDecl)
+	BeforeVarDecl(*Let)
+	AfterVarDecl(*Let)
 
-	BeforeAssignment(*Assignment)
-	AfterAssignment(*Assignment)
+	BeforeAssignment(*Binding)
+	AfterAssignment(*Binding)
 
 	BeforeParam(*Param)
 	AfterParam(*Param)
@@ -25,15 +25,15 @@ type Visitor interface {
 	BeforeBlockStmt(*Block)
 	AfterBlockStmt(*Block)
 
-	BeforeBreakStmt(*BreakStmt)
-	AfterBreakStmt(*BreakStmt)
+	BeforeBreakStmt(*Break)
+	AfterBreakStmt(*Break)
 
-	BeforeContinueStmt(*ContinueStmt)
-	AfterContinueStmt(*ContinueStmt)
+	BeforeContinueStmt(*Continue)
+	AfterContinueStmt(*Continue)
 
-	AfterIfCondition(*IfStmt)
-	AfterIfThenBlock(*IfStmt)
-	AfterElseBlock(*IfStmt)
+	AfterIfCondition(*If)
+	AfterIfThenBlock(*If)
+	AfterElseBlock(*If)
 
 	BeforeLoopBody(*Loop)
 	AfterLoopBody(*Loop)
@@ -42,13 +42,13 @@ type Visitor interface {
 	AfterWhileCondition(*WhileStmt)
 	AfterWhileBody(*WhileStmt)
 
-	BeforeForInit(*ForStmt)
-	AfterForInit(*ForStmt)
-	BeforeForInc(*ForStmt)
-	AfterForInc(*ForStmt)
-	BeforeForCond(*ForStmt)
-	AfterForCond(*ForStmt)
-	AfterForBody(*ForStmt)
+	BeforeForInit(*For)
+	AfterForInit(*For)
+	BeforeForInc(*For)
+	AfterForInc(*For)
+	BeforeForCond(*For)
+	AfterForCond(*For)
+	AfterForBody(*For)
 
 	BeforeReturnStmt(*ReturnStmt)
 	AfterReturnStmt(*ReturnStmt)

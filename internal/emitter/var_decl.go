@@ -2,13 +2,13 @@ package emitter
 
 import "github.com/caiquetorres/lumi/internal/parser"
 
-func (e *Emitter) AfterVarDecl(vd *parser.VarDecl) {}
+func (e *Emitter) AfterVarDecl(vd *parser.Let) {}
 
-func (e *Emitter) BeforeVarDecl(*parser.VarDecl) {}
+func (e *Emitter) BeforeVarDecl(*parser.Let) {}
 
-func (e *Emitter) BeforeAssignment(*parser.Assignment) {}
+func (e *Emitter) BeforeAssignment(*parser.Binding) {}
 
-func (e *Emitter) AfterAssignment(as *parser.Assignment) {
+func (e *Emitter) AfterAssignment(as *parser.Binding) {
 	name := e.lex.Lexeme(as.Identifier)
 	e.storeLocal(name)
 }

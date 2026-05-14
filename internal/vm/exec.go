@@ -16,7 +16,7 @@ func Execute(src io.ReadSeeker) error {
 		return err
 	}
 
-	pool, err := constpool.ParseConstantPool(constants)
+	pool, err := constpool.Parse(constants)
 	if err != nil {
 		return err
 	}

@@ -22,21 +22,23 @@ var keywords = map[string]token.Kind{
 	"in":       token.In,
 }
 
+// isKeywordOrIdentifier checks if the next token is a keyword or an
+// identifier.
 func (l *Lexer) isKeywordOrIdentifier() bool {
 	r, err := l.peekRune()
 	if err != nil {
 		return false
 	}
 
-	return unicode.IsLetter(r) || unicode.IsMark(r) ||
-		unicode.IsSymbol(r) || r == '_'
+	return isIdentifierStart(r)
 }
 
+// readKeywordOrIdentifier reads a keyword or an identifier from the input
+// and returns the corresponding token. If the text matches a keyword, the
+// token kind will be set to the keyword's kind; otherwise, it will be set
+// to [token.Identifier].
 func (l *Lexer) readKeywordOrIdentifier() (token.Token, error) {
-	text, err := l.takeWhile(func(r rune) bool {
-		return unicode.IsLetter(r) || unicode.IsNumber(r) ||
-			unicode.IsMark(r) || unicode.IsSymbol(r) || r == '_'
-	})
+	text, err := l.takeWhile(isIdentifierContinue)
 	if err != nil {
 		return token.Token{}, err
 	}
@@ -47,4 +49,13 @@ func (l *Lexer) readKeywordOrIdentifier() (token.Token, error) {
 	}
 
 	return l.newToken(kind), nil
+}
+
+func isIdentifierStart(r rune) bool {
+	return unicode.IsLetter(r) || unicode.IsMark(r) ||
+		unicode.IsSymbol(r) || r == '_'
+}
+
+func isIdentifierContinue(r rune) bool {
+	return isIdentifierStart(r) || unicode.IsNumber(r)
 }

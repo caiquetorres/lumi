@@ -38,7 +38,7 @@ func Exec(src io.Reader) error {
 		return err
 	}
 
-	pool, err := constpool.ParseConstantPool(constants)
+	pool, err := constpool.Parse(constants)
 	if err != nil {
 		return err
 	}
@@ -207,7 +207,7 @@ func getFunctionTable(fp *bufio.Reader) ([]uint32, error) {
 	size := binary.BigEndian.Uint32(sizeBuf[:])
 	fnTable := make([]uint32, size)
 
-	for i := uint32(0); i < size; i++ {
+	for i := range size {
 		var offsetBuf [4]byte
 		if _, err := fp.Read(offsetBuf[:]); err != nil {
 			return nil, err

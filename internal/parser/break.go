@@ -5,21 +5,21 @@ import (
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
-type BreakStmt struct {
+type Break struct {
 	span span.Span
 }
 
-func breakStmt(span span.Spanner) *BreakStmt {
-	return &BreakStmt{
+func breakStmt(span span.Spanner) *Break {
+	return &Break{
 		span: span.Span(),
 	}
 }
 
-func (s *BreakStmt) Span() span.Span {
+func (s *Break) Span() span.Span {
 	return s.span
 }
 
-func (p *Parser) parseBreak() (*BreakStmt, error) {
+func (p *Parser) parseBreak() (*Break, error) {
 	breakTok, err := p.lookahead().next().expect(token.Break)
 	if err != nil {
 		return nil, err

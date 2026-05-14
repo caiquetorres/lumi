@@ -6,19 +6,19 @@ type Stmt any
 
 func (t *TypeChecker) analyzeStmt(s parser.Stmt) Stmt {
 	switch n := s.(type) {
-	case *parser.VarDecl:
+	case *parser.Let:
 		return t.analyzeVarDecl(n)
-	case *parser.IfStmt:
+	case *parser.If:
 		return t.analyzeIfStmt(n)
 	case *parser.ReturnStmt:
 		return t.analyzeReturnStmt(n)
-	case *parser.ForStmt:
+	case *parser.For:
 		return t.analyzeForStmt(n)
 	case *parser.WhileStmt:
 		return t.analyzeWhileStmt(n)
-	case *parser.BreakStmt:
+	case *parser.Break:
 		return t.analyzeBreakStmt(n)
-	case *parser.ContinueStmt:
+	case *parser.Continue:
 		return t.analyzeContinueStmt(n)
 	case *parser.Loop:
 		return t.analyzeLoop(n)

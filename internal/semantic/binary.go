@@ -51,12 +51,11 @@ func (t *TypeChecker) analyzeBinaryExpr(be *parser.BinaryExpr) *BinaryExpr {
 		return binaryExpr(anyExpr(), left, right, be.Operator)
 	}
 
-	var (
-		typedExpr *TypedExpr
-		err       error
-	)
+	typedExpr := anyExpr()
 
 	if left.Type().IsInt() {
+		var err error
+
 		typedExpr, err = t.analyzeBinaryExprForInts(be, left.Type(), right.Type())
 		if err != nil {
 			t.addErr(err)

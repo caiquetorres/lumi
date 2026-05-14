@@ -33,7 +33,7 @@ func newEmitter(lex *lexer.Lexer, globals *globals) *Emitter {
 		loopStack: newLoopStack(),
 		jumpStack: newJumpStack(),
 
-		analyzer: semantic.NewAnalyzer(lex),
+		analyzer: semantic.NewTypeChecker(lex),
 	}
 }
 

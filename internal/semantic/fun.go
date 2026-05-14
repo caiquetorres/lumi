@@ -5,7 +5,7 @@ import (
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
-type FunDecl struct {
+type Fun struct {
 	Identifier token.Token
 	Params     []Param
 	Return     *Type
@@ -15,8 +15,8 @@ type FunDecl struct {
 func funDecl(
 	idenfier token.Token, params []Param,
 	returnType *Type, body []Stmt,
-) *FunDecl {
-	return &FunDecl{
+) *Fun {
+	return &Fun{
 		Identifier: idenfier,
 		Params:     params,
 		Return:     returnType,
@@ -24,7 +24,7 @@ func funDecl(
 	}
 }
 
-func (t *TypeChecker) analyzeFunDecl(fd *parser.FunDecl) *FunDecl {
+func (t *TypeChecker) analyzeFunDecl(fd *parser.FunDecl) *Fun {
 	params := make([]Param, len(fd.Params))
 	for i, p := range fd.Params {
 		params[i] = t.analyzeParam(p)

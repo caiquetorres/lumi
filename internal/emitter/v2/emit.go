@@ -38,7 +38,7 @@ func Emit(ast *semantic.Ast, lex *lexer.Lexer) (*Chunk, error) {
 func (e *Emitter) emitAst(ast *semantic.Ast) {
 	for _, stmt := range ast.Statements {
 		switch stmt := stmt.(type) {
-		case *semantic.FunDecl:
+		case *semantic.Fun:
 			e.emitFunDecl(stmt)
 		}
 	}
@@ -48,7 +48,7 @@ func buildGlobals(ast *semantic.Ast, lex *lexer.Lexer) *globals {
 	g := newGlobals()
 	for _, stmt := range ast.Statements {
 		switch stmt := stmt.(type) {
-		case *semantic.FunDecl:
+		case *semantic.Fun:
 			fnName := lex.Lexeme(stmt.Identifier)
 			_ = g.define(fnName)
 		}
