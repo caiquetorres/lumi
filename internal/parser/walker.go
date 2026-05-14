@@ -52,7 +52,7 @@ func (w *walker) walkStmt(v Visitor, stmt Stmt) {
 	switch s := stmt.(type) {
 	case *Let:
 		w.walkVarDecl(v, s)
-	case *ReturnStmt:
+	case *Return:
 		w.walkReturn(v, s)
 	case *If:
 		w.walkIf(v, s)
@@ -134,7 +134,7 @@ func (w *walker) walkIf(v Visitor, ifStmt *If) error {
 	return nil
 }
 
-func (w *walker) walkReturn(v Visitor, r *ReturnStmt) {
+func (w *walker) walkReturn(v Visitor, r *Return) {
 	v.BeforeReturnStmt(r)
 
 	if r.Expr != nil {

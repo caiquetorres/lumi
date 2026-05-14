@@ -13,7 +13,7 @@ func (t *TypeChecker) analyzeTopLevelStmt(s parser.TopLevelStmt) TopLevelStmt {
 	case *parser.FunDecl:
 		return t.analyzeFunDecl(n)
 	case *parser.Let:
-		return t.analyzeVarDecl(n)
+		return t.analyzeLet(n)
 	default:
 		panic("unreachable")
 	}

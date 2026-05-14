@@ -2,7 +2,7 @@ package emitter
 
 import "github.com/caiquetorres/lumi/internal/semantic"
 
-func (e *Emitter) emitIf(ifStmt *semantic.IfStmt) {
+func (e *Emitter) emitIf(ifStmt *semantic.If) {
 	e.emitExpr(ifStmt.Condition)
 
 	e.ch.emit(JumpIfFalse)

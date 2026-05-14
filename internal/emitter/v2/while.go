@@ -2,7 +2,7 @@ package emitter
 
 import "github.com/caiquetorres/lumi/internal/semantic"
 
-func (e *Emitter) emitWhile(wh *semantic.WhileStmt) {
+func (e *Emitter) emitWhile(wh *semantic.While) {
 	e.loopStack.push(loop{
 		start: e.ch.ip,
 	})

@@ -2,7 +2,7 @@ package emitter
 
 import "github.com/caiquetorres/lumi/internal/semantic"
 
-func (e *Emitter) emitFor(forStmt *semantic.ForStmt) {
+func (e *Emitter) emitFor(forStmt *semantic.For) {
 	if forStmt.Init != nil {
 		e.emitStmt(forStmt.Init)
 	}

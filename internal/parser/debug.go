@@ -171,7 +171,7 @@ func (f *debugVisitor) AfterLoopBody(*Loop)  {}
 
 func (d *debugVisitor) AfterForCondition(forStmt *For) {}
 
-func (d *debugVisitor) BeforeReturnStmt(*ReturnStmt) {
+func (d *debugVisitor) BeforeReturnStmt(*Return) {
 	d.writeIndent()
 
 	mustWrite(d.w.WriteString("return\n"))
@@ -179,7 +179,7 @@ func (d *debugVisitor) BeforeReturnStmt(*ReturnStmt) {
 	_ = d.flush()
 }
 
-func (d *debugVisitor) AfterReturnStmt(*ReturnStmt) {}
+func (d *debugVisitor) AfterReturnStmt(*Return) {}
 
 func (d *debugVisitor) AfterStmt(Stmt) {}
 

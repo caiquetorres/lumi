@@ -2,8 +2,8 @@ package semantic
 
 import "github.com/caiquetorres/lumi/internal/parser"
 
-type ContinueStmt struct{}
+type Continue struct{}
 
-func (t *TypeChecker) analyzeContinueStmt(_ *parser.Continue) *ContinueStmt {
-	return &ContinueStmt{}
+func (t *TypeChecker) analyzeContinueStmt(_ *parser.Continue) *Continue {
+	return &Continue{}
 }

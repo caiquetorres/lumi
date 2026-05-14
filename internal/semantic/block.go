@@ -7,10 +7,10 @@ type Stmt any
 func (t *TypeChecker) analyzeStmt(s parser.Stmt) Stmt {
 	switch n := s.(type) {
 	case *parser.Let:
-		return t.analyzeVarDecl(n)
+		return t.analyzeLet(n)
 	case *parser.If:
 		return t.analyzeIfStmt(n)
-	case *parser.ReturnStmt:
+	case *parser.Return:
 		return t.analyzeReturnStmt(n)
 	case *parser.For:
 		return t.analyzeForStmt(n)

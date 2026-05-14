@@ -22,7 +22,7 @@ func (f *fnVisitor) AfterFunDecl(*parser.FunDecl)                {}
 func (f *fnVisitor) AfterIfCondition(*parser.If)                 {}
 func (f *fnVisitor) AfterIfThenBlock(*parser.If)                 {}
 func (f *fnVisitor) AfterParam(*parser.Param)                    {}
-func (f *fnVisitor) AfterReturnStmt(*parser.ReturnStmt)          {}
+func (f *fnVisitor) AfterReturnStmt(*parser.Return)              {}
 func (f *fnVisitor) AfterStmt(parser.Stmt)                       {}
 func (f *fnVisitor) AfterVarDecl(*parser.Let)                    {}
 func (f *fnVisitor) AfterWhileBody(*parser.WhileStmt)            {}
@@ -36,7 +36,7 @@ func (f *fnVisitor) BeforeContinueStmt(*parser.Continue)         {}
 func (f *fnVisitor) BeforeIdentifierExpr(*parser.IdentifierExpr) {}
 func (f *fnVisitor) BeforeLiteralExpr(*parser.LiteralExpr)       {}
 func (f *fnVisitor) BeforeParam(*parser.Param)                   {}
-func (f *fnVisitor) BeforeReturnStmt(*parser.ReturnStmt)         {}
+func (f *fnVisitor) BeforeReturnStmt(*parser.Return)             {}
 func (f *fnVisitor) BeforeVarDecl(*parser.Let)                   {}
 func (f *fnVisitor) BeforeWhileCondition(*parser.WhileStmt)      {}
 func (f *fnVisitor) AfterAssignment(*parser.Binding)             {}

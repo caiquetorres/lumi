@@ -2,8 +2,8 @@ package semantic
 
 import "github.com/caiquetorres/lumi/internal/parser"
 
-type BreakStmt struct{}
+type Break struct{}
 
-func (t *TypeChecker) analyzeBreakStmt(_ *parser.Break) *BreakStmt {
-	return &BreakStmt{}
+func (t *TypeChecker) analyzeBreakStmt(_ *parser.Break) *Break {
+	return &Break{}
 }

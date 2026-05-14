@@ -6,19 +6,19 @@ func (e *Emitter) emitStmt(stmt semantic.Stmt) {
 	switch s := stmt.(type) {
 	case *semantic.Block:
 		e.emitBlock(s)
-	case *semantic.WhileStmt:
+	case *semantic.While:
 		e.emitWhile(s)
 	case *semantic.Loop:
 		e.emitLoop(s)
-	case *semantic.ForStmt:
+	case *semantic.For:
 		e.emitFor(s)
-	case *semantic.IfStmt:
+	case *semantic.If:
 		e.emitIf(s)
-	case *semantic.BreakStmt:
+	case *semantic.Break:
 		e.emitBreak()
 	case *semantic.Let:
 		e.emitLet(s)
-	case *semantic.ContinueStmt:
+	case *semantic.Continue:
 		e.emitContinue()
 	case *semantic.ReturnStmt:
 		e.emitReturn(s)

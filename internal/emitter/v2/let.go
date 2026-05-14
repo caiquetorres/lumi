@@ -3,7 +3,7 @@ package emitter
 import "github.com/caiquetorres/lumi/internal/semantic"
 
 func (e *Emitter) emitLet(l *semantic.Let) {
-	for _, as := range l.Assignments {
+	for _, as := range l.Bindings {
 		e.emitExpr(as.Expr)
 
 		name := e.lex.Lexeme(as.Identifier)

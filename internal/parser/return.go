@@ -5,24 +5,24 @@ import (
 	"github.com/caiquetorres/lumi/internal/token"
 )
 
-type ReturnStmt struct {
+type Return struct {
 	Expr Expr
 
 	span span.Span
 }
 
-func returnStmt(expr Expr, span span.Spanner) *ReturnStmt {
-	return &ReturnStmt{
+func returnStmt(expr Expr, span span.Spanner) *Return {
+	return &Return{
 		Expr: expr,
 		span: span.Span(),
 	}
 }
 
-func (s *ReturnStmt) Span() span.Span {
+func (s *Return) Span() span.Span {
 	return s.span
 }
 
-func (p *Parser) parseReturn() (*ReturnStmt, error) {
+func (p *Parser) parseReturn() (*Return, error) {
 	returnTok, err := p.lookahead().next().expect(token.Return)
 	if err != nil {
 		return nil, err

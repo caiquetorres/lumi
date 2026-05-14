@@ -50,8 +50,8 @@ type Visitor interface {
 	AfterForCond(*For)
 	AfterForBody(*For)
 
-	BeforeReturnStmt(*ReturnStmt)
-	AfterReturnStmt(*ReturnStmt)
+	BeforeReturnStmt(*Return)
+	AfterReturnStmt(*Return)
 
 	AfterStmt(Stmt)
 }

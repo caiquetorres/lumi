@@ -6,30 +6,30 @@ import (
 )
 
 type Let struct {
-	Assignments []Assignment
+	Bindings []Binding
 }
 
-func (t *TypeChecker) analyzeVarDecl(vd *parser.Let) *Let {
-	assignments := make([]Assignment, len(vd.Bindings))
-	for i, as := range vd.Bindings {
-		assignments[i] = t.analyzeAssignment(as)
+func (t *TypeChecker) analyzeLet(le *parser.Let) *Let {
+	assignments := make([]Binding, len(le.Bindings))
+	for i, as := range le.Bindings {
+		assignments[i] = t.analyzeBinding(as)
 	}
 	return &Let{
-		Assignments: assignments,
+		Bindings: assignments,
 	}
 }
 
-type Assignment struct {
+type Binding struct {
 	Identifier token.Token
 	Expr       Expr
 }
 
-func (t *TypeChecker) analyzeAssignment(as parser.Binding) Assignment {
-	name := t.lex.Lexeme(as.Identifier)
-	t.symTable.Define(name, as.Expr)
+func (t *TypeChecker) analyzeBinding(bi parser.Binding) Binding {
+	name := t.lex.Lexeme(bi.Identifier)
+	t.symTable.Define(name, bi.Expr)
 
-	return Assignment{
-		Identifier: as.Identifier,
-		Expr:       t.analyzeExpr(as.Expr),
+	return Binding{
+		Identifier: bi.Identifier,
+		Expr:       t.analyzeExpr(bi.Expr),
 	}
 }
