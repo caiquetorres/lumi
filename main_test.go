@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"strings"
@@ -10,6 +11,7 @@ import (
 	"github.com/caiquetorres/lumi/internal/lexer"
 	"github.com/caiquetorres/lumi/internal/parser"
 	"github.com/caiquetorres/lumi/internal/semantic"
+	"github.com/caiquetorres/lumi/internal/vm/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -39,6 +41,27 @@ func TestCompilation(t *testing.T) {
 			assert.Equal(t, normalizeLines(string(expected)), normalizeLines(actual))
 		})
 	}
+}
+
+const printlnSrc = `fun main() {
+	let s = 1 + 2
+	println(s)
+}`
+
+func TestExec(t *testing.T) {
+	t.Run("println", func(t *testing.T) {
+		r := compileToLumi(t, printlnSrc)
+
+		var out bytes.Buffer
+		if err := vm.ExecWithWriter(r, &out); err != nil {
+			t.Fatalf("exec failed: %v", err)
+		}
+
+		got := out.String()
+		want := "3\n"
+
+		assert.Equal(t, want, got)
+	})
 }
 
 func compileToBytecodeString(srcPath string) (string, error) {
@@ -78,4 +101,33 @@ func normalizeLines(s string) string {
 		lines[i] = strings.TrimRight(l, " \t")
 	}
 	return strings.Join(lines, "\n")
+}
+
+func compileToLumi(t *testing.T, src string) *bytes.Reader {
+	t.Helper()
+
+	lex := lexer.New(strings.NewReader(src))
+	par := parser.New(lex)
+
+	ast, err := par.Parse()
+	if err != nil {
+		t.Fatalf("parse failed: %v", err)
+	}
+
+	sAst, err := semantic.Analyze(ast, lex)
+	if err != nil {
+		t.Fatalf("semantic analyze failed: %v", err)
+	}
+
+	ch, err := emitter.Emit(sAst, lex)
+	if err != nil {
+		t.Fatalf("emit failed: %v", err)
+	}
+
+	var buf bytes.Buffer
+	if err := emitter.WriteLumiFile(ch, &buf); err != nil {
+		t.Fatalf("writing lumi file failed: %v", err)
+	}
+
+	return bytes.NewReader(buf.Bytes())
 }

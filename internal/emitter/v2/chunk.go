@@ -37,12 +37,6 @@ func (c *Chunk) emit(b byte) (offset uint32) {
 	return
 }
 
-func (c *Chunk) patch(offset uint32, b byte) {
-	if offset < uint32(len(c.code)) {
-		c.code[offset] = b
-	}
-}
-
 func (c *Chunk) patchUint32(offset uint32, value uint32) {
 	if offset+4 <= uint32(len(c.code)) {
 		var buf [4]byte
@@ -51,27 +45,10 @@ func (c *Chunk) patchUint32(offset uint32, value uint32) {
 	}
 }
 
-func (c *Chunk) emitBytes(bytes ...byte) (offset uint32) {
-	offset = c.ip
-	c.code = append(c.code, bytes...)
-	c.ip += uint32(len(bytes))
-	return
-}
-
 func (c *Chunk) emitUint8(value uint8) (offset uint32) {
 	offset = c.ip
 	c.code = append(c.code, value)
 	c.ip++
-	return
-}
-
-func (c *Chunk) emitUint16(value uint16) (offset uint32) {
-	offset = c.ip
-	var buf [2]byte
-	binary.BigEndian.PutUint16(buf[:], value)
-
-	c.code = append(c.code, buf[:]...)
-	c.ip += 2
 	return
 }
 
@@ -99,15 +76,5 @@ func (c *Chunk) emitUint32(value uint32) (offset uint32) {
 
 func (c *Chunk) reserveUint32() (offset uint32) {
 	offset = c.emitUint32(math.MaxUint32)
-	return
-}
-
-func (c *Chunk) emitUint64(value uint64) (offset uint32) {
-	offset = c.ip
-	var buf [8]byte
-	binary.BigEndian.PutUint64(buf[:], value)
-
-	c.code = append(c.code, buf[:]...)
-	c.ip += 8
 	return
 }

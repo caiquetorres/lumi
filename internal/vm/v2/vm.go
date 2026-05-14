@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 
 	"github.com/caiquetorres/lumi/internal/constpool"
 )
@@ -26,7 +27,7 @@ type vm struct {
 	locals [1024]byte
 }
 
-func Exec(src io.Reader) error {
+func ExecWithWriter(src io.Reader, out io.Writer) error {
 	r := bufio.NewReader(src)
 
 	if !isLumiFile(r) {
@@ -77,7 +78,7 @@ func Exec(src io.Reader) error {
 					return operand{}, fmt.Errorf("unsupported operand type for println: %v", arg.ty)
 				}
 			}
-			fmt.Println(values...)
+			fmt.Fprintln(out, values...)
 			return operand{}, nil
 		},
 		"printf": func(m *vm, args ...operand) (operand, error) {
@@ -115,7 +116,7 @@ func Exec(src io.Reader) error {
 				}
 			}
 
-			fmt.Printf(formatStr, values...)
+			fmt.Fprintf(out, formatStr, values...)
 			return operand{}, nil
 		},
 	}
@@ -135,6 +136,10 @@ func Exec(src io.Reader) error {
 	}
 
 	return nil
+}
+
+func Exec(src io.Reader) error {
+	return ExecWithWriter(src, os.Stdout)
 }
 
 const lumiMagic = "LUMI"
